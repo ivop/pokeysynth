@@ -1,0 +1,35 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix pprops: <http://lv2plug.in/ns/ext/port-props#> .
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
+@prefix midi: <http://lv2plug.in/ns/ext/midi#> .
+
+
+<https://github.com/ivop/pokeysynth> a lv2:Plugin , doap:Project ;
+    lv2:binary <pokeysynth.so> ;
+    doap:name "PokeySynth" ;
+    lv2:optionalFeature lv2:hardRTCapable ;
+    lv2:requiredFeature urid:map ;
+    lv2:minorVersion 2 ;
+    lv2:microVersion 0 ;
+
+    lv2:port 
+        [
+            a lv2:InputPort , atom:AtomPort ;
+            lv2:index 0 ;
+            lv2:symbol "midi_in" ;
+            lv2:name "MIDI in" ;
+            atom:bufferType atom:Sequence ;
+            atom:supports midi:MidiEvent ;
+        ],
+
+        [
+            a lv2:OutputPort , lv2:AudioPort ;
+            lv2:index 1 ;
+            lv2:symbol "audio_out" ;
+            lv2:name "Audio output" ;
+        ] .
