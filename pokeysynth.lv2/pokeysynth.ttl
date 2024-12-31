@@ -46,7 +46,7 @@
             lv2:minimum 0 ;
             lv2:maximum 3 ;
             lv2:scalePoint [ rdfs:label "Channels 0-3" ; rdf:value 0 ] ;
-            lv2:scalePoint [ rdfs:label "Channels 4-7" ; rdf:value 0 ] ;
-            lv2:scalePoint [ rdfs:label "Channels 8-11" ; rdf:value 0 ] ;
-            lv2:scalePoint [ rdfs:label "Channels 12-16" ; rdf:value 0 ] ;
+            lv2:scalePoint [ rdfs:label "Channels 4-7" ; rdf:value 1 ] ;
+            lv2:scalePoint [ rdfs:label "Channels 8-11" ; rdf:value 2 ] ;
+            lv2:scalePoint [ rdfs:label "Channels 12-16" ; rdf:value 3 ] ;
         ] .
