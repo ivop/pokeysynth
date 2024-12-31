@@ -17,12 +17,17 @@
 
 #define POKEYSYNTH_URI "https://github.com/ivop/pokeysynth"
 
-typedef enum { POKEYSYNTH_MIDI_IN, POKEYSYNTH_AUDIO_OUT } PortIndex;
+typedef enum {
+    POKEYSYNTH_MIDI_IN,
+    POKEYSYNTH_AUDIO_OUT,
+    POKEYSYNTH_CONTROL_CHANNELS
+} PortIndex;
 
 typedef struct {
     // ports
     const LV2_Atom_Sequence *midi_in;
     float *audio_out;
+    float *channels_p;
 
     // features
     LV2_URID_Map *map;
@@ -85,6 +90,9 @@ static void connect_port(LV2_Handle instance, uint32_t port, void *data) {
     case POKEYSYNTH_AUDIO_OUT:
         self->audio_out = (float *) data;
         break;
+    case POKEYSYNTH_CONTROL_CHANNELS:
+        self->channels_p = (float *) data;
+        break;
     }
 }
 
@@ -99,6 +107,26 @@ static void run(LV2_Handle instance, uint32_t sample_count) {
     PokeySynth *self = (PokeySynth *) instance;
 
     mzpokey_process_float(self->mzp, self->audio_out, sample_count);
+
+    LV2_ATOM_SEQUENCE_FOREACH (self->midi_in, ev) {
+        if (ev->body.type == self->uris.midi_MidiEvent) {
+            const uint8_t *const msg = (const uint8_t *) (ev + 1);
+            const uint8_t type = lv2_midi_message_type(msg);
+            const uint8_t channel = msg[0] & 0x0f;
+
+            switch (type) {
+            case LV2_MIDI_MSG_NOTE_ON:
+                printf("note on, channel %d\n", channel);
+                break;
+            case LV2_MIDI_MSG_NOTE_OFF:
+                printf("note off, channel %d\n", channel);
+                break;
+            case LV2_MIDI_MSG_PGM_CHANGE:
+                printf("pgm change, channel %d, pgm %d\n", channel, msg[1]);
+                break;
+            }
+        }
+    }
 }
 
 // ****************************************************************************

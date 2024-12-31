@@ -32,4 +32,21 @@
             lv2:index 1 ;
             lv2:symbol "audio_out" ;
             lv2:name "Audio output" ;
+        ],
+
+        [
+            a lv2:InputPort ;
+            a lv2:ControlPort ;
+            lv2:index 2 ;
+            lv2:symbol "channels" ;
+            lv2:name "MIDI Channels" ;
+            lv2:portProperty lv2:integer ;
+            lv2:portProperty lv2:enumeration ;
+            lv2:default 0 ;
+            lv2:minimum 0 ;
+            lv2:maximum 3 ;
+            lv2:scalePoint [ rdfs:label "Channels 0-3" ; rdf:value 0 ] ;
+            lv2:scalePoint [ rdfs:label "Channels 4-7" ; rdf:value 0 ] ;
+            lv2:scalePoint [ rdfs:label "Channels 8-11" ; rdf:value 0 ] ;
+            lv2:scalePoint [ rdfs:label "Channels 12-16" ; rdf:value 0 ] ;
         ] .
