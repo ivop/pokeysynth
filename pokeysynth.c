@@ -13,14 +13,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "mzpokey.h"
+
 #define POKEYSYNTH_URI "https://github.com/ivop/pokeysynth"
 
-typedef enum { POKEYSYNTH_CONTROL, POKEYSYNTH_AUDIO_OUT } PortIndex;
+typedef enum { POKEYSYNTH_MIDI_IN, POKEYSYNTH_AUDIO_OUT } PortIndex;
 
 typedef struct {
     // ports
-    const LV2_Atom_Sequence *control;
-    float *out;
+    const LV2_Atom_Sequence *midi_in;
+    float *audio_out;
 
     // features
     LV2_URID_Map *map;
@@ -30,6 +32,7 @@ typedef struct {
         LV2_URID midi_MidiEvent;
     } uris;
 
+    struct mzpokey_context *mzp;
 } PokeySynth;
 
 // ****************************************************************************
@@ -46,6 +49,7 @@ static LV2_Handle instantiate(const LV2_Descriptor *descriptor,
             LV2_LOG__log,  &self->logger.log, false,
             LV2_URID__map, &self->map,        true,
             NULL);
+
     lv2_log_logger_set_map(&self->logger, self->map);
     if (missing) {
         lv2_log_error(&self->logger, "Missing feature <%s>\n", missing);
@@ -56,6 +60,16 @@ static LV2_Handle instantiate(const LV2_Descriptor *descriptor,
     self->uris.midi_MidiEvent =
         self->map->map(self->map->handle, LV2_MIDI__MidiEvent);
 
+    self->mzp = mzpokey_create(1773447, rate, 1, 0);
+    if (!self->mzp) {
+        free(self);
+        return NULL;
+    }
+
+    mzpokey_write_register(self->mzp, SKCTL, 3, 0);
+    mzpokey_write_register(self->mzp, AUDC1, 0xaf, 0);
+    mzpokey_write_register(self->mzp, AUDF1, 0x81, 0);
+
     return (LV2_Handle) self;
 }
 
@@ -65,11 +79,11 @@ static void connect_port(LV2_Handle instance, uint32_t port, void *data) {
     PokeySynth *self = (PokeySynth *) instance;
 
     switch ((PortIndex) port) {
-    case POKEYSYNTH_CONTROL:
-        self->control = (const LV2_Atom_Sequence *) data;
+    case POKEYSYNTH_MIDI_IN:
+        self->midi_in = (const LV2_Atom_Sequence *) data;
         break;
     case POKEYSYNTH_AUDIO_OUT:
-        self->out = (float *) data;
+        self->audio_out = (float *) data;
         break;
     }
 }
@@ -82,6 +96,9 @@ static void activate(LV2_Handle instance) {
 // ****************************************************************************
 
 static void run(LV2_Handle instance, uint32_t sample_count) {
+    PokeySynth *self = (PokeySynth *) instance;
+
+    mzpokey_process_float(self->mzp, self->audio_out, sample_count);
 }
 
 // ****************************************************************************
