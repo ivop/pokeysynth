@@ -20,14 +20,24 @@
 typedef enum {
     POKEYSYNTH_MIDI_IN,
     POKEYSYNTH_AUDIO_OUT,
-    POKEYSYNTH_CONTROL_CHANNELS
+    POKEYSYNTH_CONTROL_CHANNELS,
+    POKEYSYNTH_CONTROL_MONO_ARP1,
+    POKEYSYNTH_CONTROL_MONO_ARP2,
+    POKEYSYNTH_CONTROL_MONO_ARP3,
+    POKEYSYNTH_CONTROL_MONO_ARP4,
+    POKEYSYNTH_CONTROL_ARP_SPEED1,
+    POKEYSYNTH_CONTROL_ARP_SPEED2,
+    POKEYSYNTH_CONTROL_ARP_SPEED3,
+    POKEYSYNTH_CONTROL_ARP_SPEED4,
 } PortIndex;
 
 typedef struct {
     // ports
     const LV2_Atom_Sequence *midi_in;
     float *audio_out;
-    float *channels_p;
+    float *control_channels;        // react to MIDI chs 0-3,4-7,8-11,12-15
+    float *control_mono_arp[4];     // pokey channels modes mono/auto-arp
+    float *control_arp_speed[4];    // pokey channels arp speeds
 
     // features
     LV2_URID_Map *map;
@@ -39,6 +49,58 @@ typedef struct {
 
     struct mzpokey_context *mzp;
 } PokeySynth;
+
+// ****************************************************************************
+
+#define INSTRUMENT_LENGTH 64
+
+enum channels_type {
+    CHANNELS_1CH,               // 1 or 2 or 3 or 4, 8-bit divider
+    CHANNELS_LINKED,            // 1,2 or 3,4, 16-bit divider
+    CHANNELS_FILTERED,          // 1,3 or 2,4, 8-bit divider, 8-bit filtered
+    CHANNELS_LINKED_FILTERED,   // 1,2,3,4, 16-bit divider, 16-bit filtered
+    CHANNELS_HIFRQ              // 1 or 3, 8-bit divider, full pokey frequency
+};
+
+enum distortions {
+    DIST_1CH_PURE,
+    DIST_1CH_0x80,
+    DIST_1CH_BUZZY_BASS,
+    DIST_1CH_GRITTY_BASS
+};
+
+enum note_tables {
+    NOTETBL_AUTOMATIC,
+    NOTETBL_CALCULATE,
+    NOTETBL_BUZZY_BASS,
+    NOTETBL_GRITTY_BASS
+};
+
+enum note_types {
+    NOTE,               // frequency depends on MIDI Note
+    NOTE_PLUS_NOTE,     // same as note, but with +/- whole semitones
+    NOTE_PLUS_CENTS,    // same as note, but offset +/- by x cents
+    FIXED_FREQ          // fixed frequency, e.g. for drum sounds
+};
+
+struct pokey_instrument {
+    char name[32];
+
+    uint8_t num_pokey_channels;             // 1, 2, or 4
+
+    bool base_clock;                        // 15kHz or 64kHz
+
+    uint8_t volume[INSTRUMENT_LENGTH];
+    uint8_t distortion[INSTRUMENT_LENGTH];
+    uint8_t end;
+    uint8_t loop;
+
+    uint8_t types[INSTRUMENT_LENGTH];       // note_types, 0 has no value
+    uint16_t values[INSTRUMENT_LENGTH];     // 8/16-bit value for types >= 1
+    uint8_t types_end;
+    uint8_t types_loop;
+    uint8_t types_speed;
+};
 
 // ****************************************************************************
 
@@ -91,7 +153,31 @@ static void connect_port(LV2_Handle instance, uint32_t port, void *data) {
         self->audio_out = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_CHANNELS:
-        self->channels_p = (float *) data;
+        self->control_channels = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP1:
+        self->control_mono_arp[0] = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP2:
+        self->control_mono_arp[1] = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP3:
+        self->control_mono_arp[2] = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP4:
+        self->control_mono_arp[3] = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED1:
+        self->control_arp_speed[0] = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED2:
+        self->control_arp_speed[1] = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED3:
+        self->control_arp_speed[2] = (float *) data;
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED4:
+        self->control_arp_speed[3] = (float *) data;
         break;
     }
 }
