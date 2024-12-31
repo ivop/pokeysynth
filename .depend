@@ -1,0 +1,3 @@
+pokeysynth.o: pokeysynth.c mzpokey.h
+mzpokey.o: mzpokey.c mzpokey.h remez.h
+remez.o: remez.c remez.h
