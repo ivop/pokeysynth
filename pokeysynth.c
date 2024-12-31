@@ -29,7 +29,16 @@ typedef enum {
     POKEYSYNTH_CONTROL_ARP_SPEED2,
     POKEYSYNTH_CONTROL_ARP_SPEED3,
     POKEYSYNTH_CONTROL_ARP_SPEED4,
+    POKEYSYNTH_CONTROL_UPDATE_FREQ,
 } PortIndex;
+
+enum pokey_update_frequency {
+    UPDATE_50HZ,
+    UPDATE_100HZ,
+    UPDATE_150HZ,
+    UPDATE_200HZ,
+    UPDATE_INSTANT          // no SAP-R recording
+};
 
 typedef struct {
     // ports
@@ -38,6 +47,7 @@ typedef struct {
     float *control_channels;        // react to MIDI chs 0-3,4-7,8-11,12-15
     float *control_mono_arp[4];     // pokey channels modes mono/auto-arp
     float *control_arp_speed[4];    // pokey channels arp speeds
+    float *control_update_freq;     // update frequency 50/100/150/200/instant
 
     // features
     LV2_URID_Map *map;
