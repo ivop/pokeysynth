@@ -40,7 +40,15 @@ enum pokey_update_frequency {
     UPDATE_INSTANT          // no SAP-R recording
 };
 
-typedef struct {
+// ****************************************************************************
+
+class PokeySynth {
+public:
+    PokeySynth(const double sample_rate, const char *bundle_path, const LV2_Feature *const *features);
+    void connect_port(const uint32_t port, void *data);
+    void run(const uint32_t sample_count);
+
+private:
     // ports
     const LV2_Atom_Sequence *midi_in;
     float *audio_out;
@@ -58,102 +66,90 @@ typedef struct {
     } uris;
 
     struct mzpokey_context *mzp;
-} PokeySynth;
+};
 
 // ****************************************************************************
 
-static LV2_Handle instantiate(const LV2_Descriptor *descriptor,
-                              double rate,
-                              const char *bundle_path,
-                              const LV2_Feature *const *features) {
-    PokeySynth *self = (PokeySynth *) calloc(1, sizeof(PokeySynth));
-    if (!self) return NULL;
+PokeySynth::PokeySynth(const double sample_rate,
+                       const char *bundle_path,
+                       const LV2_Feature *const *features) :
+    midi_in(nullptr),
+    audio_out(nullptr),
+    control_channels(nullptr),
+    control_mono_arp{nullptr},
+    control_arp_speed{nullptr},
+    control_update_freq(nullptr),
+    mzp(nullptr) {
 
     const char *missing = lv2_features_query(
             features,
-            LV2_LOG__log,  &self->logger.log, false,
-            LV2_URID__map, &self->map,        true,
+            LV2_LOG__log,  &logger.log, false,
+            LV2_URID__map, &map,        true,
             NULL);
 
-    lv2_log_logger_set_map(&self->logger, self->map);
+    lv2_log_logger_set_map(&logger, map);
     if (missing) {
-        lv2_log_error(&self->logger, "Missing feature <%s>\n", missing);
-        free(self);
-        return NULL;
+        lv2_log_error(&logger, "Missing feature <%s>\n", missing);
+        throw;
     }
 
-    self->uris.midi_MidiEvent =
-        self->map->map(self->map->handle, LV2_MIDI__MidiEvent);
+    uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
 
-    self->mzp = mzpokey_create(1773447, rate, 1, 0);
-    if (!self->mzp) {
-        free(self);
-        return NULL;
-    }
+    mzp = mzpokey_create(1773447, sample_rate, 1, 0);
+    if (!mzp) throw;
 
-    mzpokey_write_register(self->mzp, SKCTL, 3, 0);
-    mzpokey_write_register(self->mzp, AUDC1, 0xaf, 0);
-    mzpokey_write_register(self->mzp, AUDF1, 0x81, 0);
-
-    return (LV2_Handle) self;
+    mzpokey_write_register(mzp, SKCTL, 3, 0);
+    mzpokey_write_register(mzp, AUDC1, 0xaf, 0);
+    mzpokey_write_register(mzp, AUDF1, 0x81, 0);
 }
 
 // ****************************************************************************
 
-static void connect_port(LV2_Handle instance, uint32_t port, void *data) {
-    PokeySynth *self = (PokeySynth *) instance;
-
+void PokeySynth::connect_port(uint32_t port, void *data) {
     switch ((PortIndex) port) {
     case POKEYSYNTH_MIDI_IN:
-        self->midi_in = (const LV2_Atom_Sequence *) data;
+        midi_in = (const LV2_Atom_Sequence *) data;
         break;
     case POKEYSYNTH_AUDIO_OUT:
-        self->audio_out = (float *) data;
+        audio_out = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_CHANNELS:
-        self->control_channels = (float *) data;
+        control_channels = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_MONO_ARP1:
-        self->control_mono_arp[0] = (float *) data;
+        control_mono_arp[0] = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_MONO_ARP2:
-        self->control_mono_arp[1] = (float *) data;
+        control_mono_arp[1] = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_MONO_ARP3:
-        self->control_mono_arp[2] = (float *) data;
+        control_mono_arp[2] = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_MONO_ARP4:
-        self->control_mono_arp[3] = (float *) data;
+        control_mono_arp[3] = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_ARP_SPEED1:
-        self->control_arp_speed[0] = (float *) data;
+        control_arp_speed[0] = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_ARP_SPEED2:
-        self->control_arp_speed[1] = (float *) data;
+        control_arp_speed[1] = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_ARP_SPEED3:
-        self->control_arp_speed[2] = (float *) data;
+        control_arp_speed[2] = (float *) data;
         break;
     case POKEYSYNTH_CONTROL_ARP_SPEED4:
-        self->control_arp_speed[3] = (float *) data;
+        control_arp_speed[3] = (float *) data;
         break;
     }
 }
 
 // ****************************************************************************
 
-static void activate(LV2_Handle instance) {
-}
+void PokeySynth::run(uint32_t sample_count) {
+    mzpokey_process_float(mzp, audio_out, sample_count);
 
-// ****************************************************************************
-
-static void run(LV2_Handle instance, uint32_t sample_count) {
-    PokeySynth *self = (PokeySynth *) instance;
-
-    mzpokey_process_float(self->mzp, self->audio_out, sample_count);
-
-    LV2_ATOM_SEQUENCE_FOREACH (self->midi_in, ev) {
-        if (ev->body.type == self->uris.midi_MidiEvent) {
+    LV2_ATOM_SEQUENCE_FOREACH (midi_in, ev) {
+        if (ev->body.type == uris.midi_MidiEvent) {
             const uint8_t *const msg = (const uint8_t *) (ev + 1);
             const uint8_t type = lv2_midi_message_type(msg);
             const uint8_t channel = msg[0] & 0x0f;
@@ -174,23 +170,40 @@ static void run(LV2_Handle instance, uint32_t sample_count) {
 }
 
 // ****************************************************************************
+//
+// C API
+//
+static LV2_Handle instantiate(const LV2_Descriptor *descriptor,
+                              double sample_rate,
+                              const char *bundle_path,
+                              const LV2_Feature *const *features) {
+    PokeySynth *ps = new PokeySynth(sample_rate, bundle_path, features);
+    return ps;
+}
+
+static void connect_port(LV2_Handle instance, uint32_t port, void *data) {
+    PokeySynth *ps = (PokeySynth *) instance;
+    if (ps) ps->connect_port(port, data);
+}
+
+static void activate(LV2_Handle instance) {
+}
+
+static void run(LV2_Handle instance, uint32_t sample_count) {
+    PokeySynth *ps = (PokeySynth *) instance;
+    if (ps) ps->run(sample_count);
+}
 
 static void deactivate(LV2_Handle instance) {
 }
-
-// ****************************************************************************
 
 static void cleanup(LV2_Handle instance) {
     free(instance);
 }
 
-// ****************************************************************************
-
 static const void *extension_data(const char *URI) {
     return NULL;
 }
-
-// ****************************************************************************
 
 static const LV2_Descriptor descriptor = {
     POKEYSYNTH_URI,
