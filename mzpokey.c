@@ -1022,7 +1022,7 @@ static void Update_c3stop(PokeyState * ps) {
 void mzpokey_process_int16(struct mzpokey_context *mzp,
                                                 void *sndbuffer, int sndn) {
     int nsam = sndn;
-    int16_t *buffer = sndbuffer;
+    int16_t *buffer = (int16_t *) sndbuffer;
 
     if (mzp->num_cur_pokeys < 1)
         return;                 /* module was not initialized */
@@ -1046,7 +1046,7 @@ void mzpokey_process_int16(struct mzpokey_context *mzp,
 void mzpokey_process_float(struct mzpokey_context *mzp,
                                                 void *sndbuffer, int sndn) {
     int nsam = sndn;
-    float *buffer = sndbuffer;
+    float *buffer = (float *) sndbuffer;
 
     if (mzp->num_cur_pokeys < 1)
         return;                 /* module was not initialized */
@@ -1217,7 +1217,8 @@ struct mzpokey_context *mzpokey_create(int pokey_freq,
                                        int num_pokeys,
                                        int quality) {
     double cutoff;
-    struct mzpokey_context *mzp = calloc(1, sizeof(struct mzpokey_context));
+    struct mzpokey_context *mzp = (struct mzpokey_context *)
+                                    calloc(1, sizeof(struct mzpokey_context));
     if (!mzp) return NULL;
     
     mzp->pokey_freq = pokey_freq;

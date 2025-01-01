@@ -62,63 +62,11 @@ typedef struct {
 
 // ****************************************************************************
 
-#define INSTRUMENT_LENGTH 64
-
-enum channels_type {
-    CHANNELS_1CH,               // 1 or 2 or 3 or 4, 8-bit divider
-    CHANNELS_LINKED,            // 1,2 or 3,4, 16-bit divider
-    CHANNELS_FILTERED,          // 1,3 or 2,4, 8-bit divider, 8-bit filtered
-    CHANNELS_LINKED_FILTERED,   // 1,2,3,4, 16-bit divider, 16-bit filtered
-    CHANNELS_HIFRQ              // 1 or 3, 8-bit divider, full pokey frequency
-};
-
-enum distortions {
-    DIST_1CH_PURE,
-    DIST_1CH_0x80,
-    DIST_1CH_BUZZY_BASS,
-    DIST_1CH_GRITTY_BASS
-};
-
-enum note_tables {
-    NOTETBL_AUTOMATIC,
-    NOTETBL_CALCULATE,
-    NOTETBL_BUZZY_BASS,
-    NOTETBL_GRITTY_BASS
-};
-
-enum note_types {
-    NOTE,               // frequency depends on MIDI Note
-    NOTE_PLUS_NOTE,     // same as note, but with +/- whole semitones
-    NOTE_PLUS_CENTS,    // same as note, but offset +/- by x cents
-    FIXED_FREQ          // fixed frequency, e.g. for drum sounds
-};
-
-struct pokey_instrument {
-    char name[32];
-
-    uint8_t num_pokey_channels;             // 1, 2, or 4
-
-    bool base_clock;                        // 15kHz or 64kHz
-
-    uint8_t volume[INSTRUMENT_LENGTH];
-    uint8_t distortion[INSTRUMENT_LENGTH];
-    uint8_t end;
-    uint8_t loop;
-
-    uint8_t types[INSTRUMENT_LENGTH];       // note_types, 0 has no value
-    uint16_t values[INSTRUMENT_LENGTH];     // 8/16-bit value for types >= 1
-    uint8_t types_end;
-    uint8_t types_loop;
-    uint8_t types_speed;
-};
-
-// ****************************************************************************
-
 static LV2_Handle instantiate(const LV2_Descriptor *descriptor,
                               double rate,
                               const char *bundle_path,
                               const LV2_Feature *const *features) {
-    PokeySynth *self = calloc(1, sizeof(PokeySynth));
+    PokeySynth *self = (PokeySynth *) calloc(1, sizeof(PokeySynth));
     if (!self) return NULL;
 
     const char *missing = lv2_features_query(
