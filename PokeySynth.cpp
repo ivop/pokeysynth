@@ -44,6 +44,12 @@ enum pokey_update_frequency {
 
 // ****************************************************************************
 
+struct note {
+    uint64_t time;
+    uint8_t velocity;
+    uint8_t program;
+};
+
 class PokeySynth {
 public:
     PokeySynth(const double sample_rate, const char *bundle_path, const LV2_Feature *const *features);
@@ -74,7 +80,7 @@ private:
     struct mzpokey_context *mzp;
 
     // synth
-    std::map<uint8_t,uint16_t> notes_on[4];     // note -> (pgm << 8) | velo
+    std::map<uint8_t,struct note> notes_on[4];
     uint8_t programs[4] = {};
 
     int map_midi_to_pokey_channel(int channel);
@@ -189,7 +195,8 @@ void PokeySynth::run(uint32_t sample_count) {
             case LV2_MIDI_MSG_NOTE_ON:
                 channel = map_midi_to_pokey_channel(channel);
                 if (channel < 0) continue;
-                notes_on[channel][msg[1]] = msg[2] | (programs[channel] << 8);
+                notes_on[channel][msg[1]] =
+                            { current_timestamp, msg[2], programs[channel] };
                 break;
             case LV2_MIDI_MSG_NOTE_OFF:
                 channel = map_midi_to_pokey_channel(channel);

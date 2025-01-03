@@ -1,13 +1,13 @@
 CFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter
 #CFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter
 LIBS=-lm
-SRC_FILES=pokeysynth.cpp mzpokey.c remez.c
+SRC_FILES=PokeySynth.cpp PokeyInstrument.cpp mzpokey.c remez.c
 LV2DIR=pokeysynth.lv2
 POKEYSYNTHSO=$(LV2DIR)/pokeysynth.so
 
 all: $(POKEYSYNTHSO)
 
-$(POKEYSYNTHSO): pokeysynth.cpp mzpokey.c remez.c
+$(POKEYSYNTHSO): $(SRC_FILES)
 	$(CXX) -shared -fPIC -s -o $@ $^
 
 test: $(POKEYSYNTHSO)
