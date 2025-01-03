@@ -15,6 +15,8 @@
 
 #include "mzpokey.h"
 
+#include <map>
+
 #define POKEYSYNTH_URI "https://github.com/ivop/pokeysynth"
 
 typedef enum {
@@ -65,7 +67,16 @@ private:
         LV2_URID midi_MidiEvent;
     } uris;
 
+    int sample_rate;
+    int pokey_rate;
+
     struct mzpokey_context *mzp;
+
+    // synth
+    std::map<uint8_t,uint16_t> notes_on[4];     // note -> (pgm << 8) | velo
+    uint8_t programs[4] = {};
+
+    int map_midi_to_pokey_channel(int channel);
 };
 
 // ****************************************************************************
@@ -95,7 +106,10 @@ PokeySynth::PokeySynth(const double sample_rate,
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
 
-    mzp = mzpokey_create(1773447, sample_rate, 1, 0);
+    pokey_rate = 1773447;
+    this->sample_rate = sample_rate;
+
+    mzp = mzpokey_create(pokey_rate, sample_rate, 1, 0);
     if (!mzp) throw;
 
     mzpokey_write_register(mzp, SKCTL, 3, 0);
@@ -145,6 +159,21 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
 
 // ****************************************************************************
 
+int PokeySynth::map_midi_to_pokey_channel(int channel) {
+    unsigned int range = (int) *control_channels;
+
+    if (range > 3) range = 3;
+
+    int ranges[5]  = { 0, 4, 8, 12, 16 };
+
+    if (channel >= ranges[range] && channel < ranges[range+1])
+        return channel & 3;
+    else
+        return -1;
+}
+
+// ****************************************************************************
+
 void PokeySynth::run(uint32_t sample_count) {
     mzpokey_process_float(mzp, audio_out, sample_count);
 
@@ -152,17 +181,23 @@ void PokeySynth::run(uint32_t sample_count) {
         if (ev->body.type == uris.midi_MidiEvent) {
             const uint8_t *const msg = (const uint8_t *) (ev + 1);
             const uint8_t type = lv2_midi_message_type(msg);
-            const uint8_t channel = msg[0] & 0x0f;
+            uint8_t channel = msg[0] & 0x0f;
 
             switch (type) {
             case LV2_MIDI_MSG_NOTE_ON:
-                printf("note on, channel %d\n", channel);
+                channel = map_midi_to_pokey_channel(channel);
+                if (channel < 0) continue;
+                notes_on[channel][msg[1]] = msg[2] | (programs[channel] << 8);
                 break;
             case LV2_MIDI_MSG_NOTE_OFF:
-                printf("note off, channel %d\n", channel);
+                channel = map_midi_to_pokey_channel(channel);
+                if (channel < 0) continue;
+                notes_on[channel].erase(msg[1]);
                 break;
             case LV2_MIDI_MSG_PGM_CHANGE:
-                printf("pgm change, channel %d, pgm %d\n", channel, msg[1]);
+                channel = map_midi_to_pokey_channel(channel);
+                if (channel < 0) continue;
+                programs[channel] = msg[1];
                 break;
             }
         }

@@ -24,7 +24,7 @@ enum note_types {
     NOTE,               // frequency depends on MIDI Note
     NOTE_PLUS_NOTE,     // same as note, but with +/- whole semitones
     NOTE_PLUS_CENTS,    // same as note, but offset +/- by x cents
-    FIXED_FREQ          // fixed frequency, e.g. for drum sounds
+    FIXED_DIVIDER       // fixed divider/frequency, e.g. for drum sounds
 };
 
 struct pokey_instrument {
@@ -36,8 +36,9 @@ struct pokey_instrument {
 
     uint8_t volume[INSTRUMENT_LENGTH];
     uint8_t distortion[INSTRUMENT_LENGTH];
-    uint8_t end;
-    uint8_t loop;
+    uint8_t sustain_loop_start;
+    uint8_t sustain_loop_end;               // also release_start
+    uint8_t release_end;
 
     uint8_t types[INSTRUMENT_LENGTH];       // note_types, 0 has no value
     uint16_t values[INSTRUMENT_LENGTH];     // 8/16-bit value for types >= 1
