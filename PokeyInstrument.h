@@ -7,6 +7,7 @@ public:
     void Start(const uint8_t midi_note, const uint8_t velocity, const uint8_t program);
     void Restart(void);
     void Next(void);
+    void Release(void);
     uint32_t GetAudf(void);
     uint32_t GetAudc(void);
     const char *GetName(void);

@@ -115,6 +115,8 @@ void PokeyInstrument::Start(const uint8_t midi_note, const uint8_t velo, const u
 }
 
 void PokeyInstrument::Next(void) {
+    if (silent) return;
+
     types_speed_cnt--;
     if (types_speed_cnt < 0) {
         types_speed_cnt = instruments[program].types_speed;
@@ -132,6 +134,14 @@ void PokeyInstrument::Next(void) {
         if (voldis_idx > instruments[program].release_end) {
             silent = true;
         }
+    }
+}
+
+void PokeyInstrument::Release(void) {
+    release = true;
+    voldis_idx = instruments[program].sustain_loop_end;
+    if (voldis_idx > instruments[program].release_end) {
+        silent = true;
     }
 }
 
