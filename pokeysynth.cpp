@@ -69,6 +69,7 @@ private:
 
     int sample_rate;
     int pokey_rate;
+    uint64_t current_timestamp;
 
     struct mzpokey_context *mzp;
 
@@ -90,6 +91,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     control_mono_arp{nullptr},
     control_arp_speed{nullptr},
     control_update_freq(nullptr),
+    current_timestamp(0),
     mzp(nullptr) {
 
     const char *missing = lv2_features_query(
@@ -202,6 +204,8 @@ void PokeySynth::run(uint32_t sample_count) {
             }
         }
     }
+
+    current_timestamp += sample_count;
 }
 
 // ****************************************************************************
