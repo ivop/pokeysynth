@@ -88,7 +88,13 @@ private:
     PokeyInstrument instruments[4];
 
     int map_midi_to_pokey_channel(int channel);
+
+    float ticks;
+    float interval;
+    void play(void);
 };
+
+static float intervals[4];
 
 // ****************************************************************************
 
@@ -103,7 +109,9 @@ PokeySynth::PokeySynth(const double sample_rate,
     control_update_freq(nullptr),
     current_timestamp(0),
     last_note_times{0},
-    mzp(nullptr) {
+    mzp(nullptr),
+    ticks(0),
+    interval(0) {
 
     const char *missing = lv2_features_query(
             features,
@@ -128,6 +136,10 @@ PokeySynth::PokeySynth(const double sample_rate,
     mzpokey_write_register(mzp, SKCTL, 3, 0);
     mzpokey_write_register(mzp, AUDC1, 0xaf, 0);
     mzpokey_write_register(mzp, AUDF1, 0x81, 0);
+
+    for (unsigned int i=0; i<4; i++) {
+        intervals[i] = sample_rate / (50.0 + i * 50.0);
+    }
 }
 
 // ****************************************************************************
@@ -167,6 +179,9 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
     case POKEYSYNTH_CONTROL_ARP_SPEED4:
         control_arp_speed[3] = (float *) data;
         break;
+    case POKEYSYNTH_CONTROL_UPDATE_FREQ:
+        control_update_freq = (float *) data;
+        break;
     }
 }
 
@@ -183,6 +198,28 @@ int PokeySynth::map_midi_to_pokey_channel(int channel) {
         return channel & 3;
     else
         return -1;
+}
+
+// ****************************************************************************
+
+void PokeySynth::play(void) {
+    // Monophonic, check top key that is pressed (if any)
+
+    for (int c=0; c<4; c++) {
+        if (notes_on[c].empty()) {  // no note, release current note (if any)
+            instruments[c].Release();
+            continue;
+        }
+        auto i = notes_on[c].rbegin();  // pick top note
+        if (last_note_times[c] != i->second.time) {     // different from last
+            instruments[c].Start(i->first, i->second.velocity,
+                                                    i->second.program);
+        }
+    }
+
+    // Determine AUDCTL (channel layout, clocks, muted channels, etc...)
+
+    // Retrieve AUDF/AUDC values, and write to pokey
 }
 
 // ****************************************************************************
@@ -218,22 +255,15 @@ void PokeySynth::run(uint32_t sample_count) {
         }
     }
 
-    // Monophonic, check top key that is pressed (if any)
-
-    for (int c=0; c<4; c++) {
-        if (notes_on[c].empty()) {  // no note, release current note (if any)
-            instruments[c].Release();
-            continue;
-        }
-        auto i = notes_on[c].rbegin();  // pick top note
-        if (last_note_times[c] != i->second.time) {     // different from last
-            instruments[c].Start(i->first, i->second.velocity,
-                                                    i->second.program);
-        }
+    interval = intervals[(int)*control_update_freq];
+    if (ticks > interval) { // may be up to 64 samples off, but ok for now
+        ticks -= interval;
+        play();
     }
 
     mzpokey_process_float(mzp, audio_out, sample_count);
     current_timestamp += sample_count;
+    ticks += sample_count;
 }
 
 // ****************************************************************************
