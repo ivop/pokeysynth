@@ -3,19 +3,12 @@
 
 #define INSTRUMENT_LENGTH 64
 
-enum channels_type {
-    CHANNELS_1CH,                 // 1 or 2 or 3 or 4, 8-bit divider
-    CHANNELS_2CH_LINKED,          // 1+2 or 3+4, 16-bit divider
-    CHANNELS_2CH_FILTERED,        // 1+3 or 2+4, 8-bit divider, 8-bit filtered
-    CHANNELS_4CH_LINKED_FILTERED, // 1+2+3+4, 16-bit divider, 16-bit filtered
-    CHANNELS_1CH_HIFRQ            // 1 or 3, 8-bit divider, high frequency
-};
-
 enum distortions {
     DIST_PURE,
     DIST_NOISE,
     DIST_BUZZY_BASS,
-    DIST_GRITTY_BASS
+    DIST_GRITTY_BASS,
+    DIST_POLY5_SQUARE
 };
 
 static uint8_t dist_values[] = {
@@ -23,11 +16,6 @@ static uint8_t dist_values[] = {
     0x80,
     0xc0,
     0xc0
-};
-
-enum base_clocks {
-    CLOCK_15kHz,
-    CLOCK_64kHz
 };
 
 enum note_types {
@@ -58,6 +46,7 @@ struct pokey_instrument {
 
     float filtered_detune;              // detune 2nd channel in cents
     float filtered_vol2;                // volume of 2nd channel
+    bool  filtered_transpose;           // transpose 1 octave down
 };
 
 struct pokey_instrument instruments[128];
@@ -143,6 +132,19 @@ void PokeyInstrument::Release(void) {
     if (voldis_idx > instruments[program].release_end) {
         silent = true;
     }
+}
+
+enum base_clocks PokeyInstrument::GetClock(void) {
+    if (silent) return CLOCK_DONT_CARE;
+    if (instruments[program].channels >= CHANNELS_1CH_HIFRQ)
+        return CLOCK_1M8Hz;
+    else
+        return (enum base_clocks) instruments[program].base_clock;
+}
+
+enum channels_type PokeyInstrument::GetChannels(void) {
+    if (silent) return CHANNELS_NONE;
+    return instruments[program].channels;
 }
 
 uint32_t PokeyInstrument::GetAudc(void) {
