@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "mzpokey.h"
+#include "PokeyInstrument.h"
 
 #include <map>
 
@@ -82,6 +83,9 @@ private:
     // synth
     std::map<uint8_t,struct note> notes_on[4];
     uint8_t programs[4] = {};
+    uint64_t last_note_times[4];
+
+    PokeyInstrument instruments[4];
 
     int map_midi_to_pokey_channel(int channel);
 };
@@ -98,6 +102,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     control_arp_speed{nullptr},
     control_update_freq(nullptr),
     current_timestamp(0),
+    last_note_times{0},
     mzp(nullptr) {
 
     const char *missing = lv2_features_query(
@@ -183,7 +188,8 @@ int PokeySynth::map_midi_to_pokey_channel(int channel) {
 // ****************************************************************************
 
 void PokeySynth::run(uint32_t sample_count) {
-    mzpokey_process_float(mzp, audio_out, sample_count);
+
+    // Handle all MIDI events
 
     LV2_ATOM_SEQUENCE_FOREACH (midi_in, ev) {
         if (ev->body.type == uris.midi_MidiEvent) {
@@ -212,6 +218,21 @@ void PokeySynth::run(uint32_t sample_count) {
         }
     }
 
+    // Monophonic, check top key that is pressed (if any)
+
+    for (int c=0; c<4; c++) {
+        if (notes_on[c].empty()) {  // no note, release current note (if any)
+            instruments[c].Release();
+            continue;
+        }
+        auto i = notes_on[c].rbegin();  // pick top note
+        if (last_note_times[c] != i->second.time) {     // different from last
+            instruments[c].Start(i->first, i->second.velocity,
+                                                    i->second.program);
+        }
+    }
+
+    mzpokey_process_float(mzp, audio_out, sample_count);
     current_timestamp += sample_count;
 }
 

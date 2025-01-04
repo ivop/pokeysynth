@@ -79,8 +79,8 @@ struct pokey_instrument instrument = {
 
 // *************************************************************************
 
-PokeyInstrument::PokeyInstrument(const uint8_t program) :
-    program(program),
+PokeyInstrument::PokeyInstrument(void) :
+    program(0),
     note(0),
     velocity(1.0),
     release(false),
@@ -127,6 +127,7 @@ void PokeyInstrument::Next(void) {
 }
 
 void PokeyInstrument::Release(void) {
+    if (silent || release) return;
     release = true;
     voldis_idx = instruments[program].sustain_loop_end;
     if (voldis_idx > instruments[program].release_end) {
