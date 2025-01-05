@@ -9,7 +9,7 @@
 @prefix midi: <http://lv2plug.in/ns/ext/midi#> .
 
 
-<https://github.com/ivop/pokeysynth> a lv2:Plugin , doap:Project ;
+<https://github.com/ivop/pokeysynth> a lv2:Plugin , lv2:InstrumentPlugin , doap:Project ;
     lv2:binary <pokeysynth.so> ;
     doap:name "PokeySynth" ;
     lv2:optionalFeature lv2:hardRTCapable ;
