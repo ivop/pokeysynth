@@ -11,12 +11,14 @@ enum distortions {
     DIST_POLY5_SQUARE
 };
 
+#if 0
 static uint8_t dist_values[] = {
     0xa0,
     0x80,
     0xc0,
     0xc0
 };
+#endif
 
 enum note_types {
     TYPE_NOTE,              // frequency depends on MIDI Note
@@ -30,7 +32,7 @@ struct pokey_instrument {
 
     enum channels_type channels;
 
-    bool base_clock;                        // 15kHz or 64kHz
+    enum clocks clock;
 
     uint8_t volume[INSTRUMENT_LENGTH];
     uint8_t distortion[INSTRUMENT_LENGTH];
@@ -56,7 +58,7 @@ struct pokey_instrument instrument = {
 
     .channels = CHANNELS_1CH,
 
-    .base_clock = CLOCK_64kHz,
+    .clock = CLOCK_DIV28,
 
     .volume = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 },
 
@@ -72,9 +74,14 @@ struct pokey_instrument instrument = {
     .release_end =  15,
 
     .types = { TYPE_NOTE },
+    .values = {},
     .types_end = 0,
     .types_loop = 0,
-    .types_speed = 0
+    .types_speed = 0,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.0,
+    .filtered_transpose = false
 };
 
 // *************************************************************************
@@ -135,15 +142,12 @@ void PokeyInstrument::Release(void) {
     }
 }
 
-enum base_clocks PokeyInstrument::GetClock(void) {
-    if (silent) return CLOCK_DONT_CARE;
-    if (instruments[program].channels >= CHANNELS_1CH_HIFRQ)
-        return CLOCK_1M8Hz;
-    else
-        return (enum base_clocks) instruments[program].base_clock;
+enum clocks PokeyInstrument::GetClock(void) {
+    if (silent) return CLOCK_NONE;
+    return instruments[program].clock;
 }
 
-enum channels_type PokeyInstrument::GetChannels(void) {
+enum channels_type PokeyInstrument::GetChannel(void) {
     if (silent) return CHANNELS_NONE;
     return instruments[program].channels;
 }

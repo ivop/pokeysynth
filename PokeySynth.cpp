@@ -108,8 +108,8 @@ PokeySynth::PokeySynth(const double sample_rate,
     control_arp_speed{nullptr},
     control_update_freq(nullptr),
     current_timestamp(0),
-    last_note_times{0},
     mzp(nullptr),
+    last_note_times{0},
     ticks(0),
     interval(0) {
 
@@ -217,9 +217,23 @@ void PokeySynth::play(void) {
         }
     }
 
-    // Determine AUDCTL (channel layout, clocks, muted channels, etc...)
+    // Determine AUDCTL (channel layout, clocks, muted channels, etc...),
+    // retrieve AUDF/AUDC values, and write to pokey
 
-    // Retrieve AUDF/AUDC values, and write to pokey
+    uint8_t registers[9] = {};
+
+    registers[8] = 0x01;    // default to 15kHz
+
+    enum clocks clocks[4];
+    enum channels_type channels[4];
+
+    for (unsigned int c=0; c<4; c++) {
+        clocks[c]   = instruments[c].GetClock();
+        if (clocks[c] == CLOCK_DIV28) { // override if one or more are 64kHz
+            registers[8] &= ~0x01;
+        }
+        channels[c] = instruments[c].GetChannel();
+    }
 }
 
 // ****************************************************************************
@@ -232,7 +246,7 @@ void PokeySynth::run(uint32_t sample_count) {
         if (ev->body.type == uris.midi_MidiEvent) {
             const uint8_t *const msg = (const uint8_t *) (ev + 1);
             const uint8_t type = lv2_midi_message_type(msg);
-            uint8_t channel = msg[0] & 0x0f;
+            int channel = msg[0] & 0x0f;
 
             switch (type) {
             case LV2_MIDI_MSG_NOTE_ON:
