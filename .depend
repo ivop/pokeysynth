@@ -1,4 +1,5 @@
 PokeySynth.o: PokeySynth.cpp mzpokey.h PokeyInstrument.h
-PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h
+PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h \
+ test_instruments.cpp
 mzpokey.o: mzpokey.cpp mzpokey.h remez.h
 remez.o: remez.cpp remez.h

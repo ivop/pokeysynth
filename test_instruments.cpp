@@ -1,0 +1,102 @@
+
+struct pokey_instrument test_instrument0 = {
+    .name = "Test",
+
+    .channels = CHANNELS_1CH,
+
+    .clock = CLOCK_DIV28,
+
+    .volume = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 },
+
+    .distortion = {
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+    },
+
+    .sustain_loop_start = 7,
+    .sustain_loop_end = 7,
+    .release_end =  15,
+
+    .types = { TYPE_NOTE },
+    .values = {},
+    .types_end = 0,
+    .types_loop = 0,
+    .types_speed = 0,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.0,
+    .filtered_transpose = false
+};
+
+struct pokey_instrument test_instrument1 = {
+    .name = "Test Arp",
+
+    .channels = CHANNELS_1CH,
+
+    .clock = CLOCK_DIV28,
+
+    .volume = { 15,15,14,14,13,13,12,12,
+                11,11,10,10,9,9,8,8,
+                7,7,7,7,6,6,6,6,
+                5,5,5,5,4,4,4,4,
+                3,3,3,3,2,2,2,2,
+                1,1,1,1,0,0,0,0 },
+
+    .distortion = {
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+    },
+
+    .sustain_loop_start = 15,
+    .sustain_loop_end = 15,
+    .release_end = 47,
+
+    .types = { TYPE_NOTE_PLUS_NOTE, TYPE_NOTE_PLUS_NOTE, TYPE_NOTE_PLUS_NOTE },
+    .values = { 0, 4, 7 },
+    .types_end = 2,
+    .types_loop = 0,
+    .types_speed = 3,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.0,
+    .filtered_transpose = false
+};
+
+struct pokey_instrument test_instrument2 = {
+    .name = "Test 15kHz Bass",
+
+    .channels = CHANNELS_1CH,
+
+    .clock = CLOCK_DIV114,
+
+    .volume = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 },
+
+    .distortion = {
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+    },
+
+    .sustain_loop_start = 7,
+    .sustain_loop_end = 7,
+    .release_end =  15,
+
+    .types = { TYPE_NOTE },
+    .values = {},
+    .types_end = 0,
+    .types_loop = 0,
+    .types_speed = 0,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.0,
+    .filtered_transpose = false
+};

@@ -54,36 +54,7 @@ struct pokey_instrument {
 
 struct pokey_instrument instruments[128];
 
-struct pokey_instrument test_instrument = {
-    .name = "Test",
-
-    .channels = CHANNELS_1CH,
-
-    .clock = CLOCK_DIV28,
-
-    .volume = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 },
-
-    .distortion = { 
-        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
-        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
-        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
-        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
-    },
-
-    .sustain_loop_start = 7,
-    .sustain_loop_end = 7,
-    .release_end =  15,
-
-    .types = { TYPE_NOTE },
-    .values = {},
-    .types_end = 0,
-    .types_loop = 0,
-    .types_speed = 0,
-
-    .filtered_detune = 0.0,
-    .filtered_vol2 = 0.0,
-    .filtered_transpose = false
-};
+#include "test_instruments.cpp"
 
 // *************************************************************************
 
@@ -98,7 +69,9 @@ PokeyInstrument::PokeyInstrument(void) :
     types_speed_cnt(0),
     pokey_freq(0) {
 
-    instruments[0] = test_instrument;
+    instruments[0] = test_instrument0;
+    instruments[1] = test_instrument1;
+    instruments[2] = test_instrument2;
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
@@ -166,6 +139,7 @@ uint32_t PokeyInstrument::GetAudc(void) {
 
     if (channels == CHANNELS_1CH) {
         int volume = instruments[program].volume[voldis_idx];
+        volume = round(velocity * volume);
         int dist = dist_values[instruments[program].distortion[voldis_idx]];
         return dist | volume;
     }
