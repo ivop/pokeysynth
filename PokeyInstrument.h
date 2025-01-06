@@ -28,6 +28,17 @@ enum channels_type {
                                   //             pokey for one voice
 };
 
+enum audctl_bits {
+    AUDCTL_CLOCK_15KHZ = 0x01,
+    AUDCTL_HIPASS_24   = 0x02,
+    AUDCTL_HIPASS_13   = 0x04,
+    AUDCTL_LINK_34     = 0x08,
+    AUDCTL_LINK_12     = 0x10,
+    AUDCTL_CH3_HIFRQ   = 0x20,
+    AUDCTL_CH1_HIFRQ   = 0x40,
+    AUDCTL_POLY917     = 0x80
+};
+
 enum clocks {
     CLOCK_DIV114,
     CLOCK_DIV28,

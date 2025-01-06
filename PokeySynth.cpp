@@ -134,8 +134,6 @@ PokeySynth::PokeySynth(const double sample_rate,
     if (!mzp) throw;
 
     mzpokey_write_register(mzp, SKCTL, 3, 0);
-    mzpokey_write_register(mzp, AUDC1, 0xaf, 0);
-    mzpokey_write_register(mzp, AUDF1, 0x81, 0);
 
     for (unsigned int i=0; i<4; i++) {
         intervals[i] = sample_rate / (50.0 + i * 50.0);
@@ -222,7 +220,7 @@ void PokeySynth::play(void) {
 
     uint8_t registers[9] = {};
 
-    registers[8] = 0x01;    // default to 15kHz
+    registers[AUDCTL] = AUDCTL_CLOCK_15KHZ;      // default to 15kHz
 
     enum clocks clocks[4];
     enum channels_type channels[4];
@@ -230,11 +228,88 @@ void PokeySynth::play(void) {
     for (unsigned int c=0; c<4; c++) {
         clocks[c]   = instruments[c].GetClock();
         if (clocks[c] == CLOCK_DIV28) { // override if one or more are 64kHz
-            registers[8] &= ~0x01;
+            registers[AUDCTL] &= ~AUDCTL_CLOCK_15KHZ;
         }
         channels[c] = instruments[c].GetChannel();
     }
+
+    // 4CH LINKED FILTERED
+    //
+    if (channels[0] == CHANNELS_4CH_LINKED_FILTERED ||
+        channels[1] == CHANNELS_4CH_LINKED_FILTERED ||
+        channels[2] == CHANNELS_4CH_LINKED_FILTERED ||
+        channels[3] == CHANNELS_4CH_LINKED_FILTERED) {
+
+        registers[AUDCTL] |= AUDCTL_LINK_12 | AUDCTL_LINK_34 |
+                             AUDCTL_HIPASS_13 | AUDCTL_HIPASS_24;
+        for (unsigned int c=0; c<4; c++) {
+            if (channels[c] == CHANNELS_4CH_LINKED_FILTERED &&
+                  clocks[c] == CLOCK_DIV1) {
+                registers[AUDCTL] |= AUDCTL_CH1_HIFRQ | AUDCTL_CH3_HIFRQ;
+            }
+        }
+
+        // get 32-bit audf and audc and store in registers
+
+    }
+
+    // 2CH FILTERED
+    //
+    else if (channels[0] == CHANNELS_2CH_FILTERED ||
+               channels[2] == CHANNELS_2CH_FILTERED) {
+
+        registers[8] |= AUDCTL_HIPASS_13;
+
+        if ((channels[0] == CHANNELS_2CH_FILTERED && clocks[0] == CLOCK_DIV1) ||
+            (channels[2] == CHANNELS_2CH_FILTERED && clocks[2] == CLOCK_DIV1)) {
+
+            registers[AUDCTL] |= AUDCTL_CH1_HIFRQ | AUDCTL_CH3_HIFRQ;
+        }
+
+        // get 16-bit audf and audc and store in registers
+
+        // we are left with channel 2 and 4, which are either filtered, or
+        // normal
+
+    }
+
+    // 2CH LINKED
+    //
+    else if (channels[0] == CHANNELS_2CH_LINKED ||
+               channels[1] == CHANNELS_2CH_LINKED) {
+
+        registers[AUDCTL] |= AUDCTL_LINK_12;
+
+        if ((channels[0] == CHANNELS_2CH_LINKED && clocks[0] == CLOCK_DIV1) ||
+            (channels[1] == CHANNELS_2CH_LINKED && clocks[1] == CLOCK_DIV1)) {
+
+            registers[AUDCTL] |= AUDCTL_CH1_HIFRQ;
+        }
+
+        // get 16-bit audf and audc and store in registers
+
+        // we are left with channel 3 and 4, which are either linked or normal
+
+    }
+
+    // 1CH NORMAL
+    else {
+        if (clocks[0] == CLOCK_DIV1) {
+            registers[8] |= AUDCTL_CH1_HIFRQ;
+        }
+        // get 8-bit audf and audc and store in registers
+
+        // we are left with channel 2,3, and 4, which can be:
+        // 2+4 filtered, 3 normal
+        // 2 normal, 3+4 linked
+        // 2,3, and 4 normal
+    }
+
+    for (unsigned int r=0; r<9; r++) {
+        mzpokey_write_register(mzp, (enum pokey_register) r, registers[r], 0);
+    }
 }
+
 
 // ****************************************************************************
 
