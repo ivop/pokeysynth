@@ -72,6 +72,7 @@ PokeyInstrument::PokeyInstrument(void) :
     instruments[0] = test_instrument0;
     instruments[1] = test_instrument1;
     instruments[2] = test_instrument2;
+    instruments[3] = test_instrument3;
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {

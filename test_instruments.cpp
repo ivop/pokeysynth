@@ -100,3 +100,39 @@ struct pokey_instrument test_instrument2 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false
 };
+
+struct pokey_instrument test_instrument3 = {
+    .name = "Test Drum",
+
+    .channels = CHANNELS_1CH,
+
+    .clock = CLOCK_DIV28,
+
+    .volume = { 15,13,11,9,7,7,7,3,0 },
+
+    .distortion = {
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_NOISE, DIST_NOISE, DIST_NOISE, DIST_NOISE,
+        DIST_NOISE,
+    },
+
+    .sustain_loop_start = 8,
+    .sustain_loop_end = 8,
+    .release_end =  8,
+
+    .types = {
+        TYPE_FIXED_DIVIDER, TYPE_FIXED_DIVIDER, TYPE_FIXED_DIVIDER,
+        TYPE_FIXED_DIVIDER, TYPE_FIXED_DIVIDER, TYPE_FIXED_DIVIDER,
+        TYPE_FIXED_DIVIDER, TYPE_FIXED_DIVIDER, TYPE_FIXED_DIVIDER,
+    },
+    .values = {
+        0xc0, 0xd0, 0xe0, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00,
+    },
+    .types_end = 8,
+    .types_loop = 0,
+    .types_speed = 0,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.0,
+    .filtered_transpose = false
+};
