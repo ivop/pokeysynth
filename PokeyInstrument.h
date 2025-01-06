@@ -49,6 +49,7 @@ enum clocks {
 class PokeyInstrument {
 public:
     PokeyInstrument(void);
+    void SetPokeyFrequency(int frequency);
     void Start(const uint8_t midi_note, const uint8_t velocity, const uint8_t program);
     void Restart(void);
     void Next(void);
@@ -68,4 +69,5 @@ private:
     unsigned int voldis_idx;
     unsigned int types_idx;
     int types_speed_cnt;
+    int pokey_freq;
 };

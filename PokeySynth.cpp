@@ -128,6 +128,10 @@ PokeySynth::PokeySynth(const double sample_rate,
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
 
     pokey_rate = 1773447;
+    for (unsigned int i=0; i<4; i++) {
+        instruments[i].SetPokeyFrequency(pokey_rate);
+    }
+
     this->sample_rate = sample_rate;
 
     mzp = mzpokey_create(pokey_rate, sample_rate, 1, 0);
@@ -212,6 +216,7 @@ void PokeySynth::play(void) {
         if (last_note_times[c] != i->second.time) {     // different from last
             instruments[c].Start(i->first, i->second.velocity,
                                                     i->second.program);
+            last_note_times[c] = i->second.time;
         }
     }
 
@@ -299,6 +304,9 @@ void PokeySynth::play(void) {
         }
         // get 8-bit audf and audc and store in registers
 
+        registers[AUDF1] = instruments[0].GetAudf();
+        registers[AUDC1] = instruments[0].GetAudc();
+
         // we are left with channel 2,3, and 4, which can be:
         // 2+4 filtered, 3 normal
         // 2 normal, 3+4 linked
@@ -307,6 +315,10 @@ void PokeySynth::play(void) {
 
     for (unsigned int r=0; r<9; r++) {
         mzpokey_write_register(mzp, (enum pokey_register) r, registers[r], 0);
+    }
+
+    for (unsigned int c=0; c<4; c++) {
+        instruments[c].Next();
     }
 }
 

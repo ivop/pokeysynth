@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <math.h>
+#include <stdio.h>
 #include "PokeyInstrument.h"
 
 #define INSTRUMENT_LENGTH 64
@@ -11,14 +13,13 @@ enum distortions {
     DIST_POLY5_SQUARE
 };
 
-#if 0
 static uint8_t dist_values[] = {
     0xa0,
     0x80,
     0xc0,
-    0xc0
+    0xc0,
+    0x20
 };
-#endif
 
 enum note_types {
     TYPE_NOTE,              // frequency depends on MIDI Note
@@ -37,11 +38,11 @@ struct pokey_instrument {
     uint8_t volume[INSTRUMENT_LENGTH];
     uint8_t distortion[INSTRUMENT_LENGTH];
     uint8_t sustain_loop_start;
-    uint8_t sustain_loop_end;               // also release_start
+    uint8_t sustain_loop_end;             // also release_start
     uint8_t release_end;
 
-    uint8_t types[INSTRUMENT_LENGTH];       // note_types, 0 has no value
-    uint16_t values[INSTRUMENT_LENGTH];     // 8/16-bit value for types >= 1
+    uint8_t types[INSTRUMENT_LENGTH];     // note_types, 0 has no value
+    int32_t values[INSTRUMENT_LENGTH];    // 8/16/32-bit values for types >= 1
     uint8_t types_end;
     uint8_t types_loop;
     uint8_t types_speed;
@@ -53,7 +54,7 @@ struct pokey_instrument {
 
 struct pokey_instrument instruments[128];
 
-struct pokey_instrument instrument = {
+struct pokey_instrument test_instrument = {
     .name = "Test",
 
     .channels = CHANNELS_1CH,
@@ -91,10 +92,17 @@ PokeyInstrument::PokeyInstrument(void) :
     note(0),
     velocity(1.0),
     release(false),
-    silent(false),
+    silent(true),
     voldis_idx(0),
     types_idx(0),
-    types_speed_cnt(0) {
+    types_speed_cnt(0),
+    pokey_freq(0) {
+
+    instruments[0] = test_instrument;
+}
+
+void PokeyInstrument::SetPokeyFrequency(int frequency) {
+    pokey_freq = frequency;
 }
 
 void PokeyInstrument::Restart(void) {
@@ -154,11 +162,58 @@ enum channels_type PokeyInstrument::GetChannel(void) {
 
 uint32_t PokeyInstrument::GetAudc(void) {
     if (silent) return 0;
+    int channels = instruments[program].channels;
+
+    if (channels == CHANNELS_1CH) {
+        int volume = instruments[program].volume[voldis_idx];
+        int dist = dist_values[instruments[program].distortion[voldis_idx]];
+        return dist | volume;
+    }
+
     return 0;
 }
 
 uint32_t PokeyInstrument::GetAudf(void) {
     if (silent) return 0;
+
+    uint8_t type = instruments[program].types[types_idx];
+    int32_t value = instruments[program].values[types_idx];
+
+    if (type == TYPE_FIXED_DIVIDER) return value;
+
+    int xnote = note;
+
+    if (TYPE_NOTE_PLUS_NOTE) xnote += value;
+
+    float freq = pow(2.0, (xnote-69) / 12.0) * 440.0;
+
+    if (type == TYPE_NOTE_PLUS_CENTS) freq *= pow(2.0, value / 1200.0);
+
+    if (!freq) return 0;
+
+    int channels = instruments[program].channels;
+    int dist     = instruments[program].distortion[voldis_idx];
+    int clock    = instruments[program].clock;
+    int pokdiv = 0;
+
+    if (channels == CHANNELS_1CH) {
+        if (dist == DIST_PURE) {
+recalc:
+            if (clock == CLOCK_DIV114) {
+                pokdiv = round((pokey_freq / 114.0 / 2.0 / freq) - 1);
+            } else if (clock == CLOCK_DIV28) {
+                pokdiv = round((pokey_freq / 28.0 / 2.0 / freq) - 1);
+            } else {
+                pokdiv = round((pokey_freq / 1.0 / 2.0 / freq) - 7);
+            }
+            if (pokdiv < 0) return 0;
+            if (pokdiv > 255) {
+                freq *= 2.0;
+                goto recalc;
+            }
+            return pokdiv;
+        }
+    }
     return 0;
 }
 
