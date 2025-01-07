@@ -145,6 +145,15 @@ uint32_t PokeyInstrument::GetAudc(void) {
         return dist | volume;
     }
 
+    else if (channels == CHANNELS_2CH_LINKED) {
+    }
+
+    else if (channels == CHANNELS_2CH_FILTERED) {
+    }
+
+    else if (channels == CHANNELS_4CH_LINKED_FILTERED) {
+    }
+
     return 0;
 }
 
@@ -172,7 +181,7 @@ uint32_t PokeyInstrument::GetAudf(void) {
     int pokdiv = 0;
 
     if (channels == CHANNELS_1CH) {
-        if (dist == DIST_PURE) {
+        if (dist == DIST_PURE || dist == DIST_NOISE) {
 recalc:
             if (clock == CLOCK_DIV114) {
                 pokdiv = round((pokey_freq / 114.0 / 2.0 / freq) - 1);
@@ -188,7 +197,23 @@ recalc:
             }
             return pokdiv;
         }
+
+        else if (dist == DIST_BUZZY_BASS || dist == DIST_GRITTY_BASS) {
+        }
+
+        else if (dist == DIST_POLY5_SQUARE) {
+        }
     }
+
+    else if (channels == CHANNELS_2CH_LINKED) {
+    }
+
+    else if (channels == CHANNELS_2CH_FILTERED) {
+    }
+
+    else if (channels == CHANNELS_4CH_LINKED_FILTERED) {
+    }
+
     return 0;
 }
 
