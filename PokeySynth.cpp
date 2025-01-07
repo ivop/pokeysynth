@@ -289,10 +289,14 @@ void PokeySynth::play(void) {
 
         // normal
         else {
-            registers[AUDF2] = instruments[1].GetAudf();
-            registers[AUDC2] = instruments[1].GetAudc();
-            registers[AUDF4] = instruments[3].GetAudf();
-            registers[AUDC4] = instruments[3].GetAudc();
+            if (channels[1] == CHANNELS_1CH) {
+                registers[AUDF2] = instruments[1].GetAudf();
+                registers[AUDC2] = instruments[1].GetAudc();
+            }
+            if (channels[3] == CHANNELS_1CH) {
+                registers[AUDF4] = instruments[3].GetAudf();
+                registers[AUDC4] = instruments[3].GetAudc();
+            }
         }
     }
 
@@ -334,10 +338,15 @@ void PokeySynth::play(void) {
 
         // 3 and 4 normal
         else {
-            registers[AUDF3] = instruments[2].GetAudf();
-            registers[AUDC3] = instruments[2].GetAudc();
-            registers[AUDF4] = instruments[3].GetAudf();
-            registers[AUDC4] = instruments[3].GetAudc();
+            if (channels[2] == CHANNELS_1CH) {
+                // TODO hifreq
+                registers[AUDF3] = instruments[2].GetAudf();
+                registers[AUDC3] = instruments[2].GetAudc();
+            }
+            if (channels[3] == CHANNELS_1CH) {
+                registers[AUDF4] = instruments[3].GetAudf();
+                registers[AUDC4] = instruments[3].GetAudc();
+            }
         }
     }
 
@@ -364,8 +373,11 @@ void PokeySynth::play(void) {
 
             // channel 3 is normal
 
-            registers[AUDF3] = instruments[2].GetAudf();
-            registers[AUDC3] = instruments[2].GetAudc();
+            if (channels[2] == CHANNELS_1CH) {
+                // TODO hifreq
+                registers[AUDF3] = instruments[2].GetAudf();
+                registers[AUDC3] = instruments[2].GetAudc();
+            }
         }
 
         // 2 normal, 3+4 linked
@@ -385,18 +397,27 @@ void PokeySynth::play(void) {
             // TODO
 
             // channel 2 is normal
-            registers[AUDF2] = instruments[1].GetAudf();
-            registers[AUDC2] = instruments[1].GetAudc();
+            if (channels[1] == CHANNELS_1CH) {
+                registers[AUDF2] = instruments[1].GetAudf();
+                registers[AUDC2] = instruments[1].GetAudc();
+            }
         }
 
         // 2,3, and 4 normal
         else {
-            registers[AUDF2] = instruments[1].GetAudf();
-            registers[AUDC2] = instruments[1].GetAudc();
-            registers[AUDF3] = instruments[2].GetAudf();
-            registers[AUDC3] = instruments[2].GetAudc();
-            registers[AUDF4] = instruments[3].GetAudf();
-            registers[AUDC4] = instruments[3].GetAudc();
+            if (channels[1] == CHANNELS_1CH) {
+                registers[AUDF2] = instruments[1].GetAudf();
+                registers[AUDC2] = instruments[1].GetAudc();
+            }
+            if (channels[2] == CHANNELS_1CH) {
+                // TODO hifreq
+                registers[AUDF3] = instruments[2].GetAudf();
+                registers[AUDC3] = instruments[2].GetAudc();
+            }
+            if (channels[3] == CHANNELS_1CH) {
+                registers[AUDF4] = instruments[3].GetAudf();
+                registers[AUDC4] = instruments[3].GetAudc();
+            }
         }
     }
 
