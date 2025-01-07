@@ -188,7 +188,7 @@ recalc:
             } else if (clock == CLOCK_DIV28) {
                 pokdiv = round((pokey_freq / 28.0 / 2.0 / freq) - 1);
             } else {
-                pokdiv = round((pokey_freq / 1.0 / 2.0 / freq) - 7);
+                pokdiv = round((pokey_freq / 1.0 / 2.0 / freq) - 4); // 7 linked
             }
             if (pokdiv < 0) return 0;
             if (pokdiv > 255) {
