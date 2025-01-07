@@ -324,10 +324,10 @@ void PokeySynth::play(void) {
 
             registers[AUDCTL] |= AUDCTL_LINK_34;
 
-            if ((channels[0] == CHANNELS_2CH_LINKED &&
-                                    clocks[0] == CLOCK_DIV1) ||
-                (channels[1] == CHANNELS_2CH_LINKED &&
-                                    clocks[1] == CLOCK_DIV1)) {
+            if ((channels[2] == CHANNELS_2CH_LINKED &&
+                                    clocks[2] == CLOCK_DIV1) ||
+                (channels[3] == CHANNELS_2CH_LINKED &&
+                                    clocks[3] == CLOCK_DIV1)) {
                 registers[AUDCTL] |= AUDCTL_CH3_HIFRQ;
             }
 
@@ -374,7 +374,9 @@ void PokeySynth::play(void) {
             // channel 3 is normal
 
             if (channels[2] == CHANNELS_1CH) {
-                // TODO hifreq
+                if (clocks[2] == CLOCK_DIV1) {
+                    registers[AUDCTL] |= AUDCTL_CH3_HIFRQ;
+                }
                 registers[AUDF3] = instruments[2].GetAudf();
                 registers[AUDC3] = instruments[2].GetAudc();
             }
@@ -386,10 +388,10 @@ void PokeySynth::play(void) {
 
             registers[AUDCTL] |= AUDCTL_LINK_34;
 
-            if ((channels[0] == CHANNELS_2CH_LINKED &&
-                                    clocks[0] == CLOCK_DIV1) ||
-                (channels[1] == CHANNELS_2CH_LINKED &&
-                                    clocks[1] == CLOCK_DIV1)) {
+            if ((channels[2] == CHANNELS_2CH_LINKED &&
+                                    clocks[2] == CLOCK_DIV1) ||
+                (channels[3] == CHANNELS_2CH_LINKED &&
+                                    clocks[3] == CLOCK_DIV1)) {
                 registers[AUDCTL] |= AUDCTL_CH3_HIFRQ;
             }
 
@@ -410,7 +412,9 @@ void PokeySynth::play(void) {
                 registers[AUDC2] = instruments[1].GetAudc();
             }
             if (channels[2] == CHANNELS_1CH) {
-                // TODO hifreq
+                if (clocks[2] == CLOCK_DIV1) {
+                    registers[AUDCTL] |= AUDCTL_CH3_HIFRQ;
+                }
                 registers[AUDF3] = instruments[2].GetAudf();
                 registers[AUDC3] = instruments[2].GetAudc();
             }
