@@ -263,7 +263,7 @@ void PokeySynth::play(void) {
     else if (channels[0] == CHANNELS_2CH_FILTERED ||
                channels[2] == CHANNELS_2CH_FILTERED) {
 
-        registers[8] |= AUDCTL_HIPASS_13;
+        registers[AUDCTL] |= AUDCTL_HIPASS_13;
 
         if ((channels[0] == CHANNELS_2CH_FILTERED && clocks[0] == CLOCK_DIV1) ||
             (channels[2] == CHANNELS_2CH_FILTERED && clocks[2] == CLOCK_DIV1)) {
@@ -272,10 +272,28 @@ void PokeySynth::play(void) {
         }
 
         // get 16-bit audf and audc and store in registers
+        // TODO
 
         // we are left with channel 2 and 4, which are either filtered, or
-        // normal
 
+        // 2+4 filtered
+        if (channels[1] == CHANNELS_2CH_FILTERED ||
+            channels[3] == CHANNELS_2CH_FILTERED) {
+
+            registers[AUDCTL] |= AUDCTL_HIPASS_24;
+
+            // get 16-bit audf and audc and store in registers
+            // TODO
+
+        }
+
+        // normal
+        else {
+            registers[AUDF2] = instruments[1].GetAudf();
+            registers[AUDC2] = instruments[1].GetAudc();
+            registers[AUDF4] = instruments[3].GetAudf();
+            registers[AUDC4] = instruments[3].GetAudc();
+        }
     }
 
     // 2CH LINKED
@@ -292,25 +310,94 @@ void PokeySynth::play(void) {
         }
 
         // get 16-bit audf and audc and store in registers
+        // TODO
 
         // we are left with channel 3 and 4, which are either linked or normal
 
+        // 3+4 linked
+        if (channels[2] == CHANNELS_2CH_LINKED ||
+            channels[3] == CHANNELS_2CH_LINKED) {
+
+            registers[AUDCTL] |= AUDCTL_LINK_34;
+
+            if ((channels[0] == CHANNELS_2CH_LINKED &&
+                                    clocks[0] == CLOCK_DIV1) ||
+                (channels[1] == CHANNELS_2CH_LINKED &&
+                                    clocks[1] == CLOCK_DIV1)) {
+                registers[AUDCTL] |= AUDCTL_CH3_HIFRQ;
+            }
+
+            // get 16-bit audf and audc and store in registers
+            // TODO
+
+        }
+
+        // 3 and 4 normal
+        else {
+            registers[AUDF3] = instruments[2].GetAudf();
+            registers[AUDC3] = instruments[2].GetAudc();
+            registers[AUDF4] = instruments[3].GetAudf();
+            registers[AUDC4] = instruments[3].GetAudc();
+        }
     }
 
     // 1CH NORMAL
+    //
     else {
         if (clocks[0] == CLOCK_DIV1) {
-            registers[8] |= AUDCTL_CH1_HIFRQ;
+            registers[AUDCTL] |= AUDCTL_CH1_HIFRQ;
         }
-        // get 8-bit audf and audc and store in registers
 
         registers[AUDF1] = instruments[0].GetAudf();
         registers[AUDC1] = instruments[0].GetAudc();
 
         // we are left with channel 2,3, and 4, which can be:
+
         // 2+4 filtered, 3 normal
+        if (channels[1] == CHANNELS_2CH_FILTERED ||
+            channels[3] == CHANNELS_2CH_FILTERED) {
+
+            registers[AUDCTL] |= AUDCTL_HIPASS_24;
+
+            // get 16-bit audf and audc and store in registers
+            // TODO
+
+            // channel 3 is normal
+
+            registers[AUDF3] = instruments[2].GetAudf();
+            registers[AUDC3] = instruments[2].GetAudc();
+        }
+
         // 2 normal, 3+4 linked
+        else if (channels[2] == CHANNELS_2CH_LINKED ||
+                 channels[3] == CHANNELS_2CH_LINKED) {
+
+            registers[AUDCTL] |= AUDCTL_LINK_34;
+
+            if ((channels[0] == CHANNELS_2CH_LINKED &&
+                                    clocks[0] == CLOCK_DIV1) ||
+                (channels[1] == CHANNELS_2CH_LINKED &&
+                                    clocks[1] == CLOCK_DIV1)) {
+                registers[AUDCTL] |= AUDCTL_CH3_HIFRQ;
+            }
+
+            // get 16-bit audf and audc and store in registers
+            // TODO
+
+            // channel 2 is normal
+            registers[AUDF2] = instruments[1].GetAudf();
+            registers[AUDC2] = instruments[1].GetAudc();
+        }
+
         // 2,3, and 4 normal
+        else {
+            registers[AUDF2] = instruments[1].GetAudf();
+            registers[AUDC2] = instruments[1].GetAudc();
+            registers[AUDF3] = instruments[2].GetAudf();
+            registers[AUDC3] = instruments[2].GetAudc();
+            registers[AUDF4] = instruments[3].GetAudf();
+            registers[AUDC4] = instruments[3].GetAudc();
+        }
     }
 
     for (unsigned int r=0; r<9; r++) {
