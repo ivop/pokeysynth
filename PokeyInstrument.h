@@ -46,6 +46,7 @@ enum distortions : uint8_t {
     DIST_GRITTY_BASS,
     DIST_POLY5_SQUARE
 };
+#define DIST_COUNT (DIST_POLY5_SQUARE+1)
 
 enum clocks : uint8_t {
     CLOCK_DIV114,

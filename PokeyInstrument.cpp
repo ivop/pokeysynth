@@ -177,7 +177,7 @@ uint32_t PokeyInstrument::GetAudf(void) {
 
     switch (channels) {
     case CHANNELS_1CH:
-        return tuning.GetDividerSingle(dist, clock, freq);
+        return tuning.GetPokeyDivider(dist, clock, false, freq);
         break;
     case CHANNELS_2CH_LINKED:
         break;

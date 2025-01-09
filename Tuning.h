@@ -6,12 +6,10 @@ class Tuning {
 public:
     Tuning(void);
     void SetPokeyFrequency(float pokey_frequency);
-    uint8_t GetDividerSingle(enum distortions distortion,
-                             enum clocks clock,
+    uint16_t GetPokeyDivider(enum distortions dist,
+                             enum clocks clk,
+                             bool linked,
                              float frequency);
-    uint16_t GetDividerLinked(enum distortions distortion,
-                              enum clocks clock,
-                              float frequency);
 
 private:
     float pokey_frequency;
