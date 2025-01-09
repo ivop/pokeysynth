@@ -136,3 +136,65 @@ struct pokey_instrument test_instrument3 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false
 };
+
+struct pokey_instrument test_instrument4 = {
+    .name = "Test Dist C Buzzy Bass",
+
+    .channels = CHANNELS_1CH,
+
+    .clock = CLOCK_DIV28,
+
+    .volume = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 },
+
+    .distortion = {
+        DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS,
+        DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS,
+        DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS,
+        DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS, DIST_BUZZY_BASS,
+    },
+
+    .sustain_loop_start = 7,
+    .sustain_loop_end = 7,
+    .release_end =  15,
+
+    .types = { TYPE_NOTE },
+    .values = {},
+    .types_end = 0,
+    .types_loop = 0,
+    .types_speed = 0,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.0,
+    .filtered_transpose = false
+};
+
+struct pokey_instrument test_instrument5 = {
+    .name = "Test Dist C Buzzy Bass",
+
+    .channels = CHANNELS_1CH,
+
+    .clock = CLOCK_DIV28,
+
+    .volume = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 },
+
+    .distortion = {
+        DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS,
+        DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS,
+        DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS,
+        DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS, DIST_GRITTY_BASS,
+    },
+
+    .sustain_loop_start = 7,
+    .sustain_loop_end = 7,
+    .release_end =  15,
+
+    .types = { TYPE_NOTE },
+    .values = {},
+    .types_end = 0,
+    .types_loop = 0,
+    .types_speed = 0,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.0,
+    .filtered_transpose = false
+};

@@ -13,4 +13,9 @@ public:
 
 private:
     float pokey_frequency;
+    uint16_t FindClosest(uint16_t pokdiv,
+                         enum distortions dist,
+                         float div1,
+                         float div2,
+                         int xcycles);
 };
