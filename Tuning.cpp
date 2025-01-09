@@ -40,8 +40,9 @@ uint16_t Tuning::GetPokeyDivider(enum distortions dist,
     int div    = round(pokey_frequency / div1 / div2 / 2.0 / frequency);
     int pokdiv = div - xcycles;
 
-    bool MOD3  = (div % 3) == 0;
-    bool MOD5  = (div % 5) == 0;
+    bool MOD3  = (div %  3) == 0;
+    bool MOD5  = (div %  5) == 0;
+    bool MOD31 = (div % 31) == 0;
 
     switch (dist) {
     case DIST_PURE:
@@ -64,7 +65,8 @@ uint16_t Tuning::GetPokeyDivider(enum distortions dist,
             pokdiv = FindClosest(div, DIST_GRITTY_BASS, div1, div2, xcycles);
         break;
     case DIST_POLY5_SQUARE:
-        // TODO
+        if (MOD31)
+            pokdiv = FindClosest(div, DIST_POLY5_SQUARE, div1, div2, xcycles);
         break;
     }
 
@@ -97,8 +99,10 @@ uint16_t Tuning::FindClosest(uint16_t div,
         while (   top % 3 == 0 ||    top % 5 == 0) top++;
         while (bottom % 3 == 0 || bottom % 5 == 0) bottom--;
         break;
-    default:
-        // shouldn't be here
+    case DIST_POLY5_SQUARE:
+    default:    // dists where a single up/down is enough to meet requirements
+        top++;
+        bottom--;
         break;
     }
 
