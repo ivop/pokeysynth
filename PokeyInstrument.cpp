@@ -2,16 +2,11 @@
 #include <math.h>
 #include <stdio.h>
 #include "PokeyInstrument.h"
+#include "Tuning.h"
+
+Tuning tuning;
 
 #define INSTRUMENT_LENGTH 64
-
-enum distortions {
-    DIST_PURE,
-    DIST_NOISE,
-    DIST_BUZZY_BASS,
-    DIST_GRITTY_BASS,
-    DIST_POLY5_SQUARE
-};
 
 static uint8_t dist_values[] = {
     0xa0,
@@ -36,7 +31,7 @@ struct pokey_instrument {
     enum clocks clock;
 
     uint8_t volume[INSTRUMENT_LENGTH];
-    uint8_t distortion[INSTRUMENT_LENGTH];
+    enum distortions distortion[INSTRUMENT_LENGTH];
     uint8_t sustain_loop_start;
     uint8_t sustain_loop_end;             // also release_start
     uint8_t release_end;
@@ -77,6 +72,7 @@ PokeyInstrument::PokeyInstrument(void) :
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
     pokey_freq = frequency;
+    tuning.SetPokeyFrequency(frequency);
 }
 
 void PokeyInstrument::Restart(void) {
@@ -175,43 +171,22 @@ uint32_t PokeyInstrument::GetAudf(void) {
 
     if (!freq) return 0;
 
-    int channels = instruments[program].channels;
-    int dist     = instruments[program].distortion[voldis_idx];
-    int clock    = instruments[program].clock;
-    int pokdiv = 0;
+    enum channels_type channels = instruments[program].channels;
+    enum distortions   dist     = instruments[program].distortion[voldis_idx];
+    enum clocks        clock    = instruments[program].clock;
 
-    if (channels == CHANNELS_1CH) {
-        if (dist == DIST_PURE || dist == DIST_NOISE) {
-recalc:
-            if (clock == CLOCK_DIV114) {
-                pokdiv = round((pokey_freq / 114.0 / 2.0 / freq) - 1);
-            } else if (clock == CLOCK_DIV28) {
-                pokdiv = round((pokey_freq / 28.0 / 2.0 / freq) - 1);
-            } else {
-                pokdiv = round((pokey_freq / 1.0 / 2.0 / freq) - 4); // 7 linked
-            }
-            if (pokdiv < 0) return 0;
-            if (pokdiv > 255) {
-                freq *= 2.0;
-                goto recalc;
-            }
-            return pokdiv;
-        }
-
-        else if (dist == DIST_BUZZY_BASS || dist == DIST_GRITTY_BASS) {
-        }
-
-        else if (dist == DIST_POLY5_SQUARE) {
-        }
-    }
-
-    else if (channels == CHANNELS_2CH_LINKED) {
-    }
-
-    else if (channels == CHANNELS_2CH_FILTERED) {
-    }
-
-    else if (channels == CHANNELS_4CH_LINKED_FILTERED) {
+    switch (channels) {
+    case CHANNELS_1CH:
+        return tuning.GetDividerSingle(dist, clock, freq);
+        break;
+    case CHANNELS_2CH_LINKED:
+        break;
+    case CHANNELS_2CH_FILTERED:
+        break;
+    case CHANNELS_4CH_LINKED_FILTERED:
+        break;
+    case CHANNELS_NONE:
+        break;
     }
 
     return 0;

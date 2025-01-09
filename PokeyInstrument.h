@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-enum channels_type {
+enum channels_type : uint8_t {
     CHANNELS_NONE,                // silent channel
 
     CHANNELS_1CH,                 // 1 or 2 or 3 or 4, 8-bit divider
@@ -39,7 +39,15 @@ enum audctl_bits {
     AUDCTL_POLY917     = 0x80
 };
 
-enum clocks {
+enum distortions : uint8_t {
+    DIST_PURE,
+    DIST_NOISE,
+    DIST_BUZZY_BASS,
+    DIST_GRITTY_BASS,
+    DIST_POLY5_SQUARE
+};
+
+enum clocks : uint8_t {
     CLOCK_DIV114,
     CLOCK_DIV28,
     CLOCK_DIV1,

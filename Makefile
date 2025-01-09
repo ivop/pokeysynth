@@ -1,7 +1,7 @@
 CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter
 #CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter
 LIBS=-lm
-SRC=PokeySynth.cpp PokeyInstrument.cpp mzpokey.cpp remez.cpp
+SRC=PokeySynth.cpp PokeyInstrument.cpp Tuning.cpp mzpokey.cpp remez.cpp
 OBJ=$(SRC:.cpp=.o)
 LV2DIR=pokeysynth.lv2
 POKEYSYNTHSO=$(LV2DIR)/pokeysynth.so
