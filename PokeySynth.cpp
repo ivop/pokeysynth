@@ -239,6 +239,7 @@ void PokeySynth::play(void) {
         }
         channels[c] = instruments[c].GetChannel();
     }
+    // todo: mute single and linked channels that use "wrong" base clock
 
     // 4CH LINKED FILTERED
     //
@@ -274,7 +275,18 @@ void PokeySynth::play(void) {
         }
 
         // get 16-bit audf and audc and store in registers
-        // TODO
+
+        if (channels[0] == CHANNELS_2CH_FILTERED) {
+            taudf = instruments[0].GetAudf();
+            taudc = instruments[0].GetAudc();
+        } else {
+            taudf = instruments[2].GetAudf();
+            taudc = instruments[2].GetAudc();
+        }
+        registers[AUDF1] = taudf;
+        registers[AUDC1] = taudc;
+        registers[AUDF3] = taudf >> 8;
+        registers[AUDC3] = taudc >> 8;
 
         // we are left with channel 2 and 4, which are either filtered, or
 
