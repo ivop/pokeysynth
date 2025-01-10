@@ -306,7 +306,6 @@ void PokeySynth::play(void) {
     //
     else if (channels[0] == CHANNELS_2CH_LINKED ||
                channels[1] == CHANNELS_2CH_LINKED) {
-
         registers[AUDCTL] |= AUDCTL_LINK_12;
 
         if ((channels[0] == CHANNELS_2CH_LINKED && clocks[0] == CLOCK_DIV1) ||
@@ -324,10 +323,10 @@ void PokeySynth::play(void) {
             taudf = instruments[1].GetAudf();
             taudc = instruments[1].GetAudc();
         }
-        registers[0] = taudf;
-        registers[1] = taudc;
-        registers[2] = taudf >> 8;
-        registers[3] = taudc >> 8;
+        registers[AUDF1] = taudf;
+        registers[AUDC1] = taudc;
+        registers[AUDF2] = taudf >> 8;
+        registers[AUDC2] = taudc >> 8;
 
         // we are left with channel 3 and 4, which are either linked or normal
 
@@ -345,8 +344,18 @@ void PokeySynth::play(void) {
             }
 
             // get 16-bit audf and audc and store in registers
-            // TODO
 
+            if (channels[2] == CHANNELS_2CH_LINKED) {
+                taudf = instruments[2].GetAudf();
+                taudc = instruments[2].GetAudc();
+            } else {
+                taudf = instruments[3].GetAudf();
+                taudc = instruments[3].GetAudc();
+            }
+            registers[AUDF3] = taudf;
+            registers[AUDC3] = taudc;
+            registers[AUDF4] = taudf >> 8;
+            registers[AUDC4] = taudc >> 8;
         }
 
         // 3 and 4 normal
@@ -409,7 +418,18 @@ void PokeySynth::play(void) {
             }
 
             // get 16-bit audf and audc and store in registers
-            // TODO
+
+            if (channels[2] == CHANNELS_2CH_LINKED) {
+                taudf = instruments[2].GetAudf();
+                taudc = instruments[2].GetAudc();
+            } else {
+                taudf = instruments[3].GetAudf();
+                taudc = instruments[3].GetAudc();
+            }
+            registers[AUDF3] = taudf;
+            registers[AUDC3] = taudc;
+            registers[AUDF4] = taudf >> 8;
+            registers[AUDC4] = taudc >> 8;
 
             // channel 2 is normal
             if (channels[1] == CHANNELS_1CH) {
