@@ -72,6 +72,7 @@ PokeyInstrument::PokeyInstrument(void) :
     instruments[5] = test_instrument5;
     instruments[6] = test_instrument6;
     instruments[7] = test_instrument7;
+    instruments[8] = test_instrument8;
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
@@ -138,14 +139,16 @@ uint32_t PokeyInstrument::GetAudc(void) {
     if (silent) return 0;
     int channels = instruments[program].channels;
 
+    int volume = instruments[program].volume[voldis_idx];
+    volume = round(velocity * volume);
+    int dist = dist_values[instruments[program].distortion[voldis_idx]];
+
     if (channels == CHANNELS_1CH) {
-        int volume = instruments[program].volume[voldis_idx];
-        volume = round(velocity * volume);
-        int dist = dist_values[instruments[program].distortion[voldis_idx]];
         return dist | volume;
     }
 
     else if (channels == CHANNELS_2CH_LINKED) {
+        return (dist | volume) << 8;
     }
 
     else if (channels == CHANNELS_2CH_FILTERED) {
@@ -184,6 +187,7 @@ uint32_t PokeyInstrument::GetAudf(void) {
         return tuning.GetPokeyDivider(dist, clock, false, freq);
         break;
     case CHANNELS_2CH_LINKED:
+        return tuning.GetPokeyDivider(dist, clock, true, freq);
         break;
     case CHANNELS_2CH_FILTERED:
         break;

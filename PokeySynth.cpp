@@ -205,6 +205,8 @@ int PokeySynth::map_midi_to_pokey_channel(int channel) {
 // ****************************************************************************
 
 void PokeySynth::play(void) {
+    uint32_t taudf, taudc;
+
     // Monophonic, check top key that is pressed (if any)
 
     for (int c=0; c<4; c++) {
@@ -314,7 +316,18 @@ void PokeySynth::play(void) {
         }
 
         // get 16-bit audf and audc and store in registers
-        // TODO
+
+        if (channels[0] == CHANNELS_2CH_LINKED) {
+            taudf = instruments[0].GetAudf();
+            taudc = instruments[0].GetAudc();
+        } else {
+            taudf = instruments[1].GetAudf();
+            taudc = instruments[1].GetAudc();
+        }
+        registers[0] = taudf;
+        registers[1] = taudc;
+        registers[2] = taudf >> 8;
+        registers[3] = taudc >> 8;
 
         // we are left with channel 3 and 4, which are either linked or normal
 
