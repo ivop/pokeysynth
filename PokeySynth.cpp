@@ -361,7 +361,9 @@ void PokeySynth::play(void) {
         // 3 and 4 normal
         else {
             if (channels[2] == CHANNELS_1CH) {
-                // TODO hifreq
+                if (clocks[2] == CLOCK_DIV1) {
+                    registers[AUDCTL] |= AUDCTL_CH3_HIFRQ;
+                }
                 registers[AUDF3] = instruments[2].GetAudf();
                 registers[AUDC3] = instruments[2].GetAudc();
             }
