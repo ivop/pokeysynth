@@ -258,7 +258,7 @@ void PokeySynth::play(void) {
         }
 
         // get 32-bit audf and audc and store in registers
-
+        // TODO
     }
 
     // 2CH FILTERED
@@ -297,8 +297,18 @@ void PokeySynth::play(void) {
             registers[AUDCTL] |= AUDCTL_HIPASS_24;
 
             // get 16-bit audf and audc and store in registers
-            // TODO
 
+            if (channels[1] == CHANNELS_2CH_FILTERED) {
+                taudf = instruments[1].GetAudf();
+                taudc = instruments[1].GetAudc();
+            } else {
+                taudf = instruments[3].GetAudf();
+                taudc = instruments[3].GetAudc();
+            }
+            registers[AUDF2] = taudf;
+            registers[AUDC2] = taudc;
+            registers[AUDF4] = taudf >> 8;
+            registers[AUDC4] = taudc >> 8;
         }
 
         // normal
@@ -405,7 +415,18 @@ void PokeySynth::play(void) {
             registers[AUDCTL] |= AUDCTL_HIPASS_24;
 
             // get 16-bit audf and audc and store in registers
-            // TODO
+
+            if (channels[1] == CHANNELS_2CH_FILTERED) {
+                taudf = instruments[1].GetAudf();
+                taudc = instruments[1].GetAudc();
+            } else {
+                taudf = instruments[3].GetAudf();
+                taudc = instruments[3].GetAudc();
+            }
+            registers[AUDF2] = taudf;
+            registers[AUDC2] = taudc;
+            registers[AUDF4] = taudf >> 8;
+            registers[AUDC4] = taudc >> 8;
 
             // channel 3 is normal
 
