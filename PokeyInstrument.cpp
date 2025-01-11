@@ -75,6 +75,7 @@ PokeyInstrument::PokeyInstrument(void) :
     instruments[8] = test_instrument8;
     instruments[9] = test_instrument9;
     instruments[10] = test_instrument10;
+    instruments[11] = test_instrument11;
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
@@ -162,6 +163,7 @@ uint32_t PokeyInstrument::GetAudc(void) {
     }
 
     else if (channels == CHANNELS_4CH_LINKED_FILTERED) {
+        return ((dist | volume2) << 8 ) | dist | volume;
     }
 
     return 0;
@@ -215,7 +217,19 @@ uint32_t PokeyInstrument::GetAudf(void) {
         return bch | (dch << 8);
         break;
         }
-    case CHANNELS_4CH_LINKED_FILTERED:
+    case CHANNELS_4CH_LINKED_FILTERED: {
+        if (instruments[program].filtered_transpose) freq /= 2.0;
+
+        int bch = tuning.GetPokeyDivider(dist, clock, true, freq);
+
+        freq *= pow(2.0, instruments[program].filtered_detune / 1200.0);
+        int dch = tuning.GetPokeyDivider(dist, clock, true, freq);
+
+        if (dch == bch) dch++;
+        if (dch > 0xffff) dch = 0xffff;
+
+        return bch | (dch << 16);
+        }
         break;
     case CHANNELS_NONE:
         break;

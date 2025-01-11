@@ -258,7 +258,22 @@ void PokeySynth::play(void) {
         }
 
         // get 32-bit audf and audc and store in registers
-        // TODO
+
+        int c = 0;
+             if (channels[0] == CHANNELS_4CH_LINKED_FILTERED) c = 0;
+        else if (channels[1] == CHANNELS_4CH_LINKED_FILTERED) c = 1;
+        else if (channels[2] == CHANNELS_4CH_LINKED_FILTERED) c = 2;
+        else if (channels[3] == CHANNELS_4CH_LINKED_FILTERED) c = 3;
+
+        taudf = instruments[c].GetAudf();
+        taudc = instruments[c].GetAudc();
+
+        registers[AUDF1] = taudf;
+        registers[AUDF2] = taudf >> 8;
+        registers[AUDF3] = taudf >> 16;
+        registers[AUDF4] = taudf >> 24;
+        registers[AUDC2] = taudc;
+        registers[AUDC4] = taudc >> 8;
     }
 
     // 2CH FILTERED
