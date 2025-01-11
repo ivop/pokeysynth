@@ -10,6 +10,7 @@ public:
                              enum clocks clk,
                              bool linked,
                              float frequency);
+    uint8_t GetSawtoothDivider(float frequency);
 
 private:
     float pokey_frequency;

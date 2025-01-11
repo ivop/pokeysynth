@@ -24,7 +24,7 @@ enum note_types {
 };
 
 struct pokey_instrument {
-    char name[32];
+    char name[64];
 
     enum channels_type channels;
 
@@ -74,6 +74,7 @@ PokeyInstrument::PokeyInstrument(void) :
     instruments[7] = test_instrument7;
     instruments[8] = test_instrument8;
     instruments[9] = test_instrument9;
+    instruments[10] = test_instrument10;
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
@@ -154,6 +155,9 @@ uint32_t PokeyInstrument::GetAudc(void) {
     }
 
     else if (channels == CHANNELS_2CH_FILTERED) {
+        if (instruments[program].clock == CLOCK_DIV1) {
+            volume2 = volume;       // sawtooth
+        }
         return ((dist | volume2) << 8 ) | dist | volume;
     }
 
@@ -193,6 +197,11 @@ uint32_t PokeyInstrument::GetAudf(void) {
         return tuning.GetPokeyDivider(dist, clock, true, freq);
         break;
     case CHANNELS_2CH_FILTERED: {
+        if (clock == CLOCK_DIV1) {  // sawtooth exception
+            int div = tuning.GetSawtoothDivider(freq);
+            return div | ((div+1) << 8);
+        }
+
         if (instruments[program].filtered_transpose) freq /= 2.0;
 
         int bch = tuning.GetPokeyDivider(dist, clock, false, freq);

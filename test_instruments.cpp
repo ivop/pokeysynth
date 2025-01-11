@@ -324,3 +324,34 @@ struct pokey_instrument test_instrument9 = {
     .filtered_vol2 = 0.5,
     .filtered_transpose = true
 };
+
+struct pokey_instrument test_instrument10 = {
+    .name = "Test Filtered Tone 1.8MHz (Sawtooth)",
+
+    .channels = CHANNELS_2CH_FILTERED,
+
+    .clock = CLOCK_DIV1,
+
+    .volume = { 15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0 },
+
+    .distortion = {
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+        DIST_PURE, DIST_PURE, DIST_PURE, DIST_PURE,
+    },
+
+    .sustain_loop_start = 7,
+    .sustain_loop_end = 7,
+    .release_end =  15,
+
+    .types = { TYPE_NOTE },
+    .values = {},
+    .types_end = 0,
+    .types_loop = 0,
+    .types_speed = 0,
+
+    .filtered_detune = 0.0,
+    .filtered_vol2 = 0.5,
+    .filtered_transpose = true
+};

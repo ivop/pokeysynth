@@ -1,10 +1,27 @@
 #include <math.h>
+#include <map>
+#include <stdio.h>
 #include "Tuning.h"
 
 // Docs: Altirra Reference Manual, RMT Raster/VinsCool code, GPL
 
+static std::map<float,int> *sawtooth;
+
 Tuning::Tuning(void) :
     pokey_frequency(1773447.0) {
+
+    if (!sawtooth) { // init sawtooth
+        sawtooth = new std::map<float,int>;
+        for (int p=0; p<255; p++) {
+            int q = p+1;
+            float G1 = pokey_frequency / (p + 4.0);
+            float G3 = pokey_frequency / (q + 4.0);
+            float Fsaw = G1-G3;
+            float Fcar = G1+G3;
+            if (Fcar < 20000.0 || Fsaw < 250.0 || Fsaw > 20000.0) continue;
+            sawtooth->insert({Fsaw, p});
+        }
+    }
 }
 
 void Tuning::SetPokeyFrequency(float f) {
@@ -111,4 +128,19 @@ uint16_t Tuning::FindClosest(uint16_t div,
 
     // fixme?: calculate difference in cents instead of hertz
     return (dbottom > dtop ? top : bottom) - xcycles;
+}
+
+uint8_t Tuning::GetSawtoothDivider(float f) {
+    auto it = sawtooth->lower_bound(f);
+
+    if (it == sawtooth->begin()) return it->second;
+
+    auto prev = it;
+    prev--;
+
+    // fixme? use cents instead of absolute difference
+    float di = fabs(f - it->first);
+    float dp = fabs(f - prev->first);
+
+    return di > dp ? prev->second : it->second;
 }
