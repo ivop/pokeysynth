@@ -68,6 +68,7 @@ public:
     uint32_t GetAudf(void);
     uint32_t GetAudc(void);
     const char *GetName(void);
+    void SetPitchShift(int value);
 
 private:
     uint8_t program;
@@ -79,4 +80,5 @@ private:
     unsigned int types_idx;
     int types_speed_cnt;
     int pokey_freq;
+    float pitch_shift;
 };

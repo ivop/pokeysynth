@@ -62,7 +62,8 @@ PokeyInstrument::PokeyInstrument(void) :
     voldis_idx(0),
     types_idx(0),
     types_speed_cnt(0),
-    pokey_freq(0) {
+    pokey_freq(0),
+    pitch_shift(1.0) {
 
     instruments[0] = test_instrument0;
     instruments[1] = test_instrument1;
@@ -185,6 +186,8 @@ uint32_t PokeyInstrument::GetAudf(void) {
 
     if (type == TYPE_NOTE_PLUS_CENTS) freq *= pow(2.0, value / 1200.0);
 
+    freq *= pitch_shift;
+
     if (!freq) return 0;
 
     enum channels_type channels = instruments[program].channels;
@@ -240,4 +243,9 @@ uint32_t PokeyInstrument::GetAudf(void) {
 
 const char *PokeyInstrument::GetName(void) {
     return instruments[program].name;
+}
+
+void PokeyInstrument::SetPitchShift(int value) {
+    float cents = (float) (value - 0x2000) / 0x2000 * 200.0;
+    pitch_shift = pow(2.0, cents / 1200.0);
 }
