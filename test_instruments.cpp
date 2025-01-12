@@ -27,7 +27,9 @@ struct pokey_instrument test_instrument0 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 1200.0
 };
 
 struct pokey_instrument test_instrument1 = {
@@ -67,7 +69,9 @@ struct pokey_instrument test_instrument1 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument2 = {
@@ -98,7 +102,9 @@ struct pokey_instrument test_instrument2 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument3 = {
@@ -134,7 +140,9 @@ struct pokey_instrument test_instrument3 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument4 = {
@@ -165,7 +173,9 @@ struct pokey_instrument test_instrument4 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument5 = {
@@ -196,7 +206,9 @@ struct pokey_instrument test_instrument5 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument6 = {
@@ -227,7 +239,9 @@ struct pokey_instrument test_instrument6 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument7 = {
@@ -260,7 +274,9 @@ struct pokey_instrument test_instrument7 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument8 = {
@@ -291,7 +307,9 @@ struct pokey_instrument test_instrument8 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.0,
-    .filtered_transpose = false
+    .filtered_transpose = false,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument9 = {
@@ -322,7 +340,9 @@ struct pokey_instrument test_instrument9 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.5,
-    .filtered_transpose = true
+    .filtered_transpose = true,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument10 = {
@@ -353,7 +373,9 @@ struct pokey_instrument test_instrument10 = {
 
     .filtered_detune = 0.0,
     .filtered_vol2 = 0.5,
-    .filtered_transpose = true
+    .filtered_transpose = true,
+
+    .bender_range = 200.0
 };
 
 struct pokey_instrument test_instrument11 = {
@@ -384,5 +406,7 @@ struct pokey_instrument test_instrument11 = {
 
     .filtered_detune = 10.0,
     .filtered_vol2 = 0.5,
-    .filtered_transpose = true
+    .filtered_transpose = true,
+
+    .bender_range = 200.0
 };

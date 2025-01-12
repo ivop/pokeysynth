@@ -45,6 +45,8 @@ struct pokey_instrument {
     float filtered_detune;              // detune 2nd channel in cents
     float filtered_vol2;                // volume of 2nd channel
     bool  filtered_transpose;           // transpose 1 octave down
+
+    float bender_range;                 // pitch wheel +/- range in cents
 };
 
 struct pokey_instrument instruments[128];
@@ -246,6 +248,6 @@ const char *PokeyInstrument::GetName(void) {
 }
 
 void PokeyInstrument::SetPitchShift(int value) {
-    float cents = (float) (value - 0x2000) / 0x2000 * 200.0;
+    float cents = (float) (value - 0x2000) / 0x2000 * instruments[program].bender_range;
     pitch_shift = pow(2.0, cents / 1200.0);
 }
