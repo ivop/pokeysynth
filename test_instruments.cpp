@@ -29,7 +29,10 @@ struct pokey_instrument test_instrument0 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 1200.0
+    .bender_range = 1200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument1 = {
@@ -71,7 +74,10 @@ struct pokey_instrument test_instrument1 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument2 = {
@@ -104,7 +110,10 @@ struct pokey_instrument test_instrument2 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument3 = {
@@ -142,7 +151,10 @@ struct pokey_instrument test_instrument3 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument4 = {
@@ -175,7 +187,10 @@ struct pokey_instrument test_instrument4 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument5 = {
@@ -208,7 +223,10 @@ struct pokey_instrument test_instrument5 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument6 = {
@@ -241,7 +259,10 @@ struct pokey_instrument test_instrument6 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument7 = {
@@ -276,7 +297,10 @@ struct pokey_instrument test_instrument7 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument8 = {
@@ -309,7 +333,10 @@ struct pokey_instrument test_instrument8 = {
     .filtered_vol2 = 0.0,
     .filtered_transpose = false,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument9 = {
@@ -342,7 +369,10 @@ struct pokey_instrument test_instrument9 = {
     .filtered_vol2 = 0.5,
     .filtered_transpose = true,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument10 = {
@@ -375,7 +405,10 @@ struct pokey_instrument test_instrument10 = {
     .filtered_vol2 = 0.5,
     .filtered_transpose = true,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };
 
 struct pokey_instrument test_instrument11 = {
@@ -408,5 +441,8 @@ struct pokey_instrument test_instrument11 = {
     .filtered_vol2 = 0.5,
     .filtered_transpose = true,
 
-    .bender_range = 200.0
+    .bender_range = 200.0,
+
+    .mod_lfo_maxdepth = 100.0,
+    .mod_lfo_speed = 3.14/4.0
 };

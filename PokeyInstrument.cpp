@@ -47,6 +47,9 @@ struct pokey_instrument {
     bool  filtered_transpose;           // transpose 1 octave down
 
     float bender_range;                 // pitch wheel +/- range in cents
+
+    float mod_lfo_maxdepth;             // modulation wheel maxdepth in cents
+    float mod_lfo_speed;                // angle step in radians per frame
 };
 
 struct pokey_instrument instruments[128];
@@ -90,6 +93,7 @@ void PokeyInstrument::Restart(void) {
     release = silent = false;
     voldis_idx = types_idx = 0;
     types_speed_cnt = instruments[program].types_speed;
+    mod_lfo_angle = 0.0;
 }
 
 void PokeyInstrument::Start(const uint8_t midi_note, const uint8_t velo, const uint8_t pgm) {
@@ -120,6 +124,8 @@ void PokeyInstrument::Next(void) {
             silent = true;
         }
     }
+
+    mod_lfo_angle += instruments[program].mod_lfo_speed;
 }
 
 void PokeyInstrument::Release(void) {
@@ -190,6 +196,11 @@ uint32_t PokeyInstrument::GetAudf(void) {
 
     freq *= pitch_shift;
 
+    float maxdepth = instruments[program].mod_lfo_maxdepth;
+    float modwheel = sin(mod_lfo_angle) * mod_amount * maxdepth;
+
+    freq *= pow(2.0, modwheel / 1200.0);
+
     if (!freq) return 0;
 
     enum channels_type channels = instruments[program].channels;
@@ -250,4 +261,8 @@ const char *PokeyInstrument::GetName(void) {
 void PokeyInstrument::SetPitchShift(int value) {
     float cents = (float) (value - 0x2000) / 0x2000 * instruments[program].bender_range;
     pitch_shift = pow(2.0, cents / 1200.0);
+}
+
+void PokeyInstrument::SetModWheel(int value) {
+    mod_amount = (float) value / 127.0;
 }

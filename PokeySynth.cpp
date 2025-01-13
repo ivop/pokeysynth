@@ -553,7 +553,11 @@ void PokeySynth::run(uint32_t sample_count) {
                 instruments[channel].SetPitchShift((msg[2]<<7) | msg[1]);
                 break;
             case LV2_MIDI_MSG_CONTROLLER:
-//                printf("controller %02x %02x\n", msg[1], msg[2]);
+                if (msg[1] == 0x01) {       // ModWheel
+                    channel = map_midi_to_pokey_channel(channel);
+                    if (channel < 0) continue;
+                    instruments[channel].SetModWheel(msg[2]);
+                }
                 break;
             }
         }
