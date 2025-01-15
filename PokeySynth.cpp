@@ -43,6 +43,11 @@ enum pokey_update_frequency {
     UPDATE_INSTANT          // no SAP-R recording
 };
 
+enum control_arp_enum {
+    CONTROL_ARP_UP = 1,
+    CONTROL_ARP_DOWN = 2
+};
+
 // ****************************************************************************
 
 struct note {
@@ -64,7 +69,7 @@ private:
     float *control_channels;        // react to MIDI chs 0-3,4-7,8-11,12-15
     float *control_mono_arp[4];     // pokey channels modes mono/auto-arp
     float *control_arp_speed[4];    // pokey channels arp speeds
-    float *control_update_freq;     // update frequency 50/100/150/200/instant
+    float *control_update_freq;     // update frequency 50/100/150/200
 
     // features
     LV2_URID_Map *map;
@@ -92,6 +97,9 @@ private:
     float ticks;
     float interval;
     void play(void);
+
+    int auto_arp_count[4];
+    int auto_arp_pos[4];
 };
 
 static float intervals[4];
@@ -111,7 +119,9 @@ PokeySynth::PokeySynth(const double sample_rate,
     mzp(nullptr),
     last_note_times{0},
     ticks(0),
-    interval(0) {
+    interval(0),
+    auto_arp_count{0},
+    auto_arp_pos{0} {
 
     const char *missing = lv2_features_query(
             features,
@@ -207,18 +217,34 @@ int PokeySynth::map_midi_to_pokey_channel(int channel) {
 void PokeySynth::play(void) {
     uint32_t taudf, taudc;
 
-    // Monophonic, check top key that is pressed (if any)
 
     for (int c=0; c<4; c++) {
         if (notes_on[c].empty()) {  // no note, release current note (if any)
             instruments[c].Release();
             continue;
         }
-        auto i = notes_on[c].rbegin();  // pick top note
-        if (last_note_times[c] != i->second.time) {     // different from last
-            instruments[c].Start(i->first, i->second.velocity,
-                                                    i->second.program);
-            last_note_times[c] = i->second.time;
+        if (*control_mono_arp[c] > 0 && notes_on[c].size() > 1) { // auto-arp
+            if (auto_arp_count[c] == 0) {
+                int idx = auto_arp_pos[c];
+                if (idx > (int) notes_on[c].size() - 1) {
+                    auto_arp_pos[c] = idx = 0;
+                }
+                if (*control_mono_arp[c] == CONTROL_ARP_DOWN) {
+                    idx = notes_on[c].size() - idx - 1;
+                }
+                auto i = notes_on[c].begin();
+                while (--idx >= 0) i++;
+                instruments[c].Start(i->first, i->second.velocity,
+                                                        i->second.program);
+            }
+        }
+        else { // Monophonic, check top key that is pressed
+            auto i = notes_on[c].rbegin();  // pick top note
+            if (last_note_times[c] != i->second.time) {     // different from last
+                instruments[c].Start(i->first, i->second.velocity,
+                                                        i->second.program);
+                last_note_times[c] = i->second.time;
+            }
         }
     }
 
@@ -514,6 +540,14 @@ void PokeySynth::play(void) {
 
     for (unsigned int c=0; c<4; c++) {
         instruments[c].Next();
+    }
+
+    for (unsigned int c=0; c<4; c++) {
+        auto_arp_count[c]--;
+        if (auto_arp_count[c] < 0) {
+            auto_arp_count[c] = *control_arp_speed[c];
+            auto_arp_pos[c]++;
+        }
     }
 }
 
