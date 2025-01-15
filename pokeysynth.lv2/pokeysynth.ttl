@@ -124,7 +124,7 @@
             lv2:portProperty lv2:integer ;
             lv2:default 0 ;
             lv2:minimum 0 ;
-            lv2:maximum 7 ;
+            lv2:maximum 15 ;
         ],
 
         [
@@ -136,7 +136,7 @@
             lv2:portProperty lv2:integer ;
             lv2:default 0 ;
             lv2:minimum 0 ;
-            lv2:maximum 7 ;
+            lv2:maximum 15 ;
         ],
 
         [
@@ -148,7 +148,7 @@
             lv2:portProperty lv2:integer ;
             lv2:default 0 ;
             lv2:minimum 0 ;
-            lv2:maximum 7 ;
+            lv2:maximum 15 ;
         ],
 
         [
@@ -160,7 +160,7 @@
             lv2:portProperty lv2:integer ;
             lv2:default 0 ;
             lv2:minimum 0 ;
-            lv2:maximum 7 ;
+            lv2:maximum 15 ;
         ],
 
         [
