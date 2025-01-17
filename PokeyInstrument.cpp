@@ -68,7 +68,8 @@ PokeyInstrument::PokeyInstrument(void) :
     types_idx(0),
     types_speed_cnt(0),
     pokey_freq(0),
-    pitch_shift(1.0) {
+    pitch_shift(1.0),
+    volume_cc(1.0) {
 
     instruments[0] = test_instrument0;
     instruments[1] = test_instrument1;
@@ -152,8 +153,9 @@ uint32_t PokeyInstrument::GetAudc(void) {
     int channels = instruments[program].channels;
 
     int volume  = instruments[program].volume[voldis_idx];
-    volume = round(velocity * volume);
+    volume = round(volume_cc * velocity * (float) volume);
     int volume2 = round(volume * instruments[program].filtered_vol2);
+
     int dist = dist_values[instruments[program].distortion[voldis_idx]];
 
     if (channels == CHANNELS_1CH) {
@@ -265,4 +267,8 @@ void PokeyInstrument::SetPitchShift(int value) {
 
 void PokeyInstrument::SetModWheel(int value) {
     mod_amount = (float) value / 127.0;
+}
+
+void PokeyInstrument::SetVolumeCC(int value) {
+    volume_cc = (float) value / 127.0;
 }

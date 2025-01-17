@@ -591,7 +591,14 @@ void PokeySynth::run(uint32_t sample_count) {
                     channel = map_midi_to_pokey_channel(channel);
                     if (channel < 0) continue;
                     instruments[channel].SetModWheel(msg[2]);
+                } else if (msg[1] == 0x07) {    // Volume CC7
+                    channel = map_midi_to_pokey_channel(channel);
+                    if (channel < 0) continue;
+                    instruments[channel].SetVolumeCC(msg[2]);
                 }
+//                else {
+//                    printf("CC%d\n", msg[1]);
+//                }
                 break;
             }
         }
