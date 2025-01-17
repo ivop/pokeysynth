@@ -2,29 +2,35 @@ CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter
 #CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter
 LIBS=-lm
 SRC=PokeySynth.cpp PokeyInstrument.cpp Tuning.cpp mzpokey.cpp remez.cpp
+SRCUI=PokeySynthUi.cpp
 OBJ=$(SRC:.cpp=.o)
+OBJUI=$(SRCUI:.cpp=.o)
 LV2DIR=pokeysynth.lv2
 POKEYSYNTHSO=$(LV2DIR)/pokeysynth.so
+POKEYSYNTHUISO=$(LV2DIR)/pokeysynth_ui.so
 
-all: $(POKEYSYNTHSO)
+all: $(POKEYSYNTHSO) $(POKEYSYNTHUISO)
 
 $(POKEYSYNTHSO): $(OBJ)
 	$(CXX) -shared -fPIC -s -o $@ $^
 
+$(POKEYSYNTHUISO): $(OBJUI)
+	$(CXX) -shared -fPIC -s -o $@ $^ -lfltk
+
 %.o: %.cpp
 	$(CXX) -c -o $@ $(CXXFLAGS) -fPIC $<
 
-test: $(POKEYSYNTHSO)
+test: $(POKEYSYNTHSO) $(POKEYSYNTHUISO)
 	cp -a $(LV2DIR) ~/.lv2
 
 clean:
-	rm -f *.o *.a *~ */*~ $(POKEYSYNTHSO)
+	rm -f *.o *.a *~ */*~ $(POKEYSYNTHSO) $(POKEYSYNTHUISO)
 
 depend:
 	rm -f .depend
 	+make .depend
 
 .depend:
-	$(CC) -MM $(SRC) > .depend
+	$(CC) -MM $(SRC) $(SRCUI) > .depend
 
 include .depend

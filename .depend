@@ -4,3 +4,4 @@ PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h Tuning.h \
 Tuning.o: Tuning.cpp Tuning.h PokeyInstrument.h
 mzpokey.o: mzpokey.cpp mzpokey.h remez.h
 remez.o: remez.cpp remez.h
+PokeySynthUi.o: PokeySynthUi.cpp
