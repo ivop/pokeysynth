@@ -7,10 +7,20 @@
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Select_Browser.H>
 #include <FL/x.H>
+
+#include "FL/Fl_Exception.h"
+#include "FL/Fl_State.h"
+#include "FL/Fl_Transform.h"
+#include "FL/Fl_Instruction.h"
+#include "FL/Fl_Helper.h"
+#include "FL/Fl_Flow.h"
 
 #include <X11/Xlib.h>
 
@@ -25,6 +35,7 @@ public:
                    const void *buffer);
 
     Fl_Window *window;
+    void *parentWindow;
 
 private:
     LV2UI_Write_Function write_function;
@@ -34,37 +45,79 @@ private:
 PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                            LV2UI_Controller controller,
                            void *parentWindow) :
+    parentWindow(parentWindow),
     write_function(write_function),
     controller(controller) {
 
-    window = new Fl_Window(300,180);
-    Fl_Box *box = new Fl_Box(20,40,260,100,"Hello, World!");
-    box->box(FL_UP_BOX);
-    box->labelsize(24);
-    box->labelfont(FL_BOLD+FL_ITALIC);
-    box->labeltype(FL_SHADOW_LABEL);
+    Fl::visual(FL_DOUBLE|FL_INDEX);
+
+    window = new Fl_Double_Window(640,480);
+    Fl_Flow *flow = new Fl_Flow(0,0, window->w(), window->h());
+    Fl_Box *title = new Fl_Box(0,0,100,48,"PokeySynth");
+    title->box(FL_FLAT_BOX);
+    title->labelsize(40);
+    title->labelfont(FL_BOLD|FL_ITALIC);
+    title->labeltype(FL_SHADOW_LABEL);
+    flow->rule(title, "=<^");
+
+    Fl_Box *copyright = new Fl_Box(0,0,100,16,
+            "Version 0.9.0 -- Copyright © 2025 by Ivo van poorten");
+    copyright->box(FL_FLAT_BOX);
+    copyright->labelsize(14);
+    copyright->labelfont(FL_ITALIC);
+    flow->rule(copyright, "=<^");
+
+    Fl_Box *sep1 = new Fl_Box(0,0,1,1);
+    sep1->color(FL_BLACK);
+    sep1->box(FL_FLAT_BOX);
+    flow->rule(sep1, "=<^");
+
+    Fl_Group *flg = new Fl_Group(0,0,512,24);
+    flg->begin();
+    Fl_Button *rb1 = new Fl_Button(0,0,128,24, "Channel 1-4");
+    rb1->type(FL_RADIO_BUTTON);
+    Fl_Button *rb2 = new Fl_Button(128,0,128,24, "Channel 5-8");
+    rb2->type(FL_RADIO_BUTTON);
+    Fl_Button *rb3 = new Fl_Button(256,0,128,24, "Channel 9-12");
+    rb3->type(FL_RADIO_BUTTON);
+    Fl_Button *rb4 = new Fl_Button(384,0,128,24, "Channel 13-16");
+    rb4->type(FL_RADIO_BUTTON);
+    rb1->setonly();
+    flg->end();
+    flow->rule(flg, "^/<");
+
+    Fl_Box *sep2 = new Fl_Box(0,0,1,1);
+    sep2->color(FL_BLACK);
+    sep2->box(FL_FLAT_BOX);
+    flow->rule(sep2, "=<^");
+
+    window->resizable(flow);
+    window->set_override();
+    window->size_range(640,480);
     window->end();
     window->show();
 
-#ifdef __linux__
-
     Window w = fl_xid(window);
 
-    //printf("debug: window = %llx\n", (unsigned long long ) w);
-    //printf("debug: parentWindow = %llx\n", (unsigned long long) parentWindow);
+    printf("debug: window = %llx\n", (unsigned long long ) w);
+    printf("debug: parentWindow = %llx\n", (unsigned long long) parentWindow);
 
+#ifdef __linux__
+    XSync(fl_display, False);
     Fl::check();
     Fl::flush();
     usleep(100000);
 
     XUnmapWindow(fl_display, w);
+
     XSync(fl_display, False);
+    Fl::check();
+    Fl::flush();
     usleep(100000);
 
     XReparentWindow(fl_display, w, (Window) parentWindow, 0,0);
     XMapWindow(fl_display, w);
     XSync(fl_display, False);
-
 #elif _WIN32
     // windows code goes here, reparent HWND
     #error "WIN32 not implemented yet"
@@ -114,7 +167,6 @@ static LV2UI_Handle instantiate(const struct LV2UI_Descriptor *descriptor,
 
     *widget = reinterpret_cast<LV2UI_Widget>(fl_xid(ui->window));
 
-    printf("debug: widget=%lx\n", fl_xid(ui->window));
     return (LV2UI_Handle) ui;
 }
 
@@ -133,7 +185,7 @@ static void port_event(LV2UI_Handle ui,
 }
 
 static int ui_idle(LV2UI_Handle ui) {
-    //PokeySynthUi *psui = static_cast<PokeySynthUi *>(ui);
+//    PokeySynthUi *psui = static_cast<PokeySynthUi *>(ui);
     Fl::check();
     Fl::flush();
     return 0;
