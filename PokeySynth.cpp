@@ -14,33 +14,18 @@
 #include <string.h>
 
 #include "mzpokey.h"
+#include "PokeySynth.h"
 #include "PokeyInstrument.h"
 
 #include <map>
 
 #define POKEYSYNTH_URI "https://github.com/ivop/pokeysynth"
 
-typedef enum {
-    POKEYSYNTH_MIDI_IN,
-    POKEYSYNTH_AUDIO_OUT,
-    POKEYSYNTH_CONTROL_CHANNELS,
-    POKEYSYNTH_CONTROL_MONO_ARP1,
-    POKEYSYNTH_CONTROL_MONO_ARP2,
-    POKEYSYNTH_CONTROL_MONO_ARP3,
-    POKEYSYNTH_CONTROL_MONO_ARP4,
-    POKEYSYNTH_CONTROL_ARP_SPEED1,
-    POKEYSYNTH_CONTROL_ARP_SPEED2,
-    POKEYSYNTH_CONTROL_ARP_SPEED3,
-    POKEYSYNTH_CONTROL_ARP_SPEED4,
-    POKEYSYNTH_CONTROL_UPDATE_FREQ,
-} PortIndex;
-
 enum pokey_update_frequency {
     UPDATE_50HZ,
     UPDATE_100HZ,
     UPDATE_150HZ,
-    UPDATE_200HZ,
-    UPDATE_INSTANT          // no SAP-R recording
+    UPDATE_200HZ
 };
 
 enum control_arp_enum {
