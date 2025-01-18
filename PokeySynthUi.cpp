@@ -10,6 +10,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Select_Browser.H>
@@ -74,14 +75,10 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     Fl_Group *flg = new Fl_Group(0,0,512,24);
     flg->begin();
-    Fl_Button *rb1 = new Fl_Button(0,0,128,24, "Channel 1-4");
-    rb1->type(FL_RADIO_BUTTON);
-    Fl_Button *rb2 = new Fl_Button(128,0,128,24, "Channel 5-8");
-    rb2->type(FL_RADIO_BUTTON);
-    Fl_Button *rb3 = new Fl_Button(256,0,128,24, "Channel 9-12");
-    rb3->type(FL_RADIO_BUTTON);
-    Fl_Button *rb4 = new Fl_Button(384,0,128,24, "Channel 13-16");
-    rb4->type(FL_RADIO_BUTTON);
+    Fl_Radio_Button *rb1 = new Fl_Radio_Button(0,0,128,24, "Channel 1-4");
+    new Fl_Radio_Button(128,0,128,24, "Channel 5-8");
+    new Fl_Radio_Button(256,0,128,24, "Channel 9-12");
+    new Fl_Radio_Button(384,0,128,24, "Channel 13-16");
     rb1->setonly();
     flg->end();
     flow->rule(flg, "^/<");
@@ -91,8 +88,44 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     sep2->box(FL_FLAT_BOX);
     flow->rule(sep2, "=<^");
 
+    Fl_Group *flg2 = new Fl_Group(0,0,512,96);
+    flg2->begin();
+    new Fl_Box(0,0,128,24, "Voice 1:");
+        Fl_Group *v1g = new Fl_Group(128,0,384,24);
+        v1g->begin();
+            Fl_Radio_Button *v1grb1 = new Fl_Radio_Button(128,0,128,24,"Monophonic");
+            new Fl_Radio_Button(256,0,128,24,"Arpeggio Up");
+            new Fl_Radio_Button(384,0,128,24,"Arpeggio Down");
+            v1grb1->setonly();
+        v1g->end();
+    new Fl_Box(0,24,128,24, "Voice 2:");
+        Fl_Group *v2g = new Fl_Group(128,24,384,24);
+        v2g->begin();
+            Fl_Radio_Button *v2grb1 = new Fl_Radio_Button(128,24,128,24,"Monophonic");
+            new Fl_Radio_Button(256,24,128,24,"Arpeggio Up");
+            new Fl_Radio_Button(384,24,128,24,"Arpeggio Down");
+            v2grb1->setonly();
+        v2g->end();
+    new Fl_Box(0,48,128,24, "Voice 3:");
+        Fl_Group *v3g = new Fl_Group(128,48,384,24);
+        v3g->begin();
+            Fl_Radio_Button *v3grb1 = new Fl_Radio_Button(128,48,128,24,"Monophonic");
+            new Fl_Radio_Button(256,48,128,24,"Arpeggio Up");
+            new Fl_Radio_Button(384,48,128,24,"Arpeggio Down");
+            v3grb1->setonly();
+        v3g->end();
+    new Fl_Box(0,72,128,24, "Voice 4:");
+        Fl_Group *v4g = new Fl_Group(128,72,384,24);
+        v4g->begin();
+            Fl_Radio_Button *v4grb1 = new Fl_Radio_Button(128,72,128,24,"Monophonic");
+            new Fl_Radio_Button(256,72,128,24,"Arpeggio Up");
+            new Fl_Radio_Button(384,72,128,24,"Arpeggio Down");
+            v4grb1->setonly();
+        v4g->end();
+    flg2->end();
+    flow->rule(flg2, "^/<");
+
     window->resizable(flow);
-    window->set_override();
     window->size_range(640,480);
     window->end();
     window->show();
