@@ -55,6 +55,15 @@ private:
     Fl_Radio_Button *updateSpeedRadioButtons[4];
     static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleUpdateSpeedCB(Fl_Widget *w, void *data);
+
+    static void HandleLoadInstruments_redirect(Fl_Widget *w, void *data);
+    void HandleLoadInstruments(Fl_Widget *w, void *data);
+
+    static void HandleSaveInstruments_redirect(Fl_Widget *w, void *data);
+    void HandleSaveInstruments(Fl_Widget *w, void *data);
+
+    static void HandleEditInstruments_redirect(Fl_Widget *w, void *data);
+    void HandleEditInstruments(Fl_Widget *w, void *data);
 };
 
 // ****************************************************************************
@@ -123,6 +132,33 @@ void PokeySynthUi::HandleUpdateSpeedCB(Fl_Widget *w, void *data) {
             sizeof(float), 0, (const void*) &which);
 }
 
+void PokeySynthUi::HandleLoadInstruments_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleLoadInstruments(w,data);
+}
+
+void PokeySynthUi::HandleLoadInstruments(Fl_Widget *w, void *data) {
+    puts("Load Instruments");
+}
+
+void PokeySynthUi::HandleSaveInstruments_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleSaveInstruments(w,data);
+}
+
+void PokeySynthUi::HandleSaveInstruments(Fl_Widget *w, void *data) {
+    puts("Save Instruments");
+}
+
+void PokeySynthUi::HandleEditInstruments_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleEditInstruments(w,data);
+}
+
+void PokeySynthUi::HandleEditInstruments(Fl_Widget *w, void *data) {
+    puts("Edit Instruments");
+    Fl_Window *editor = new Fl_Double_Window(0,0,256,256);
+    editor->set_modal();
+    editor->show();
+}
+
 // ****************************************************************************
 //
 // GUI Helper Classes
@@ -174,7 +210,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     Fl::visual(FL_DOUBLE|FL_INDEX);
 
-    window = new Fl_Double_Window(640,380);
+    window = new Fl_Double_Window(640,444);
 
     Fl_Box *title = new Fl_Box(0,0,window->w(),48, "PokeySynth");
     title->labelfont(FL_BOLD+FL_ITALIC);
@@ -256,8 +292,25 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         }
     }
     group3->end();
+    cury += 24 + 8;
+
+    new Separator(cury, window->w());
+    cury += 8;
+
+    new Label(cury, window->w(), "Instruments / Patches");
     cury += 24;
-//    printf("%d\n", cury);     // 372
+
+    Fl_Button *loadB = new Fl_Button( 64, cury, 160,24, "Load Instruments");
+    Fl_Button *saveB = new Fl_Button(240, cury, 160,24, "Save Instruments");
+    Fl_Button *editB = new Fl_Button(416, cury, 160,24, "Edit Instruments");
+
+    loadB->callback(HandleLoadInstruments_redirect, this);
+    saveB->callback(HandleSaveInstruments_redirect, this);
+    editB->callback(HandleEditInstruments_redirect, this);
+
+    cury += 24 + 8;
+
+    printf("%d\n", cury);
 
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();

@@ -87,3 +87,36 @@ private:
     float mod_amount;                   // 0-127 mapped to 0.0-1.0
     float volume_cc;                    // 0-127 mapped to 0.0-1.0
 };
+
+#define INSTRUMENT_LENGTH 64
+
+struct pokey_instrument {
+    char name[64];
+
+    enum channels_type channels;
+
+    enum clocks clock;
+
+    uint8_t volume[INSTRUMENT_LENGTH];
+    enum distortions distortion[INSTRUMENT_LENGTH];
+    uint8_t sustain_loop_start;
+    uint8_t sustain_loop_end;             // also release_start
+    uint8_t release_end;
+
+    uint8_t types[INSTRUMENT_LENGTH];     // note_types, 0 has no value
+    int32_t values[INSTRUMENT_LENGTH];    // 8/16/32-bit values for types >= 1
+    uint8_t types_end;
+    uint8_t types_loop;
+    uint8_t types_speed;
+
+    float filtered_detune;              // detune 2nd channel in cents
+    float filtered_vol2;                // volume of 2nd channel
+    bool  filtered_transpose;           // transpose 1 octave down
+
+    float bender_range;                 // pitch wheel +/- range in cents
+
+    float mod_lfo_maxdepth;             // modulation wheel maxdepth in cents
+    float mod_lfo_speed;                // angle step in radians per frame
+};
+
+extern struct pokey_instrument instruments[128];
