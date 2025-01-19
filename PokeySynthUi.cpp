@@ -13,6 +13,7 @@
 #include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Hor_Value_Slider.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Select_Browser.H>
 #include <FL/Fl_Table.H>
@@ -34,17 +35,27 @@ public:
 
     Fl_Window *window;
     void *parentWindow;
-    Fl_Radio_Button *listenRadioButtons[4];
 
 private:
     LV2UI_Write_Function write_function;
     LV2UI_Controller controller;
 
-    void HandleListenCB(Fl_Widget *, void *data);
+    Fl_Radio_Button *listenRadioButtons[4];
     static void HandleListenCB_redirect(Fl_Widget *, void *data);
+    void HandleListenCB(Fl_Widget *, void *data);
+
+    Fl_Radio_Button *modesRadioButtons[4][3];
+
+    Fl_Hor_Value_Slider *arpSpeedSliders[4];
+
+    Fl_Radio_Button *updateSpeedRadioButtons[4];
 };
 
 // ****************************************************************************
+
+void PokeySynthUi::HandleListenCB_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleListenCB(w,data);
+}
 
 void PokeySynthUi::HandleListenCB(Fl_Widget *, void *data) {
     PokeySynthUi *ui = (PokeySynthUi *) data;
@@ -59,26 +70,41 @@ void PokeySynthUi::HandleListenCB(Fl_Widget *, void *data) {
             0, (const void*) &which);
 }
 
-void PokeySynthUi::HandleListenCB_redirect(Fl_Widget *w, void *data) {
-    ((PokeySynthUi *) data)->HandleListenCB(w,data);
-}
+// ****************************************************************************
 
 class Label : public Fl_Box {
-    public:
+public:
     Label(int x, int y, int w, int h, const char *label = nullptr)
         : Fl_Box(x,y,w,h,label) {
         box(FL_FLAT_BOX);
         labelsize(14);
     }
+    Label(int y, int w, const char *label = nullptr) : Fl_Box(0,y,w,20,label) {
+        box(FL_FLAT_BOX);
+        labelsize(14);
+        labelfont(FL_BOLD);
+    }
 };
 
 class Separator : public Fl_Box {
-    public:
+public:
     Separator(int y, int w, const char *label=nullptr) : Fl_Box(0,y,w,1,label) {
         color(FL_BLACK);
         box(FL_FLAT_BOX);
     }
 };
+
+class ArpSlider : public Fl_Hor_Value_Slider {
+public:
+    ArpSlider(int x, int y, int w, int h, const char *l=nullptr) :
+        Fl_Hor_Value_Slider(x, y, w, h, l) {
+        bounds(0,31);
+        precision(0);
+        step(1);
+    }
+};
+
+// ****************************************************************************
 
 PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                            LV2UI_Controller controller,
@@ -87,24 +113,32 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     write_function(write_function),
     controller(controller) {
 
+    int cury = 0;
+
     Fl::visual(FL_DOUBLE|FL_INDEX);
 
-    window = new Fl_Double_Window(640,480);
+    window = new Fl_Double_Window(640,380);
 
     Fl_Box *title = new Fl_Box(0,0,window->w(),48, "PokeySynth");
     title->labelfont(FL_BOLD+FL_ITALIC);
     title->labelsize(40);
 
-    Fl_Box *copyright = new Fl_Box(0, title->x()+title->h(),
+    Fl_Box *copyright = new Fl_Box(0, title->y()+title->h(),
                                    window->w(), 20,
                                    "Version 0.9.0 / Copyright © 2025 "
                                    "by Ivo van Poorten");
     copyright->labelfont(FL_ITALIC);
     copyright->labelsize(14);
 
-    new Separator(copyright->y() + copyright->h(), window->w());
+    cury = copyright->y() + copyright->h();
 
-    Fl_Group *group1 = new Fl_Group(64,copyright->y()+copyright->h()+8,512,24);
+    new Separator(cury, window->w());
+
+    new Label(cury+8, window->w(), "MIDI Channels");
+
+    cury += 28;
+
+    Fl_Group *group1 = new Fl_Group(64,cury,512,24);
     group1->begin(); {
         int y = group1->y();
         const char *t[4] = {
@@ -117,14 +151,62 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
     group1->end();
 
+    cury += group1->h() + 8;
+    new Separator(cury, window->w());
+    new Label(cury+8, window->w(), "Pokey Channels");
+
+    cury += 28;
+
+    {
+        char s[40];
+        const char *t[3] = { "Monophonic", "Arpeggiate Up", "Arpeggiate Down" };
+        for (int c=0; c<4; c++) {
+            snprintf(s, 40, "Channel %d:", c+1);
+            new Label(64, cury+c*24, 128, 24, strdup(s));
+            Fl_Group *group = new Fl_Group(192, cury+c*24, 384, 24);
+            group->begin();
+                for (int x=0; x<3; x++) {
+                    modesRadioButtons[c][x] =
+                        new Fl_Radio_Button(192+x*128,cury+c*24,128,24,t[x]);
+                }
+            group->end();
+        }
+    }
+
+    cury += 96 + 8;
+    new Label(cury, window->w(), "Arpeggiate Speed");
+    cury += 20;
+
+    for (int x=0; x<4; x++) {
+        char s[40];
+        snprintf(s, 40, "Channel %d", x+1);
+        arpSpeedSliders[x] = new ArpSlider(64+x*128, cury, 128, 24, strdup(s));
+    }
+
+    cury += 48;
+    new Label(cury, window->w(), "Update Speed");
+    cury += 20;
+
+    Fl_Group *group3 = new Fl_Group(64,cury, 512, 24);
+    group3->begin(); {
+        const char *t[4] = { "50Hz", "100Hz", "150Hz", "200Hz" };
+        for (int x=0; x<4; x++) {
+            updateSpeedRadioButtons[x] =
+                new Fl_Radio_Button(64+x*128, cury, 128, 24, t[x]);
+        }
+    }
+    group3->end();
+    cury += 24;
+//    printf("%d\n", cury);     // 372
+
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();
     window->show();
 
     Window w = fl_xid(window);
 
-    printf("debug: window = %llx\n", (unsigned long long ) w);
-    printf("debug: parentWindow = %llx\n", (unsigned long long) parentWindow);
+//    printf("debug: window = %llx\n", (unsigned long long ) w);
+//    printf("debug: parentWindow = %llx\n", (unsigned long long) parentWindow);
 
 #ifdef __linux__
     XSync(fl_display, False);
@@ -144,7 +226,10 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     XSync(fl_display, False);
 #elif _WIN32
     // windows code goes here, reparent HWND
-    #error "WIN32 not implemented yet"
+    #error "WIN32 support not implemented yet"
+#elif __APPLE__
+    // macOS code goes here, reparent NSView
+    #error "macOS support not implemented yet"
 #else
     #error "Unsupported platform"
 #endif
@@ -161,6 +246,33 @@ void PokeySynthUi::portEvent(uint32_t port_index,
     switch (port_index) {
     case POKEYSYNTH_CONTROL_CHANNELS:
         listenRadioButtons[vi]->setonly();
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP1:
+        modesRadioButtons[0][vi]->setonly();
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP2:
+        modesRadioButtons[1][vi]->setonly();
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP3:
+        modesRadioButtons[2][vi]->setonly();
+        break;
+    case POKEYSYNTH_CONTROL_MONO_ARP4:
+        modesRadioButtons[3][vi]->setonly();
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED1:
+        arpSpeedSliders[0]->value(vi);
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED2:
+        arpSpeedSliders[1]->value(vi);
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED3:
+        arpSpeedSliders[2]->value(vi);
+        break;
+    case POKEYSYNTH_CONTROL_ARP_SPEED4:
+        arpSpeedSliders[3]->value(vi);
+        break;
+    case POKEYSYNTH_CONTROL_UPDATE_FREQ:
+        updateSpeedRadioButtons[vi]->setonly();
         break;
     }
 }
