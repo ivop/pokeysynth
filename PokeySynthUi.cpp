@@ -41,27 +41,34 @@ private:
     LV2UI_Controller controller;
 
     Fl_Radio_Button *listenRadioButtons[4];
-    static void HandleListenCB_redirect(Fl_Widget *, void *data);
-    void HandleListenCB(Fl_Widget *, void *data);
+    static void HandleListenCB_redirect(Fl_Widget *w, void *data);
+    void HandleListenCB(Fl_Widget *w, void *data);
 
     Fl_Radio_Button *modesRadioButtons[4][3];
+    static void HandleModesCB_redirect(Fl_Widget *w, void *data);
+    void HandleModesCB(Fl_Widget *w, void *data);
 
     Fl_Hor_Value_Slider *arpSpeedSliders[4];
+    static void HandleArpSpeedCB_redirect(Fl_Widget *w, void *data);
+    void HandleArpSpeedCB(Fl_Widget *w, void *data);
 
     Fl_Radio_Button *updateSpeedRadioButtons[4];
+    static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
+    void HandleUpdateSpeedCB(Fl_Widget *w, void *data);
 };
 
 // ****************************************************************************
-
+//
+// CALLBACKS - Send data to controller
+//
 void PokeySynthUi::HandleListenCB_redirect(Fl_Widget *w, void *data) {
     ((PokeySynthUi *) data)->HandleListenCB(w,data);
 }
 
 void PokeySynthUi::HandleListenCB(Fl_Widget *, void *data) {
-    PokeySynthUi *ui = (PokeySynthUi *) data;
     float which = 0;
     for (int x=0; x<4; x++) {
-        if(ui->listenRadioButtons[x]->value()) {
+        if(listenRadioButtons[x]->value()) {
             which = x;
             break;
         }
@@ -70,7 +77,55 @@ void PokeySynthUi::HandleListenCB(Fl_Widget *, void *data) {
             0, (const void*) &which);
 }
 
+void PokeySynthUi::HandleModesCB_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleModesCB(w,data);
+}
+
+void PokeySynthUi::HandleModesCB(Fl_Widget *w, void *data) {
+    float which = 0;
+    for (int y=0; y<4; y++) {
+        for (int x=0; x<3; x++) {
+            if (modesRadioButtons[y][x]->value()) {
+                which = x;
+                break;
+            }
+        }
+        write_function(controller, POKEYSYNTH_CONTROL_MONO_ARP1+y,
+                sizeof(float), 0, (const void*) &which);
+    }
+}
+
+void PokeySynthUi::HandleArpSpeedCB_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleArpSpeedCB(w,data);
+}
+
+void PokeySynthUi::HandleArpSpeedCB(Fl_Widget *w, void *data) {
+    for (int x=0; x<4; x++) {
+        float v = arpSpeedSliders[x]->value();
+        write_function(controller, POKEYSYNTH_CONTROL_ARP_SPEED1+x,
+                sizeof(float), 0, (const void*) &v);
+    }
+}
+
+void PokeySynthUi::HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleUpdateSpeedCB(w,data);
+}
+
+void PokeySynthUi::HandleUpdateSpeedCB(Fl_Widget *w, void *data) {
+    float which = 0;
+    for (int x=0; x<4; x++) {
+        if (updateSpeedRadioButtons[x]->value()) {
+            which = x;
+            break;
+        }
+    }
+    write_function(controller, POKEYSYNTH_CONTROL_UPDATE_FREQ,
+            sizeof(float), 0, (const void*) &which);
+}
+
 // ****************************************************************************
+//
+// GUI Helper Classes
 
 class Label : public Fl_Box {
 public:
@@ -105,7 +160,9 @@ public:
 };
 
 // ****************************************************************************
-
+//
+// MAIN GUI
+//
 PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                            LV2UI_Controller controller,
                            void *parentWindow) :
@@ -168,6 +225,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                 for (int x=0; x<3; x++) {
                     modesRadioButtons[c][x] =
                         new Fl_Radio_Button(192+x*128,cury+c*24,128,24,t[x]);
+                    modesRadioButtons[c][x]->callback(HandleModesCB_redirect, this);
                 }
             group->end();
         }
@@ -181,6 +239,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         char s[40];
         snprintf(s, 40, "Channel %d", x+1);
         arpSpeedSliders[x] = new ArpSlider(64+x*128, cury, 128, 24, strdup(s));
+        arpSpeedSliders[x]->callback(HandleArpSpeedCB_redirect, this);
     }
 
     cury += 48;
@@ -193,6 +252,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         for (int x=0; x<4; x++) {
             updateSpeedRadioButtons[x] =
                 new Fl_Radio_Button(64+x*128, cury, 128, 24, t[x]);
+            updateSpeedRadioButtons[x]->callback(HandleUpdateSpeedCB_redirect, this);
         }
     }
     group3->end();
@@ -236,7 +296,9 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 }
 
 // ****************************************************************************
-
+//
+// HANDLE INCOMING PORT EVENTS
+//
 void PokeySynthUi::portEvent(uint32_t port_index,
                              uint32_t buffer_size,
                              uint32_t format,
