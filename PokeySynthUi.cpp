@@ -3,8 +3,10 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lv2/core/lv2.h>
+#include <lv2/ui/ui.h>
+#include <lv2/atom/forge.h>
+#include <lv2/midi/midi.h>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -27,7 +29,7 @@ class PokeySynthUi {
 public:
     PokeySynthUi(LV2UI_Write_Function write_function,
                  LV2UI_Controller controller,
-                 void *parentWindow);
+                 const LV2_Feature *const *features);
     void portEvent(uint32_t port_index,
                    uint32_t buffer_size,
                    uint32_t format,
@@ -39,6 +41,13 @@ public:
 private:
     LV2UI_Write_Function write_function;
     LV2UI_Controller controller;
+    LV2_Atom_Forge forge;
+    LV2_URID_Map *map;
+
+    struct {
+        LV2_URID midi_MidiEvent;
+        LV2_URID instrdata_pointer;
+    } uris;
 
     Fl_Radio_Button *listenRadioButtons[4];
     static void HandleListenCB_redirect(Fl_Widget *w, void *data);
@@ -197,14 +206,26 @@ public:
 
 // ****************************************************************************
 //
-// MAIN GUI
+// MAIN GUI Constructor / Instantiate
 //
 PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                            LV2UI_Controller controller,
-                           void *parentWindow) :
-    parentWindow(parentWindow),
+                           const LV2_Feature *const *features) :
     write_function(write_function),
     controller(controller) {
+
+    for (int i = 0; features[i]; ++i) {
+        if (!strcmp (features[i]->URI, LV2_UI__parent)) {
+            parentWindow = features[i]->data;
+        } else if (!strcmp(features[i]->URI, LV2_URID__map)) {
+            map = (LV2_URID_Map*)features[i]->data;
+      }
+    }
+
+    uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
+    uris.instrdata_pointer = map->map(map->handle, POKEYSYNTH_URI"#instrdata_pointer");
+
+    // setup UI
 
     int cury = 0;
 
@@ -316,6 +337,8 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     window->end();
     window->show();
 
+    if (!parentWindow) return;
+
     Window w = fl_xid(window);
 
 //    printf("debug: window = %llx\n", (unsigned long long ) w);
@@ -389,8 +412,17 @@ void PokeySynthUi::portEvent(uint32_t port_index,
     case POKEYSYNTH_CONTROL_UPDATE_FREQ:
         updateSpeedRadioButtons[vi]->setonly();
         break;
-    case POKEYSYNTH_NOTIFY_GUI:
-        puts("gui: notify received");
+    case POKEYSYNTH_NOTIFY_GUI: {
+            puts("gui: notify received");
+            LV2_Atom_Object *obj = (LV2_Atom_Object *) buffer;
+            const LV2_Atom_Object *body = nullptr;
+
+            lv2_atom_object_get(obj, uris.instrdata_pointer, &body, 0);
+            if (obj) {
+                unsigned long long v = *(unsigned long long *)LV2_ATOM_BODY(body);
+                printf("retrieved: %llx\n", v);
+            }
+        }
         break;
     }
 }
@@ -411,20 +443,9 @@ static LV2UI_Handle instantiate(const struct LV2UI_Descriptor *descriptor,
         return nullptr;
     }
 
-    void* parentWindow = nullptr;
-    for (int i = 0; features[i]; ++i) {
-        if (strcmp (features[i]->URI, LV2_UI__parent) == 0)
-            parentWindow = features[i]->data;
-    }
-
-    if (!parentWindow) {
-        fprintf(stderr, "Required feature LV2_UI__parent not provided\n");
-        return nullptr;
-    }
-
     PokeySynthUi *ui;
     try {
-        ui = new PokeySynthUi(write_function, controller, parentWindow);
+        ui = new PokeySynthUi(write_function, controller, features);
     }
     catch (std::exception& exc) {
         fprintf(stderr, "UI instantiation failed.\n");

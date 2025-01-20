@@ -1,5 +1,6 @@
 #include <lv2/atom/atom.h>
 #include <lv2/atom/util.h>
+#include <lv2/atom/forge.h>
 #include <lv2/core/lv2.h>
 #include <lv2/core/lv2_util.h>
 #include <lv2/log/log.h>
@@ -18,8 +19,6 @@
 #include "PokeyInstrument.h"
 
 #include <map>
-
-#define POKEYSYNTH_URI "https://github.com/ivop/pokeysynth"
 
 enum pokey_update_frequency {
     UPDATE_50HZ,
@@ -55,14 +54,20 @@ private:
     float *control_mono_arp[4];     // pokey channels modes mono/auto-arp
     float *control_arp_speed[4];    // pokey channels arp speeds
     float *control_update_freq;     // update frequency 50/100/150/200
+    LV2_Atom_Sequence *notify;
 
     // features
     LV2_URID_Map *map;
     LV2_Log_Logger logger;
+    LV2_Atom_Forge forge;
+    LV2_Atom_Forge_Frame notify_frame;
 
     struct {
         LV2_URID midi_MidiEvent;
+        LV2_URID instrdata_pointer;
     } uris;
+    
+    bool pointer_sent = false;
 
     int sample_rate;
     int pokey_rate;
@@ -121,6 +126,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     }
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
+    uris.instrdata_pointer = map->map(map->handle, POKEYSYNTH_URI"#instrdata_pointer");
 
     pokey_rate = 1773447;
     for (unsigned int i=0; i<4; i++) {
@@ -137,6 +143,8 @@ PokeySynth::PokeySynth(const double sample_rate,
     for (unsigned int i=0; i<4; i++) {
         intervals[i] = sample_rate / (50.0 + i * 50.0);
     }
+
+    lv2_atom_forge_init(&forge, map);
 }
 
 // ****************************************************************************
@@ -180,7 +188,7 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
         control_update_freq = (float *) data;
         break;
     case POKEYSYNTH_NOTIFY_GUI:
-        printf("connect port %d\n", (PortIndex) port);
+        notify = (LV2_Atom_Sequence *) data;
         break;
     }
 }
@@ -204,7 +212,6 @@ int PokeySynth::map_midi_to_pokey_channel(int channel) {
 
 void PokeySynth::play(void) {
     uint32_t taudf, taudc;
-
 
     for (int c=0; c<4; c++) {
         if (notes_on[c].empty()) {  // no note, release current note (if any)
@@ -543,6 +550,22 @@ void PokeySynth::play(void) {
 // ****************************************************************************
 
 void PokeySynth::run(uint32_t sample_count) {
+    if (!pointer_sent) {
+        lv2_atom_forge_set_buffer(&forge, (uint8_t *) notify, 256);
+        lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
+        lv2_atom_forge_frame_time(&forge, 0);
+
+        LV2_Atom_Forge_Frame frame;
+
+        lv2_atom_forge_object(&forge, &frame, 2, 0);
+        lv2_atom_forge_property_head(&forge, uris.instrdata_pointer, 0);
+        lv2_atom_forge_long(&forge, 0x123456789abLL);
+
+        lv2_atom_forge_pop(&forge, &frame);
+        lv2_atom_forge_pop(&forge, &notify_frame);
+
+        pointer_sent = true;
+    }
 
     // Handle all MIDI events
 

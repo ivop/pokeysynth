@@ -1,5 +1,7 @@
 #pragma once
 
+#define POKEYSYNTH_URI "https://github.com/ivop/pokeysynth"
+
 typedef enum {
     POKEYSYNTH_MIDI_IN,
     POKEYSYNTH_AUDIO_OUT,
