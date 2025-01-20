@@ -4,7 +4,7 @@ PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h Tuning.h \
 Tuning.o: Tuning.cpp Tuning.h PokeyInstrument.h
 mzpokey.o: mzpokey.cpp mzpokey.h remez.h
 remez.o: remez.cpp remez.h
-PokeySynthUi.o: PokeySynthUi.cpp PokeySynth.h PokeyInstrument.h \
+PokeySynthUi.o: PokeySynthUi.cpp fltk.h PokeySynth.h PokeyInstrument.h \
  InstrumentEditor.h UiHelpers.h
-InstrumentEditor.o: InstrumentEditor.cpp PokeyInstrument.h \
- InstrumentEditor.h
+InstrumentEditor.o: InstrumentEditor.cpp fltk.h PokeyInstrument.h \
+ InstrumentEditor.h UiHelpers.h
