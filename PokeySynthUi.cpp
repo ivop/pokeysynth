@@ -25,6 +25,8 @@
 
 #include "PokeySynth.h"
 #include "PokeyInstrument.h"
+#include "InstrumentEditor.h"
+#include "UiHelpers.h"
 
 struct pokey_instrument (*instr)[128] = nullptr;
 
@@ -166,46 +168,10 @@ void PokeySynthUi::HandleEditInstruments_redirect(Fl_Widget *w, void *data) {
 
 void PokeySynthUi::HandleEditInstruments(Fl_Widget *w, void *data) {
     puts("Edit Instruments");
-    Fl_Window *editor = new Fl_Double_Window(0,0,256,256);
+    InstrumentEditor *editor = new InstrumentEditor();
     editor->set_modal();
     editor->show();
 }
-
-// ****************************************************************************
-//
-// GUI Helper Classes
-
-class Label : public Fl_Box {
-public:
-    Label(int x, int y, int w, int h, const char *label = nullptr)
-        : Fl_Box(x,y,w,h,label) {
-        box(FL_FLAT_BOX);
-        labelsize(14);
-    }
-    Label(int y, int w, const char *label = nullptr) : Fl_Box(0,y,w,20,label) {
-        box(FL_FLAT_BOX);
-        labelsize(14);
-        labelfont(FL_BOLD);
-    }
-};
-
-class Separator : public Fl_Box {
-public:
-    Separator(int y, int w, const char *label=nullptr) : Fl_Box(0,y,w,1,label) {
-        color(FL_BLACK);
-        box(FL_FLAT_BOX);
-    }
-};
-
-class ArpSlider : public Fl_Hor_Value_Slider {
-public:
-    ArpSlider(int x, int y, int w, int h, const char *l=nullptr) :
-        Fl_Hor_Value_Slider(x, y, w, h, l) {
-        bounds(0,31);
-        precision(0);
-        step(1);
-    }
-};
 
 // ****************************************************************************
 //
@@ -334,8 +300,6 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     cury += 24 + 8;
 
-    printf("%d\n", cury);
-
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();
     window->show();
@@ -416,7 +380,6 @@ void PokeySynthUi::portEvent(uint32_t port_index,
         updateSpeedRadioButtons[vi]->setonly();
         break;
     case POKEYSYNTH_NOTIFY_GUI: {
-            puts("gui: notify received");
             LV2_Atom_Object *obj = (LV2_Atom_Object *) buffer;
             const LV2_Atom_Object *body = nullptr;
 
@@ -424,7 +387,6 @@ void PokeySynthUi::portEvent(uint32_t port_index,
             if (obj) {
                 unsigned long long v = *(unsigned long long *)LV2_ATOM_BODY(body);
                 instr = (struct pokey_instrument (*)[128]) v;
-                printf("instrument name = %s\n", (*instr)[3].name);
             }
         }
         break;

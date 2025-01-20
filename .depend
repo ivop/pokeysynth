@@ -1,7 +1,11 @@
-PokeySynth.o: PokeySynth.cpp mzpokey.h PokeyInstrument.h
+PokeySynth.o: PokeySynth.cpp mzpokey.h PokeySynth.h PokeyInstrument.h
 PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h Tuning.h \
  test_instruments.cpp
 Tuning.o: Tuning.cpp Tuning.h PokeyInstrument.h
 mzpokey.o: mzpokey.cpp mzpokey.h remez.h
 remez.o: remez.cpp remez.h
-PokeySynthUi.o: PokeySynthUi.cpp
+PokeySynthUi.o: PokeySynthUi.cpp PokeySynth.h PokeyInstrument.h \
+ InstrumentEditor.h UiHelpers.h
+InstrumentEditor.o: InstrumentEditor.cpp PokeyInstrument.h \
+ InstrumentEditor.h
+UiHelpers.o: UiHelpers.cpp
