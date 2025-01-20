@@ -7,6 +7,7 @@ private:
     Fl_Double_Window *win;
     Fl_Spinner *programSpinner;
     Fl_Input *programName;
+    Fl_Radio_Button *channelsButtons[4];
 
     int program;
 

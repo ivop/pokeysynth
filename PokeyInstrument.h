@@ -2,8 +2,6 @@
 #include <stdint.h>
 
 enum channels_type : uint8_t {
-    CHANNELS_NONE,                // silent channel
-
     CHANNELS_1CH,                 // 1 or 2 or 3 or 4, 8-bit divider
                                   //   div114 -> bass notes
                                   //   div28  -> "normal" notes
@@ -26,6 +24,9 @@ enum channels_type : uint8_t {
                                   //   div28  -> not paricualarly useful?
                                   //   div1   -> 16-bit filter sound, full
                                   //             pokey for one voice
+                                  //
+    CHANNELS_NONE,                // silent channel
+
 };
 
 enum audctl_bits {

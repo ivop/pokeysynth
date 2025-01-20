@@ -30,8 +30,14 @@ InstrumentEditor::InstrumentEditor(void) {
 
     cury += 32;
 
-    Fl_Box *temp = new Label(16,cury,128,24,"Channels");
-    temp->align(FL_ALIGN_RIGHT);
+    Fl_Group *channelsGroup = new Fl_Group(64, cury, 768, 24);
+    channelsGroup->begin(); {
+        const char *t[4] = { "8-bit Channel", "2CH Linked", "2CH Filter", "4CH Linked + Filter" };
+        for (int c=0; c<4; c++) {
+            channelsButtons[c] = new Fl_Radio_Button(16+c*192,cury,192,24,t[c]);
+        }
+    };
+    channelsGroup->end();
 
     DrawProgram();
 
@@ -52,5 +58,12 @@ void InstrumentEditor::DrawProgram(void) {
     struct pokey_instrument *p = &(*instr)[program];
 
     programName->value(p->name);
+    for (int c=0; c<4; c++) {
+        if (c == p->channels) {
+            channelsButtons[c]->setonly();
+        } else {
+            channelsButtons[c]->clear();
+        }
+    }
 }
 
