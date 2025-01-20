@@ -2,7 +2,7 @@
 
 class InstrumentEditor {
 public:
-    InstrumentEditor();
+    InstrumentEditor(int width);
 private:
     Fl_Double_Window *win;
     Fl_Spinner *programSpinner;

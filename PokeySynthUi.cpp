@@ -31,6 +31,7 @@ public:
 
     Fl_Window *window;
     void *parentWindow;
+    InstrumentEditor *editor;
 
 private:
     LV2UI_Write_Function write_function;
@@ -58,15 +59,6 @@ private:
     Fl_Radio_Button *updateSpeedRadioButtons[4];
     static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleUpdateSpeedCB(Fl_Widget *w, void *data);
-
-    static void HandleLoadInstruments_redirect(Fl_Widget *w, void *data);
-    void HandleLoadInstruments(Fl_Widget *w, void *data);
-
-    static void HandleSaveInstruments_redirect(Fl_Widget *w, void *data);
-    void HandleSaveInstruments(Fl_Widget *w, void *data);
-
-    static void HandleEditInstruments_redirect(Fl_Widget *w, void *data);
-    void HandleEditInstruments(Fl_Widget *w, void *data);
 };
 
 // ****************************************************************************
@@ -135,31 +127,6 @@ void PokeySynthUi::HandleUpdateSpeedCB(Fl_Widget *w, void *data) {
             sizeof(float), 0, (const void*) &which);
 }
 
-void PokeySynthUi::HandleLoadInstruments_redirect(Fl_Widget *w, void *data) {
-    ((PokeySynthUi *) data)->HandleLoadInstruments(w,data);
-}
-
-void PokeySynthUi::HandleLoadInstruments(Fl_Widget *w, void *data) {
-    puts("Load Instruments");
-}
-
-void PokeySynthUi::HandleSaveInstruments_redirect(Fl_Widget *w, void *data) {
-    ((PokeySynthUi *) data)->HandleSaveInstruments(w,data);
-}
-
-void PokeySynthUi::HandleSaveInstruments(Fl_Widget *w, void *data) {
-    puts("Save Instruments");
-}
-
-void PokeySynthUi::HandleEditInstruments_redirect(Fl_Widget *w, void *data) {
-    ((PokeySynthUi *) data)->HandleEditInstruments(w,data);
-}
-
-void PokeySynthUi::HandleEditInstruments(Fl_Widget *w, void *data) {
-    puts("Edit Instruments");
-    new InstrumentEditor();
-}
-
 // ****************************************************************************
 //
 // MAIN GUI Constructor / Instantiate
@@ -183,18 +150,38 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     // setup UI
 
-    int cury = 0;
+    int cury = 32, curx = 0;
 
     Fl::visual(FL_DOUBLE|FL_INDEX);
 
-    window = new Fl_Double_Window(640,444);
+#define WIDTH 800
+#define HEIGHT 600
 
-    Fl_Box *title = new Fl_Box(0,0,window->w(),48, "PokeySynth");
+    window = new Fl_Double_Window(WIDTH, HEIGHT);
+
+    Fl_Tabs *tabs = new Fl_Tabs(0, 0, WIDTH, HEIGHT);
+
+    Fl_Group *tab2 = new Fl_Group(0, cury, WIDTH, HEIGHT, "Editor");
+    tab2->hide();
+    editor = new InstrumentEditor(window->w()-2);
+    tab2->end();
+
+    Fl_Group *tab3 = new Fl_Group(0, cury, WIDTH, HEIGHT, "Load");
+    new Fl_Button(32,64,128,24,"Hallo");
+    new Fl_Button(256,64,128,24,"Doei");
+    tab3->hide();
+    tab3->end();
+
+    Fl_Group *tab1 = new Fl_Group(0, cury, WIDTH, HEIGHT, "Main");
+
+    cury += 16;
+
+    Fl_Box *title = new Fl_Box(0,cury,window->w()-2,48, "PokeySynth");
     title->labelfont(FL_BOLD+FL_ITALIC);
     title->labelsize(40);
 
     Fl_Box *copyright = new Fl_Box(0, title->y()+title->h(),
-                                   window->w(), 20,
+                                   window->w()-2, 20,
                                    "Version 0.9.0 / Copyright © 2025 "
                                    "by Ivo van Poorten");
     copyright->labelfont(FL_ITALIC);
@@ -202,28 +189,31 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     cury = copyright->y() + copyright->h();
 
-    new Separator(cury, window->w());
+    new Separator(cury, window->w()-2);
 
-    new Label(cury+8, window->w(), "MIDI Channels");
+    new Label(cury+8, window->w()-2, "MIDI Channels");
 
     cury += 28;
 
-    Fl_Group *group1 = new Fl_Group(64,cury,512,24);
+    curx = (WIDTH-512) / 2;
+
+    Fl_Group *group1 = new Fl_Group(curx,cury,512,24);
     group1->begin(); {
         int y = group1->y();
         const char *t[4] = {
             "Channel 1-4", "Channel 5-8", "Channel 9-12", "Channel 13-16"
         };
         for (int x=0; x<4; x++) {
-            listenRadioButtons[x] = new Fl_Radio_Button(64+x*128,y,128,24,t[x]);
+            listenRadioButtons[x] =
+                            new Fl_Radio_Button(curx+x*128, y, 128, 24, t[x]);
             listenRadioButtons[x]->callback(HandleListenCB_redirect, this);
         }
     }
     group1->end();
 
     cury += group1->h() + 8;
-    new Separator(cury, window->w());
-    new Label(cury+8, window->w(), "Pokey Channels");
+    new Separator(cury, window->w()-2);
+    new Label(cury+8, window->w()-2, "Pokey Channels");
 
     cury += 28;
 
@@ -232,60 +222,51 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         const char *t[3] = { "Monophonic", "Arpeggiate Up", "Arpeggiate Down" };
         for (int c=0; c<4; c++) {
             snprintf(s, 40, "Channel %d:", c+1);
-            new Label(64, cury+c*24, 128, 24, strdup(s));
+            new Label(curx, cury+c*24, 128, 24, strdup(s));
             Fl_Group *group = new Fl_Group(192, cury+c*24, 384, 24);
             group->begin();
                 for (int x=0; x<3; x++) {
                     modesRadioButtons[c][x] =
-                        new Fl_Radio_Button(192+x*128,cury+c*24,128,24,t[x]);
-                    modesRadioButtons[c][x]->callback(HandleModesCB_redirect, this);
+                        new Fl_Radio_Button(curx+128+x*128, cury+c*24,
+                                            128, 24, t[x]);
+                    modesRadioButtons[c][x]->callback(HandleModesCB_redirect,
+                                                                        this);
                 }
             group->end();
         }
     }
 
     cury += 96 + 8;
-    new Label(cury, window->w(), "Arpeggiate Speed");
+    new Label(cury, window->w()-2, "Arpeggiate Speed");
     cury += 20;
 
     for (int x=0; x<4; x++) {
         char s[40];
         snprintf(s, 40, "Channel %d", x+1);
-        arpSpeedSliders[x] = new ArpSlider(64+x*128, cury, 128, 24, strdup(s));
+        arpSpeedSliders[x] =
+                        new ArpSlider(curx+x*128, cury, 128, 24, strdup(s));
         arpSpeedSliders[x]->callback(HandleArpSpeedCB_redirect, this);
     }
 
     cury += 48;
-    new Label(cury, window->w(), "Update Speed");
+    new Label(cury, window->w()-2, "Update Speed");
     cury += 20;
 
-    Fl_Group *group3 = new Fl_Group(64,cury, 512, 24);
+    Fl_Group *group3 = new Fl_Group(curx,cury, 512, 24);
     group3->begin(); {
         const char *t[4] = { "50Hz", "100Hz", "150Hz", "200Hz" };
         for (int x=0; x<4; x++) {
             updateSpeedRadioButtons[x] =
-                new Fl_Radio_Button(64+x*128, cury, 128, 24, t[x]);
+                new Fl_Radio_Button(curx+x*128, cury, 128, 24, t[x]);
             updateSpeedRadioButtons[x]->callback(HandleUpdateSpeedCB_redirect, this);
         }
     }
     group3->end();
     cury += 24 + 8;
 
-    new Separator(cury, window->w());
-    cury += 8;
+    tab1->end();
 
-    new Label(cury, window->w(), "Instruments / Patches");
-    cury += 24;
-
-    Fl_Button *loadB = new Fl_Button( 64, cury, 160,24, "Load Instruments");
-    Fl_Button *saveB = new Fl_Button(240, cury, 160,24, "Save Instruments");
-    Fl_Button *editB = new Fl_Button(416, cury, 160,24, "Edit Instruments");
-
-    loadB->callback(HandleLoadInstruments_redirect, this);
-    saveB->callback(HandleSaveInstruments_redirect, this);
-    editB->callback(HandleEditInstruments_redirect, this);
-
-    cury += 24 + 8;
+    tabs->end();
 
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();

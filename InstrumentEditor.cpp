@@ -5,14 +5,13 @@
 
 extern struct pokey_instrument (*instr)[128];
 
-InstrumentEditor::InstrumentEditor(void) {
-    win = new Fl_Double_Window(800,600,"Instrument Editor");
-    int cury = 8;
+InstrumentEditor::InstrumentEditor(int width) {
+    int cury = 32+8;
 
-    new Label(cury,win->w(), "Instrument Editor");
+    new Label(cury,width, "Instrument Editor");
     cury += 20;
 
-    new Separator(cury, win->w());
+    new Separator(cury, width);
     cury += 8;
 
     programSpinner = new Fl_Spinner(16,cury, 64, 24);
@@ -39,10 +38,13 @@ InstrumentEditor::InstrumentEditor(void) {
     };
     channelsGroup->end();
 
-    DrawProgram();
+    for (int y=cury+32; y<550; y+=32) {
+        for (int x=64; x<width-128; x+=128) {
+            new Fl_Button(x,y, 128, 24, "HALLO");
+        }
+    }
 
-    win->set_modal();
-    win->show();
+//    DrawProgram();
 }
 
 void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
