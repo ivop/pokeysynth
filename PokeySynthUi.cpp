@@ -24,6 +24,9 @@
 #include <X11/Xlib.h>
 
 #include "PokeySynth.h"
+#include "PokeyInstrument.h"
+
+struct pokey_instrument (*instr)[128] = nullptr;
 
 class PokeySynthUi {
 public:
@@ -420,7 +423,8 @@ void PokeySynthUi::portEvent(uint32_t port_index,
             lv2_atom_object_get(obj, uris.instrdata_pointer, &body, 0);
             if (obj) {
                 unsigned long long v = *(unsigned long long *)LV2_ATOM_BODY(body);
-                printf("retrieved: %llx\n", v);
+                instr = (struct pokey_instrument (*)[128]) v;
+                printf("instrument name = %s\n", (*instr)[3].name);
             }
         }
         break;

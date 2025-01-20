@@ -559,7 +559,7 @@ void PokeySynth::run(uint32_t sample_count) {
 
         lv2_atom_forge_object(&forge, &frame, 2, 0);
         lv2_atom_forge_property_head(&forge, uris.instrdata_pointer, 0);
-        lv2_atom_forge_long(&forge, 0x123456789abLL);
+        lv2_atom_forge_long(&forge, (unsigned long long) &instrdata);
 
         lv2_atom_forge_pop(&forge, &frame);
         lv2_atom_forge_pop(&forge, &notify_frame);
