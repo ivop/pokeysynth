@@ -21,7 +21,7 @@ enum note_types {
     TYPE_FIXED_DIVIDER      // fixed divider/frequency, e.g. for drum sounds
 };
 
-struct pokey_instrument instruments[128];
+struct pokey_instrument instrdata[128];
 
 #include "test_instruments.cpp"
 
@@ -40,18 +40,18 @@ PokeyInstrument::PokeyInstrument(void) :
     pitch_shift(1.0),
     volume_cc(1.0) {
 
-    instruments[0] = test_instrument0;
-    instruments[1] = test_instrument1;
-    instruments[2] = test_instrument2;
-    instruments[3] = test_instrument3;
-    instruments[4] = test_instrument4;
-    instruments[5] = test_instrument5;
-    instruments[6] = test_instrument6;
-    instruments[7] = test_instrument7;
-    instruments[8] = test_instrument8;
-    instruments[9] = test_instrument9;
-    instruments[10] = test_instrument10;
-    instruments[11] = test_instrument11;
+    instrdata[0] = test_instrument0;
+    instrdata[1] = test_instrument1;
+    instrdata[2] = test_instrument2;
+    instrdata[3] = test_instrument3;
+    instrdata[4] = test_instrument4;
+    instrdata[5] = test_instrument5;
+    instrdata[6] = test_instrument6;
+    instrdata[7] = test_instrument7;
+    instrdata[8] = test_instrument8;
+    instrdata[9] = test_instrument9;
+    instrdata[10] = test_instrument10;
+    instrdata[11] = test_instrument11;
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
@@ -62,7 +62,7 @@ void PokeyInstrument::SetPokeyFrequency(int frequency) {
 void PokeyInstrument::Restart(void) {
     release = silent = false;
     voldis_idx = types_idx = 0;
-    types_speed_cnt = instruments[program].types_speed;
+    types_speed_cnt = instrdata[program].types_speed;
     mod_lfo_angle = 0.0;
 }
 
@@ -78,54 +78,54 @@ void PokeyInstrument::Next(void) {
 
     types_speed_cnt--;
     if (types_speed_cnt < 0) {
-        types_speed_cnt = instruments[program].types_speed;
+        types_speed_cnt = instrdata[program].types_speed;
         types_idx++;
-        if (types_idx > instruments[program].types_end) {
-            types_idx = instruments[program].types_loop;
+        if (types_idx > instrdata[program].types_end) {
+            types_idx = instrdata[program].types_loop;
         }
     }
     voldis_idx++;
     if (!release) {
-        if (voldis_idx > instruments[program].sustain_loop_end) {
-            voldis_idx = instruments[program].sustain_loop_start;
+        if (voldis_idx > instrdata[program].sustain_loop_end) {
+            voldis_idx = instrdata[program].sustain_loop_start;
         }
     } else {
-        if (voldis_idx > instruments[program].release_end) {
+        if (voldis_idx > instrdata[program].release_end) {
             silent = true;
         }
     }
 
-    mod_lfo_angle += instruments[program].mod_lfo_speed;
+    mod_lfo_angle += instrdata[program].mod_lfo_speed;
 }
 
 void PokeyInstrument::Release(void) {
     if (silent || release) return;
     release = true;
-    voldis_idx = instruments[program].sustain_loop_end;
-    if (voldis_idx > instruments[program].release_end) {
+    voldis_idx = instrdata[program].sustain_loop_end;
+    if (voldis_idx > instrdata[program].release_end) {
         silent = true;
     }
 }
 
 enum clocks PokeyInstrument::GetClock(void) {
     if (silent) return CLOCK_NONE;
-    return instruments[program].clock;
+    return instrdata[program].clock;
 }
 
 enum channels_type PokeyInstrument::GetChannel(void) {
     if (silent) return CHANNELS_NONE;
-    return instruments[program].channels;
+    return instrdata[program].channels;
 }
 
 uint32_t PokeyInstrument::GetAudc(void) {
     if (silent) return 0;
-    int channels = instruments[program].channels;
+    int channels = instrdata[program].channels;
 
-    int volume  = instruments[program].volume[voldis_idx];
+    int volume  = instrdata[program].volume[voldis_idx];
     volume = round(volume_cc * velocity * (float) volume);
-    int volume2 = round(volume * instruments[program].filtered_vol2);
+    int volume2 = round(volume * instrdata[program].filtered_vol2);
 
-    int dist = dist_values[instruments[program].distortion[voldis_idx]];
+    int dist = dist_values[instrdata[program].distortion[voldis_idx]];
 
     if (channels == CHANNELS_1CH) {
         return dist | volume;
@@ -136,7 +136,7 @@ uint32_t PokeyInstrument::GetAudc(void) {
     }
 
     else if (channels == CHANNELS_2CH_FILTERED) {
-        if (instruments[program].clock == CLOCK_DIV1) {
+        if (instrdata[program].clock == CLOCK_DIV1) {
             volume2 = volume;       // sawtooth
         }
         return ((dist | volume2) << 8 ) | dist | volume;
@@ -152,8 +152,8 @@ uint32_t PokeyInstrument::GetAudc(void) {
 uint32_t PokeyInstrument::GetAudf(void) {
     if (silent) return 0;
 
-    uint8_t type = instruments[program].types[types_idx];
-    int32_t value = instruments[program].values[types_idx];
+    uint8_t type = instrdata[program].types[types_idx];
+    int32_t value = instrdata[program].values[types_idx];
 
     if (type == TYPE_FIXED_DIVIDER) return value;
 
@@ -167,16 +167,16 @@ uint32_t PokeyInstrument::GetAudf(void) {
 
     freq *= pitch_shift;
 
-    float maxdepth = instruments[program].mod_lfo_maxdepth;
+    float maxdepth = instrdata[program].mod_lfo_maxdepth;
     float modwheel = sin(mod_lfo_angle) * mod_amount * maxdepth;
 
     freq *= pow(2.0, modwheel / 1200.0);
 
     if (!freq) return 0;
 
-    enum channels_type channels = instruments[program].channels;
-    enum distortions   dist     = instruments[program].distortion[voldis_idx];
-    enum clocks        clock    = instruments[program].clock;
+    enum channels_type channels = instrdata[program].channels;
+    enum distortions   dist     = instrdata[program].distortion[voldis_idx];
+    enum clocks        clock    = instrdata[program].clock;
 
     switch (channels) {
     case CHANNELS_1CH:
@@ -191,11 +191,11 @@ uint32_t PokeyInstrument::GetAudf(void) {
             return div | ((div+1) << 8);
         }
 
-        if (instruments[program].filtered_transpose) freq /= 2.0;
+        if (instrdata[program].filtered_transpose) freq /= 2.0;
 
         int bch = tuning.GetPokeyDivider(dist, clock, false, freq);
 
-        freq *= pow(2.0, instruments[program].filtered_detune / 1200.0);
+        freq *= pow(2.0, instrdata[program].filtered_detune / 1200.0);
         int dch = tuning.GetPokeyDivider(dist, clock, false, freq);
 
         if (dch == bch) dch++;
@@ -205,11 +205,11 @@ uint32_t PokeyInstrument::GetAudf(void) {
         break;
         }
     case CHANNELS_4CH_LINKED_FILTERED: {
-        if (instruments[program].filtered_transpose) freq /= 2.0;
+        if (instrdata[program].filtered_transpose) freq /= 2.0;
 
         int bch = tuning.GetPokeyDivider(dist, clock, true, freq);
 
-        freq *= pow(2.0, instruments[program].filtered_detune / 1200.0);
+        freq *= pow(2.0, instrdata[program].filtered_detune / 1200.0);
         int dch = tuning.GetPokeyDivider(dist, clock, true, freq);
 
         if (dch == bch) dch++;
@@ -226,11 +226,11 @@ uint32_t PokeyInstrument::GetAudf(void) {
 }
 
 const char *PokeyInstrument::GetName(void) {
-    return instruments[program].name;
+    return instrdata[program].name;
 }
 
 void PokeyInstrument::SetPitchShift(int value) {
-    float cents = (float) (value - 0x2000) / 0x2000 * instruments[program].bender_range;
+    float cents = (float) (value - 0x2000) / 0x2000 * instrdata[program].bender_range;
     pitch_shift = pow(2.0, cents / 1200.0);
 }
 

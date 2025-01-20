@@ -118,3 +118,5 @@ struct pokey_instrument {
     float mod_lfo_maxdepth;             // modulation wheel maxdepth in cents
     float mod_lfo_speed;                // angle step in radians per frame
 };
+
+extern struct pokey_instrument instrdata[128];
