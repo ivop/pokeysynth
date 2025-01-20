@@ -175,6 +175,44 @@ void PokeySynthUi::HandleEditInstruments(Fl_Widget *w, void *data) {
 
 // ****************************************************************************
 //
+// GUI Helpers
+//
+#if 0
+class Label : public Fl_Box {
+public:
+    Label(int x, int y, int w, int h, const char *label = nullptr)
+        : Fl_Box(x,y,w,h,label) {
+        box(FL_FLAT_BOX);
+        labelsize(14);
+    }
+    Label(int y, int w, const char *label = nullptr) : Fl_Box(0,y,w,20,label) {
+        box(FL_FLAT_BOX);
+        labelsize(14);
+        labelfont(FL_BOLD);
+    }
+};
+
+class Separator : public Fl_Box {
+public:
+    Separator(int y, int w, const char *label=nullptr) : Fl_Box(0,y,w,1,label) {
+        color(FL_BLACK);
+        box(FL_FLAT_BOX);
+    }
+};
+
+class ArpSlider : public Fl_Hor_Value_Slider {
+public:
+    ArpSlider(int x, int y, int w, int h, const char *l=nullptr) :
+        Fl_Hor_Value_Slider(x, y, w, h, l) {
+        bounds(0,31);
+        precision(0);
+        step(1);
+    }
+};
+#endif
+
+// ****************************************************************************
+//
 // MAIN GUI Constructor / Instantiate
 //
 PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,

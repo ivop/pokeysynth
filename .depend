@@ -8,4 +8,3 @@ PokeySynthUi.o: PokeySynthUi.cpp PokeySynth.h PokeyInstrument.h \
  InstrumentEditor.h UiHelpers.h
 InstrumentEditor.o: InstrumentEditor.cpp PokeyInstrument.h \
  InstrumentEditor.h
-UiHelpers.o: UiHelpers.cpp
