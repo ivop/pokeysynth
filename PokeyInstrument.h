@@ -59,7 +59,9 @@ class PokeyInstrument {
 public:
     PokeyInstrument(void);
     void SetPokeyFrequency(int frequency);
-    void Start(const uint8_t midi_note, const uint8_t velocity, const uint8_t program);
+    void Start(const uint8_t midi_note,
+               const uint8_t velocity,
+               const uint8_t program);
     void Restart(void);
     void Next(void);
     void Release(void);
