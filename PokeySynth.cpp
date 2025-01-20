@@ -179,6 +179,9 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
     case POKEYSYNTH_CONTROL_UPDATE_FREQ:
         control_update_freq = (float *) data;
         break;
+    case POKEYSYNTH_NOTIFY_GUI:
+        printf("connect port %d\n", (PortIndex) port);
+        break;
     }
 }
 

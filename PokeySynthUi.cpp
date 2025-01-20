@@ -389,6 +389,9 @@ void PokeySynthUi::portEvent(uint32_t port_index,
     case POKEYSYNTH_CONTROL_UPDATE_FREQ:
         updateSpeedRadioButtons[vi]->setonly();
         break;
+    case POKEYSYNTH_NOTIFY_GUI:
+        puts("gui: notify received");
+        break;
     }
 }
 
