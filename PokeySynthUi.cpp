@@ -168,9 +168,7 @@ void PokeySynthUi::HandleEditInstruments_redirect(Fl_Widget *w, void *data) {
 
 void PokeySynthUi::HandleEditInstruments(Fl_Widget *w, void *data) {
     puts("Edit Instruments");
-    InstrumentEditor *editor = new InstrumentEditor();
-    editor->set_modal();
-    editor->show();
+    new InstrumentEditor();
 }
 
 // ****************************************************************************

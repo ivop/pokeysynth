@@ -13,9 +13,12 @@
 
 #include "PokeyInstrument.h"
 #include "InstrumentEditor.h"
+#include "UiHelpers.h"
 
 extern struct pokey_instrument (*instr)[128];
 
-InstrumentEditor::InstrumentEditor(void) :
-    Fl_Double_Window(800,600,"Instrument Editor") {
+InstrumentEditor::InstrumentEditor(void) {
+    win = new Fl_Double_Window(800,600,"Instrument Editor");
+    win->set_modal();
+    win->show();
 }
