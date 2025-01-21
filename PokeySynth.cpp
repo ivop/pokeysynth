@@ -604,11 +604,20 @@ void PokeySynth::run(uint32_t sample_count) {
 //                }
                 break;
             }
-        } else {
+        } else if (lv2_atom_forge_is_object_type(&forge, ev->body.type)) { 
             puts("received stuff!");
             const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
             if (obj->body.otype == uris.instrument_data) {
                 puts("instr data");
+
+                const LV2_Atom *pgm = nullptr;
+
+                lv2_atom_object_get(obj, uris.program_number, &pgm, 0);
+                if (pgm) {
+                    printf("is int %d\n", pgm->type == uris.atom_Int);
+                    uint32_t number = ((const LV2_Atom_Int *)pgm)->body;
+                    printf("number %08x\n", number);
+                }
             }
         }
     }

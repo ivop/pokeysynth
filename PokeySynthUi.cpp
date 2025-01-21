@@ -185,12 +185,14 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     instrdata[10] = test_instrument10;
     instrdata[11] = test_instrument11;
 
+    lv2_atom_forge_init(&forge, map);
+
     lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
-    lv2_atom_forge_frame_time(&forge, 0);
+
     LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
 
     lv2_atom_forge_key(&forge, uris.program_number);
-    lv2_atom_forge_int(&forge, 3);
+    lv2_atom_forge_int(&forge, 0x12345678);
 
     lv2_atom_forge_pop(&forge, &frame);
 
