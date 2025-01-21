@@ -42,7 +42,7 @@ private:
 
     struct {
         LV2_URID midi_MidiEvent;
-        LV2_URID instrdata_pointer;
+        LV2_URID instrdata;
     } uris;
 
     Fl_Radio_Button *listenRadioButtons[4];
@@ -156,7 +156,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
-    uris.instrdata_pointer = map->map(map->handle, POKEYSYNTH_URI"#instrdata_pointer");
+    uris.instrdata = map->map(map->handle, POKEYSYNTH_URI"#instrdata");
 
     printf("sizeof instrdata = %ld\n", sizeof(instrdata));
 
@@ -355,14 +355,7 @@ void PokeySynthUi::portEvent(uint32_t port_index,
     case POKEYSYNTH_CONTROL_UPDATE_FREQ:
         updateSpeedRadioButtons[vi]->setonly();
         break;
-    case POKEYSYNTH_NOTIFY_GUI: {
-            LV2_Atom_Object *obj = (LV2_Atom_Object *) buffer;
-            const LV2_Atom_Object *body = nullptr;
-
-            lv2_atom_object_get(obj, uris.instrdata_pointer, &body, 0);
-            if (obj) {
-            }
-        }
+    default:
         break;
     }
 }

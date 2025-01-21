@@ -7,6 +7,7 @@
 #include <lv2/log/logger.h>
 #include <lv2/midi/midi.h>
 #include <lv2/urid/urid.h>
+#include <lv2/worker/worker.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -61,14 +62,13 @@ private:
     LV2_Log_Logger logger;
     LV2_Atom_Forge forge;
     LV2_Atom_Forge_Frame notify_frame;
+    LV2_Worker_Schedule *schedule;
 
     struct {
         LV2_URID midi_MidiEvent;
-        LV2_URID instrdata_pointer;
+        LV2_URID instrdata;
     } uris;
     
-    bool pointer_sent = false;
-
     int sample_rate;
     int pokey_rate;
     uint64_t current_timestamp;
@@ -115,8 +115,9 @@ PokeySynth::PokeySynth(const double sample_rate,
 
     const char *missing = lv2_features_query(
             features,
-            LV2_LOG__log,  &logger.log, false,
-            LV2_URID__map, &map,        true,
+            LV2_LOG__log,           &logger.log, false,
+            LV2_URID__map,          &map,        true,
+            LV2_WORKER__schedule,   &schedule,   true,
             NULL);
 
     lv2_log_logger_set_map(&logger, map);
@@ -126,7 +127,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     }
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
-    uris.instrdata_pointer = map->map(map->handle, POKEYSYNTH_URI"#instrdata_pointer");
+    uris.instrdata = map->map(map->handle, POKEYSYNTH_URI"#instrdata");
 
     pokey_rate = 1773447;
     for (unsigned int i=0; i<4; i++) {
@@ -550,22 +551,6 @@ void PokeySynth::play(void) {
 // ****************************************************************************
 
 void PokeySynth::run(uint32_t sample_count) {
-    if (!pointer_sent) {
-        lv2_atom_forge_set_buffer(&forge, (uint8_t *) notify, 256);
-        lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
-        lv2_atom_forge_frame_time(&forge, 0);
-
-        LV2_Atom_Forge_Frame frame;
-
-        lv2_atom_forge_object(&forge, &frame, 2, 0);
-        lv2_atom_forge_property_head(&forge, uris.instrdata_pointer, 0);
-        lv2_atom_forge_long(&forge, (unsigned long long) &instrdata);
-
-        lv2_atom_forge_pop(&forge, &frame);
-        lv2_atom_forge_pop(&forge, &notify_frame);
-
-        pointer_sent = true;
-    }
 
     // Handle all MIDI events
 
@@ -612,7 +597,7 @@ void PokeySynth::run(uint32_t sample_count) {
 //                }
                 break;
             }
-        }
+        }   // else if message from GUI
     }
 
     interval = intervals[(int)*control_update_freq];
@@ -658,7 +643,28 @@ static void cleanup(LV2_Handle instance) {
     free(instance);
 }
 
-static const void *extension_data(const char *URI) {
+static LV2_Worker_Status work(LV2_Handle instance,
+                              LV2_Worker_Respond_Function respond,
+                              LV2_Worker_Respond_Handle handle,
+                              uint32_t size,
+                              const void *data) {
+    puts("inside worker!");
+    return LV2_WORKER_SUCCESS;
+}
+
+static LV2_Worker_Status work_response(LV2_Handle instance,
+                                       uint32_t size,
+                                       const void *data) {
+    return LV2_WORKER_SUCCESS;
+}
+
+static const void *extension_data(const char *uri) {
+    static const LV2_Worker_Interface worker = { work, work_response, NULL };
+
+    if (!strcmp(uri, LV2_WORKER__interface)) {
+        puts("ext data worker interface!");
+        return &worker;
+    }
     return NULL;
 }
 
