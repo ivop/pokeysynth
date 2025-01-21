@@ -55,17 +55,17 @@ private:
     float *control_mono_arp[4];     // pokey channels modes mono/auto-arp
     float *control_arp_speed[4];    // pokey channels arp speeds
     float *control_update_freq;     // update frequency 50/100/150/200
-    LV2_Atom_Sequence *notify;
 
     // features
     LV2_URID_Map *map;
     LV2_Log_Logger logger;
     LV2_Atom_Forge forge;
-    LV2_Atom_Forge_Frame notify_frame;
+    LV2_Atom_Forge_Frame frame;
     LV2_Worker_Schedule *schedule;
 
     struct {
         LV2_URID midi_MidiEvent;
+        LV2_URID atom_eventTransfer;
         LV2_URID instrdata;
     } uris;
     
@@ -127,6 +127,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     }
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
+    uris.atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
     uris.instrdata = map->map(map->handle, POKEYSYNTH_URI"#instrdata");
 
     pokey_rate = 1773447;
@@ -188,8 +189,7 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
     case POKEYSYNTH_CONTROL_UPDATE_FREQ:
         control_update_freq = (float *) data;
         break;
-    case POKEYSYNTH_NOTIFY_GUI:
-        notify = (LV2_Atom_Sequence *) data;
+    default:
         break;
     }
 }
@@ -597,7 +597,11 @@ void PokeySynth::run(uint32_t sample_count) {
 //                }
                 break;
             }
-        }   // else if message from GUI
+        } else {
+            puts("atom received!");
+            printf("body type = %d\n", ev->body.type);
+            printf("instrdata = %d\n", uris.instrdata);
+        }
     }
 
     interval = intervals[(int)*control_update_freq];
@@ -662,7 +666,6 @@ static const void *extension_data(const char *uri) {
     static const LV2_Worker_Interface worker = { work, work_response, NULL };
 
     if (!strcmp(uri, LV2_WORKER__interface)) {
-        puts("ext data worker interface!");
         return &worker;
     }
     return NULL;

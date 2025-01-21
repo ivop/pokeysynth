@@ -38,10 +38,13 @@ private:
     LV2UI_Write_Function write_function;
     LV2UI_Controller controller;
     LV2_Atom_Forge forge;
+    LV2_Atom_Forge_Frame frame;
+    uint8_t atom_buffer[1024*128];
     LV2_URID_Map *map;
 
     struct {
         LV2_URID midi_MidiEvent;
+        LV2_URID atom_eventTransfer;
         LV2_URID instrdata;
     } uris;
 
@@ -156,9 +159,25 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
+    uris.atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
     uris.instrdata = map->map(map->handle, POKEYSYNTH_URI"#instrdata");
 
-    printf("sizeof instrdata = %ld\n", sizeof(instrdata));
+    // Send all instrument data to DSP
+
+    puts("set buffer");
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+    LV2_Atom msg;
+    const char *testbuf = "Hello, world!";
+    msg.type = uris.instrdata;
+    msg.size = strlen(testbuf) + 1;
+    lv2_atom_forge_raw(&forge, &msg, sizeof(LV2_Atom));
+    lv2_atom_forge_raw(&forge, testbuf, strlen(testbuf) + 1);
+    lv2_atom_forge_pad(&forge, sizeof(LV2_Atom) + strlen(testbuf) + 1);
+
+    puts("write function");
+    printf("total size = %ld\n", lv2_atom_total_size(&msg));
+    write_function(controller, 0, lv2_atom_total_size(&msg), uris.atom_eventTransfer, &msg);
+    puts("write done");
 
     // setup UI
 
