@@ -20,10 +20,10 @@ void VolBoxCB(Fl_Widget *w, void *data) {
     ie->DrawProgram();
 }
 
-VolBox::VolBox(int x, int y, const char *l) : Fl_Box(x,y,10,10,l) {
+VolBox::VolBox(int x, int y, const char *l) : Fl_Box(x,y,12,12,l) {
     box(FL_FLAT_BOX);
     color(FL_WHITE);
-    labelsize(10);
+    labelsize(12);
 }
 
 int VolBox::handle(int event) {
@@ -42,9 +42,9 @@ void VolBox::myposition(int x, int y) { xpos = x; ypos = y; }
 
 // ****************************************************************************
 
-HexBox::HexBox(int x, int y, const char *l) : Fl_Box(x,y,10,10,l) {
+HexBox::HexBox(int x, int y, const char *l) : Fl_Box(x,y,12,12,l) {
     box(FL_FLAT_BOX);
-    labelsize(10);
+    labelsize(12);
     labelfont(FL_COURIER);
     normal();
 }
@@ -61,9 +61,25 @@ void HexBox::inverse(void) {
     redraw();
 };
 
-HexLine::HexLine(int x, int y) : Fl_Group(x,y,64*10,10,nullptr) {
-    HexBox *hb = new HexBox(x,y,"F");
+HexLine::HexLine(int x, int y) : Fl_Group(x,y,64*12,12,nullptr) {
+    for (int q=0; q<64; q++) {
+        boxes[q] = new HexBox(q*12+x,y,"F");
+    }
     end();
+}
+
+void HexLine::SetValue(int index, unsigned int v) {
+    if (v > 15) v = 15;
+    const char *hex[16] = {
+        "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"
+    };
+    boxes[index]->label(hex[v]);
+}
+
+void HexLine::SetValues(uint8_t *v) {
+    for (int q=0; q<64; q++) {
+        SetValue(q, v[q]);
+    }
 }
 
 // ****************************************************************************
@@ -118,19 +134,19 @@ InstrumentEditor::InstrumentEditor(int width, int starty) {
     clocksGroup->end();
 
     cury += 24 + 8;
-    curx = (width - 640) / 2;
+    curx = (width - (64*12)) / 2;
 
     for (int p=0; p<64; p++) {
         for (int q=0; q<16; q++) {
-            envelopeBoxes[p][q] = new VolBox(curx+p*10, cury+q*10);
+            envelopeBoxes[p][q] = new VolBox(curx+p*12, cury+q*12);
             envelopeBoxes[p][q]->callback(VolBoxCB, this);
             envelopeBoxes[p][q]->myposition(p, q);
         }
     }
 
-    cury += 16*10;
+    cury += 16*12;
 
-    HexLine *hl = new HexLine(curx, cury);
+    volumeValues = new HexLine(curx, cury);
 }
 
 void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
@@ -169,5 +185,6 @@ void InstrumentEditor::DrawProgram(void) {
             envelopeBoxes[x][15-y]->white();
         }
     }
+    volumeValues->SetValues(&p->volume[0]);
 }
 
