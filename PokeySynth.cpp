@@ -608,15 +608,22 @@ void PokeySynth::run(uint32_t sample_count) {
             puts("received stuff!");
             const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
             if (obj->body.otype == uris.instrument_data) {
-                puts("instr data");
-
+                uint32_t program_number;
                 const LV2_Atom *pgm = nullptr;
+                const LV2_Atom *pgmdata = nullptr;
 
-                lv2_atom_object_get(obj, uris.program_number, &pgm, 0);
-                if (pgm) {
-                    printf("is int %d\n", pgm->type == uris.atom_Int);
-                    uint32_t number = ((const LV2_Atom_Int *)pgm)->body;
-                    printf("number %08x\n", number);
+                lv2_atom_object_get(obj, uris.program_number, &pgm,
+                                         uris.program_data, &pgmdata,
+                                         0);
+                if (pgm && pgmdata) {
+                    program_number = ((const LV2_Atom_Int *)pgm)->body;
+                    printf("program number %d\n", program_number);
+                    const LV2_Atom_Vector *vec = (const LV2_Atom_Vector *)pgmdata;
+                    if (vec->body.child_type == uris.atom_Int) {
+                        puts("vector with ints!");
+                        uint8_t *data = (uint8_t *)(&vec->body + 1);
+                        memcpy(&instrdata[program_number], data, sizeof(struct pokey_instrument));
+                    }
                 }
             }
         }

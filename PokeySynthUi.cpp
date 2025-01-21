@@ -192,7 +192,12 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
 
     lv2_atom_forge_key(&forge, uris.program_number);
-    lv2_atom_forge_int(&forge, 0x12345678);
+    lv2_atom_forge_int(&forge, 3);
+
+    lv2_atom_forge_key(&forge, uris.program_data);
+    // unpacked struct should be padded to at least 32-bits
+    int size = sizeof(struct pokey_instrument) / sizeof(uint32_t);
+    lv2_atom_forge_vector(&forge, sizeof(uint32_t), uris.atom_Int, size, &instrdata[3]);
 
     lv2_atom_forge_pop(&forge, &frame);
 
