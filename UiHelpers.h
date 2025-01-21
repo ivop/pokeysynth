@@ -7,7 +7,7 @@ public:
         box(FL_FLAT_BOX);
         labelsize(14);
     }
-    Label(int y, int w, const char *label = nullptr) : Fl_Box(0,y,w,20,label) {
+    Label(int x, int y, int w, const char *label = nullptr) : Fl_Box(x,y,w,20,label) {
         box(FL_FLAT_BOX);
         labelsize(14);
         labelfont(FL_BOLD);
