@@ -14,16 +14,7 @@ static uint8_t dist_values[] = {
     0x20
 };
 
-enum note_types {
-    TYPE_NOTE,              // frequency depends on MIDI Note
-    TYPE_NOTE_PLUS_NOTE,    // same as note, but with +/- whole semitones
-    TYPE_NOTE_PLUS_CENTS,   // same as note, but offset +/- by x cents
-    TYPE_FIXED_DIVIDER      // fixed divider/frequency, e.g. for drum sounds
-};
-
-struct pokey_instrument instrdata[128];
-
-#include "test_instruments.cpp"
+struct pokey_instrument instrdata[128] = {};
 
 // *************************************************************************
 
@@ -39,19 +30,6 @@ PokeyInstrument::PokeyInstrument(void) :
     pokey_freq(0),
     pitch_shift(1.0),
     volume_cc(1.0) {
-
-    instrdata[0] = test_instrument0;
-    instrdata[1] = test_instrument1;
-    instrdata[2] = test_instrument2;
-    instrdata[3] = test_instrument3;
-    instrdata[4] = test_instrument4;
-    instrdata[5] = test_instrument5;
-    instrdata[6] = test_instrument6;
-    instrdata[7] = test_instrument7;
-    instrdata[8] = test_instrument8;
-    instrdata[9] = test_instrument9;
-    instrdata[10] = test_instrument10;
-    instrdata[11] = test_instrument11;
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {

@@ -56,6 +56,13 @@ enum clocks : uint8_t {
     CLOCK_NONE
 };
 
+enum note_types {
+    TYPE_NOTE,              // frequency depends on MIDI Note
+    TYPE_NOTE_PLUS_NOTE,    // same as note, but with +/- whole semitones
+    TYPE_NOTE_PLUS_CENTS,   // same as note, but offset +/- by x cents
+    TYPE_FIXED_DIVIDER      // fixed divider/frequency, e.g. for drum sounds
+};
+
 class PokeyInstrument {
 public:
     PokeyInstrument(void);

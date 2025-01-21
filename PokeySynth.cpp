@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "mzpokey.h"
 #include "PokeySynth.h"
@@ -66,7 +67,10 @@ private:
     struct {
         LV2_URID midi_MidiEvent;
         LV2_URID atom_eventTransfer;
-        LV2_URID instrdata;
+        LV2_URID atom_Int;
+        LV2_URID instrument_data;
+        LV2_URID program_number;
+        LV2_URID program_data;
     } uris;
     
     int sample_rate;
@@ -128,7 +132,10 @@ PokeySynth::PokeySynth(const double sample_rate,
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
     uris.atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
-    uris.instrdata = map->map(map->handle, POKEYSYNTH_URI"#instrdata");
+    uris.atom_Int = map->map(map->handle, LV2_ATOM__Int);
+    uris.instrument_data = map->map(map->handle, POKEYSYNTH_URI"#instrument_data");
+    uris.program_number = map->map(map->handle, POKEYSYNTH_URI"#program_number");
+    uris.program_data = map->map(map->handle, POKEYSYNTH_URI"#program_data");
 
     pokey_rate = 1773447;
     for (unsigned int i=0; i<4; i++) {
@@ -598,9 +605,11 @@ void PokeySynth::run(uint32_t sample_count) {
                 break;
             }
         } else {
-            puts("atom received!");
-            printf("body type = %d\n", ev->body.type);
-            printf("instrdata = %d\n", uris.instrdata);
+            puts("received stuff!");
+            const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
+            if (obj->body.otype == uris.instrument_data) {
+                puts("instr data");
+            }
         }
     }
 

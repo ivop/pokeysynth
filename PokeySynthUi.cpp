@@ -19,6 +19,8 @@
 
 struct pokey_instrument instrdata[128];
 
+#include "test_instruments.cpp"
+
 class PokeySynthUi {
 public:
     PokeySynthUi(LV2UI_Write_Function write_function,
@@ -44,8 +46,11 @@ private:
 
     struct {
         LV2_URID midi_MidiEvent;
+        LV2_URID atom_Int;
         LV2_URID atom_eventTransfer;
-        LV2_URID instrdata;
+        LV2_URID instrument_data;
+        LV2_URID program_number;
+        LV2_URID program_data;
     } uris;
 
     Fl_Radio_Button *listenRadioButtons[4];
@@ -160,24 +165,37 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
     uris.atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
-    uris.instrdata = map->map(map->handle, POKEYSYNTH_URI"#instrdata");
+    uris.atom_Int = map->map(map->handle, LV2_ATOM__Int);
+    uris.instrument_data = map->map(map->handle, POKEYSYNTH_URI"#instrument_data");
+    uris.program_number = map->map(map->handle, POKEYSYNTH_URI"#program_number");
+    uris.program_data = map->map(map->handle, POKEYSYNTH_URI"#program_data");
 
     // Send all instrument data to DSP
 
-    puts("set buffer");
-    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
-    LV2_Atom msg;
-    const char *testbuf = "Hello, world!";
-    msg.type = uris.instrdata;
-    msg.size = strlen(testbuf) + 1;
-    lv2_atom_forge_raw(&forge, &msg, sizeof(LV2_Atom));
-    lv2_atom_forge_raw(&forge, testbuf, strlen(testbuf) + 1);
-    lv2_atom_forge_pad(&forge, sizeof(LV2_Atom) + strlen(testbuf) + 1);
+    instrdata[0] = test_instrument0;
+    instrdata[1] = test_instrument1;
+    instrdata[2] = test_instrument2;
+    instrdata[3] = test_instrument3;
+    instrdata[4] = test_instrument4;
+    instrdata[5] = test_instrument5;
+    instrdata[6] = test_instrument6;
+    instrdata[7] = test_instrument7;
+    instrdata[8] = test_instrument8;
+    instrdata[9] = test_instrument9;
+    instrdata[10] = test_instrument10;
+    instrdata[11] = test_instrument11;
 
-    puts("write function");
-    printf("total size = %ld\n", lv2_atom_total_size(&msg));
-    write_function(controller, 0, lv2_atom_total_size(&msg), uris.atom_eventTransfer, &msg);
-    puts("write done");
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+    lv2_atom_forge_frame_time(&forge, 0);
+    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
+
+    lv2_atom_forge_key(&forge, uris.program_number);
+    lv2_atom_forge_int(&forge, 3);
+
+    lv2_atom_forge_pop(&forge, &frame);
+
+    printf("sending %ld bytes\n", lv2_atom_total_size(msg));
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 
     // setup UI
 
