@@ -17,7 +17,7 @@
 #include "InstrumentEditor.h"
 #include "UiHelpers.h"
 
-struct pokey_instrument (*instr)[128] = nullptr;
+struct pokey_instrument instrdata[128];
 
 class PokeySynthUi {
 public:
@@ -157,6 +157,8 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     uris.midi_MidiEvent = map->map(map->handle, LV2_MIDI__MidiEvent);
     uris.instrdata_pointer = map->map(map->handle, POKEYSYNTH_URI"#instrdata_pointer");
+
+    printf("sizeof instrdata = %ld\n", sizeof(instrdata));
 
     // setup UI
 
@@ -359,9 +361,6 @@ void PokeySynthUi::portEvent(uint32_t port_index,
 
             lv2_atom_object_get(obj, uris.instrdata_pointer, &body, 0);
             if (obj) {
-                unsigned long long v = *(unsigned long long *)LV2_ATOM_BODY(body);
-                instr = (struct pokey_instrument (*)[128]) v;
-                editor->DrawProgram();
             }
         }
         break;

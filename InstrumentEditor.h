@@ -44,6 +44,10 @@ private:
     Fl_Radio_Button *clocksButtons[3];
     VolBox *envelopeBoxes[64][16];
     HexLine *volumeValues;
+    Fl_Spinner *attackSpin;
+    Fl_Spinner *decaySpin;
+    Fl_Spinner *sustainSpin;
+    Fl_Spinner *releaseSpin;
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
     void HandleProgramSpinner(Fl_Spinner *w, void *data);

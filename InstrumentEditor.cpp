@@ -3,10 +3,11 @@
 #include "InstrumentEditor.h"
 #include "UiHelpers.h"
 
-extern struct pokey_instrument (*instr)[128];
+extern struct pokey_instrument instrdata[128];
 
 void testCB(Fl_Widget *w, void *data) {
     puts("test");
+    char *result = fl_file_chooser("Choose a file", "*.*", NULL);
 }
 
 // ****************************************************************************
@@ -14,7 +15,7 @@ void testCB(Fl_Widget *w, void *data) {
 void VolBoxCB(Fl_Widget *w, void *data) {
     InstrumentEditor *ie = (InstrumentEditor *) data;
     VolBox *vb = (VolBox *) w;
-    struct pokey_instrument *p = &(*instr)[ie->program];
+    struct pokey_instrument *p = &instrdata[ie->program];
 
     p->volume[vb->myxpos()] = 15-vb->myypos();
     ie->DrawProgram();
@@ -85,7 +86,7 @@ void HexLine::SetValues(uint8_t *v) {
 // ****************************************************************************
 
 InstrumentEditor::InstrumentEditor(int width, int starty) {
-    int cury = starty, curx = 0;
+    int cury = starty, curx = 0, savey = 0;
 
     new Label(0, cury,width, "Instrument Editor");
     cury += 20;
@@ -144,8 +145,31 @@ InstrumentEditor::InstrumentEditor(int width, int starty) {
         }
     }
 
-    cury += 16*12;
+    attackSpin = new Fl_Spinner(32, cury, 40, 24, "A");
+    attackSpin->minimum(1);
+    attackSpin->maximum(32);
+    attackSpin->step(1);
+    attackSpin->value(8);
+    decaySpin = new Fl_Spinner(32+64, cury, 40, 24, "D");
+    decaySpin->minimum(1);
+    decaySpin->maximum(32);
+    decaySpin->step(1);
+    decaySpin->value(8);
+    sustainSpin = new Fl_Spinner(32, cury+32, 40, 24, "S");
+    sustainSpin->minimum(0);
+    sustainSpin->maximum(15);
+    sustainSpin->step(1);
+    sustainSpin->value(7);
+    releaseSpin= new Fl_Spinner(32+64, cury+32, 40, 24, "R");
+    releaseSpin->minimum(1);
+    releaseSpin->maximum(32);
+    releaseSpin->step(1);
+    releaseSpin->value(8);
 
+    Fl_Button *adsrButton = new Fl_Button(16, cury+64, 128, 24, "ADSR");
+    adsrButton->callback(testCB, this);
+
+    cury += 16*12;
     volumeValues = new HexLine(curx, cury);
 }
 
@@ -159,7 +183,7 @@ void InstrumentEditor::HandleProgramSpinner(Fl_Spinner *w, void *data) {
 }
 
 void InstrumentEditor::DrawProgram(void) {
-    struct pokey_instrument *p = &(*instr)[program];
+    struct pokey_instrument *p = &instrdata[program];
 
     programName->value(p->name);
     for (int c=0; c<4; c++) {
