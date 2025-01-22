@@ -37,11 +37,21 @@ public:
     InstrumentEditor(int width,
                      int starty,
                      LV2UI_Write_Function write_function,
-                     LV2UI_Controller controller);
+                     LV2UI_Controller controller,
+                     LV2_URID_Map *map);
     void DrawProgram(void);
     unsigned int program;
 
+    void SendInstrumentToDSP(unsigned int num);
+    void RequestInstrumentFromDSP(unsigned int num);
+
 private:
+    LV2UI_Write_Function write_function;
+    LV2UI_Controller controller;
+    LV2_Atom_Forge forge;
+    LV2_Atom_Forge_Frame frame;
+    uint8_t atom_buffer[1024*128];
+
     Fl_Double_Window *win;
     Fl_Spinner *programSpinner;
     Fl_Input *programName;

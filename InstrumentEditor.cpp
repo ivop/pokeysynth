@@ -4,6 +4,7 @@
 
 #include "lv2.h"
 #include "fltk.h"
+#include "uris.h"
 #include "PokeyInstrument.h"
 #include "InstrumentEditor.h"
 #include "UiHelpers.h"
@@ -13,6 +14,53 @@ extern struct pokey_instrument instrdata[128];
 void testCB(Fl_Widget *w, void *data) {
     puts("test");
     char *result = fl_file_chooser("Choose a file", "*.*", NULL);
+}
+
+// ****************************************************************************
+
+void InstrumentEditor::SendInstrumentToDSP(unsigned int num) {
+    if (num > 127) return;
+
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+
+    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
+                                                       &frame,
+                                                       0,
+                                                       uris.instrument_data);
+
+    lv2_atom_forge_key(&forge, uris.program_number);
+    lv2_atom_forge_int(&forge, num);
+
+    lv2_atom_forge_key(&forge, uris.program_data);
+    // unpacked struct should be padded to at least 32-bits
+    int size = sizeof(struct pokey_instrument) / sizeof(uint32_t);
+    lv2_atom_forge_vector(&forge,
+                          sizeof(uint32_t),
+                          uris.atom_Int,
+                          size,
+                          &instrdata[num]);
+
+    lv2_atom_forge_pop(&forge, &frame);
+
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+}
+
+void InstrumentEditor::RequestInstrumentFromDSP(unsigned int num) {
+    if (num > 127) return;
+
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+
+    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
+                                                       &frame,
+                                                       0,
+                                                       uris.request_program);
+
+    lv2_atom_forge_key(&forge, uris.program_number);
+    lv2_atom_forge_int(&forge, num);
+
+    lv2_atom_forge_pop(&forge, &frame);
+
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
 // ****************************************************************************
@@ -93,8 +141,13 @@ void HexLine::SetValues(uint8_t *v) {
 InstrumentEditor::InstrumentEditor(int width,
                                    int starty,
                                    LV2UI_Write_Function write_function,
-                                   LV2UI_Controller controller) {
+                                   LV2UI_Controller controller,
+                                   LV2_URID_Map *map) {
     int cury = starty, curx = 0, savey = 0;
+
+    this->write_function = write_function;
+    this->controller = controller;
+    lv2_atom_forge_init(&forge, map);
 
     new Label(0, cury,width, "Instrument Editor");
     cury += 20;

@@ -54,57 +54,7 @@ private:
     Fl_Radio_Button *updateSpeedRadioButtons[4];
     static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleUpdateSpeedCB(Fl_Widget *w, void *data);
-
-    void SendInstrumentToDSP(unsigned int num);
-    void RequestInstrumentFromDSP(unsigned int num);
 };
-
-// ****************************************************************************
-
-void PokeySynthUi::SendInstrumentToDSP(unsigned int num) {
-    if (num > 127) return;
-
-    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
-
-    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
-                                                       &frame,
-                                                       0,
-                                                       uris.instrument_data);
-
-    lv2_atom_forge_key(&forge, uris.program_number);
-    lv2_atom_forge_int(&forge, num);
-
-    lv2_atom_forge_key(&forge, uris.program_data);
-    // unpacked struct should be padded to at least 32-bits
-    int size = sizeof(struct pokey_instrument) / sizeof(uint32_t);
-    lv2_atom_forge_vector(&forge,
-                          sizeof(uint32_t),
-                          uris.atom_Int,
-                          size,
-                          &instrdata[num]);
-
-    lv2_atom_forge_pop(&forge, &frame);
-
-    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
-}
-
-void PokeySynthUi::RequestInstrumentFromDSP(unsigned int num) {
-    if (num > 127) return;
-
-    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
-
-    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
-                                                       &frame,
-                                                       0,
-                                                       uris.request_program);
-
-    lv2_atom_forge_key(&forge, uris.program_number);
-    lv2_atom_forge_int(&forge, num);
-
-    lv2_atom_forge_pop(&forge, &frame);
-
-    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
-}
 
 // ****************************************************************************
 //
@@ -202,21 +152,6 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     init_uris(map);
 
     lv2_atom_forge_init(&forge, map);
-
-#if 0
-    // Send all instrument data to DSP
-    for (int i=0; i<128; i++) {
-        SendInstrumentToDSP(i);
-        usleep(1000);   // do not send too fast
-    }
-#endif
-
-#if 0
-    for (int i=0; i<128; i++) {
-        RequestInstrumentFromDSP(i);
-        usleep(50000);  // jalv has enough time with 3ms, carla needs 50+
-    }
-#endif
 
     // setup UI
 
@@ -332,11 +267,26 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     new Separator(cury, window->w());
     cury += 4;
 
-    editor = new InstrumentEditor(window->w(), cury, write_function, controller);
+    editor = new InstrumentEditor(window->w(), cury, write_function, controller, map);
 
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();
     window->show();
+
+#if 0
+    // Send all instrument data to DSP
+    for (int i=0; i<128; i++) {
+        editor->SendInstrumentToDSP(i);
+        usleep(1000);   // do not send too fast
+    }
+#endif
+
+#if 0
+    for (int i=0; i<128; i++) {
+        editor->RequestInstrumentFromDSP(i);
+        usleep(50000);  // jalv has enough time with 3ms, carla needs 50+
+    }
+#endif
 
     if (!parentWindow) return;
 
