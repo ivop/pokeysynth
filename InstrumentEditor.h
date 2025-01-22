@@ -1,3 +1,5 @@
+#pragma once
+#include "lv2.h"
 #include "fltk.h"
 
 class VolBox : public Fl_Box {
@@ -32,7 +34,10 @@ private:
 
 class InstrumentEditor {
 public:
-    InstrumentEditor(int width, int starty);
+    InstrumentEditor(int width,
+                     int starty,
+                     LV2UI_Write_Function write_function,
+                     LV2UI_Controller controller);
     void DrawProgram(void);
     unsigned int program;
 
@@ -51,4 +56,7 @@ private:
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
     void HandleProgramSpinner(Fl_Spinner *w, void *data);
+
+    static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
+    void RequestAllButtonCB(Fl_Widget *w, void *data);
 };

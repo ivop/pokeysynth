@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "lv2.h"
 #include "fltk.h"
 #include "PokeyInstrument.h"
 #include "InstrumentEditor.h"
@@ -85,7 +90,10 @@ void HexLine::SetValues(uint8_t *v) {
 
 // ****************************************************************************
 
-InstrumentEditor::InstrumentEditor(int width, int starty) {
+InstrumentEditor::InstrumentEditor(int width,
+                                   int starty,
+                                   LV2UI_Write_Function write_function,
+                                   LV2UI_Controller controller) {
     int cury = starty, curx = 0, savey = 0;
 
     new Label(0, cury,width, "Instrument Editor");
@@ -171,6 +179,31 @@ InstrumentEditor::InstrumentEditor(int width, int starty) {
 
     cury += 16*12;
     volumeValues = new HexLine(curx, cury);
+    cury += 20;
+
+    curx = 16;
+    Fl_Progress *progressBar = new Fl_Progress(curx, cury, 128, 24);
+    progressBar->minimum(0);
+    progressBar->maximum(127);
+    progressBar->value(99);
+    progressBar->color2(fl_rgb_color(0x30,0x60,0x90));
+    curx += progressBar->w() + 8;
+
+    const int butwidth = 144;
+    Fl_Button *tb;
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Request All");
+    tb->callback(RequestAllButtonCB_redirect, this);
+    curx += butwidth + 8;
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Send All");
+    curx += butwidth + 8;
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Load Instrument");
+    curx += butwidth + 8;
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Save Instrument");
+    curx += butwidth + 8;
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Load Bank");
+    curx += butwidth + 8;
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Save Bank");
+    curx += butwidth + 8;
 
     DrawProgram();
 }
@@ -182,6 +215,14 @@ void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
 void InstrumentEditor::HandleProgramSpinner(Fl_Spinner *w, void *data) {
     program = w->value();
     DrawProgram();
+}
+
+void InstrumentEditor::RequestAllButtonCB_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->RequestAllButtonCB(w, data);
+}
+
+void InstrumentEditor::RequestAllButtonCB(Fl_Widget *w, void *data) {
+    puts("request all button");
 }
 
 void InstrumentEditor::DrawProgram(void) {

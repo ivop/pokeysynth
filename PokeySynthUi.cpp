@@ -231,7 +231,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 #endif
 
-#if 1
+#if 0
     for (int i=0; i<128; i++) {
         RequestInstrumentFromDSP(i);
         usleep(50000);  // jalv has enough time with 3ms, carla needs 50+
@@ -352,7 +352,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     new Separator(cury, window->w());
     cury += 4;
 
-    editor = new InstrumentEditor(window->w(), cury);
+    editor = new InstrumentEditor(window->w(), cury, write_function, controller);
 
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();
