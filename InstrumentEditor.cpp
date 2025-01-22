@@ -73,6 +73,7 @@ void VolBoxCB(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[ie->program];
 
     p->volume[vb->myxpos()] = 15-vb->myypos();
+    ie->SendInstrumentToDSP(ie->program);
     ie->DrawProgram();
 }
 
@@ -245,7 +246,7 @@ InstrumentEditor::InstrumentEditor(int width,
     progressBar = new Fl_Progress(curx, cury, 128, 24);
     progressBar->minimum(0);
     progressBar->maximum(127);
-    progressBar->value(99);
+    progressBar->value(0);
     progressBar->color2(fl_rgb_color(0x30,0x60,0x90));
     curx += progressBar->w() + 8;
 
