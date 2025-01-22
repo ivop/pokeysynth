@@ -47,6 +47,10 @@ public:
     PokeySynth(const double sample_rate, const char *bundle_path, const LV2_Feature *const *features);
     void connect_port(const uint32_t port, void *data);
     void run(const uint32_t sample_count);
+    LV2_Worker_Status work(LV2_Worker_Respond_Function respond,
+                           LV2_Worker_Respond_Handle handle,
+                           uint32_t size,
+                           const void *data);
 
 private:
     // ports
@@ -605,27 +609,9 @@ void PokeySynth::run(uint32_t sample_count) {
                 break;
             }
         } else if (lv2_atom_forge_is_object_type(&forge, ev->body.type)) { 
-            puts("received stuff!");
-            const LV2_Atom_Object* obj = (const LV2_Atom_Object*)&ev->body;
-            if (obj->body.otype == uris.instrument_data) {
-                uint32_t program_number;
-                const LV2_Atom *pgm = nullptr;
-                const LV2_Atom *pgmdata = nullptr;
-
-                lv2_atom_object_get(obj, uris.program_number, &pgm,
-                                         uris.program_data, &pgmdata,
-                                         0);
-                if (pgm && pgmdata) {
-                    program_number = ((const LV2_Atom_Int *)pgm)->body;
-                    printf("program number %d\n", program_number);
-                    const LV2_Atom_Vector *vec = (const LV2_Atom_Vector *)pgmdata;
-                    if (vec->body.child_type == uris.atom_Int) {
-                        puts("vector with ints!");
-                        uint8_t *data = (uint8_t *)(&vec->body + 1);
-                        memcpy(&instrdata[program_number], data, sizeof(struct pokey_instrument));
-                    }
-                }
-            }
+            schedule->schedule_work(schedule->handle,
+                                    lv2_atom_total_size(&ev->body),
+                                    &ev->body);
         }
     }
 
@@ -638,6 +624,36 @@ void PokeySynth::run(uint32_t sample_count) {
     mzpokey_process_float(mzp, audio_out, sample_count);
     current_timestamp += sample_count;
     ticks += sample_count;
+}
+
+// ****************************************************************************
+
+LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
+                                   LV2_Worker_Respond_Handle handle,
+                                   uint32_t size,
+                                   const void *data) {
+
+    const LV2_Atom_Object* obj = (const LV2_Atom_Object*) data;
+    if (obj->body.otype == uris.instrument_data) {
+        uint32_t program_number;
+        const LV2_Atom *pgm = nullptr;
+        const LV2_Atom *pgmdata = nullptr;
+
+        lv2_atom_object_get(obj, uris.program_number, &pgm,
+                                 uris.program_data, &pgmdata,
+                                 0);
+        if (pgm && pgmdata) {
+            program_number = ((const LV2_Atom_Int *)pgm)->body;
+            const LV2_Atom_Vector *vec = (const LV2_Atom_Vector *)pgmdata;
+            if (vec->body.child_type == uris.atom_Int) {
+                printf("received program number %d\n", program_number);
+                uint8_t *data = (uint8_t *)(&vec->body + 1);
+                memcpy(&instrdata[program_number], data, sizeof(struct pokey_instrument));
+            }
+        }
+    }
+
+    return LV2_WORKER_SUCCESS;
 }
 
 // ****************************************************************************
@@ -677,8 +693,8 @@ static LV2_Worker_Status work(LV2_Handle instance,
                               LV2_Worker_Respond_Handle handle,
                               uint32_t size,
                               const void *data) {
-    puts("inside worker!");
-    return LV2_WORKER_SUCCESS;
+    PokeySynth *ps = (PokeySynth *) instance;
+    return ps->work(respond, handle, size, data);
 }
 
 static LV2_Worker_Status work_response(LV2_Handle instance,

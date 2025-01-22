@@ -171,6 +171,8 @@ InstrumentEditor::InstrumentEditor(int width, int starty) {
 
     cury += 16*12;
     volumeValues = new HexLine(curx, cury);
+
+    DrawProgram();
 }
 
 void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
