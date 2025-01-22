@@ -148,6 +148,7 @@ InstrumentEditor::InstrumentEditor(int width,
     this->write_function = write_function;
     this->controller = controller;
     lv2_atom_forge_init(&forge, map);
+    sending_or_receiving = false;
 
     new Label(0, cury,width, "Instrument Editor");
     cury += 20;
@@ -235,7 +236,7 @@ InstrumentEditor::InstrumentEditor(int width,
     cury += 20;
 
     curx = 16;
-    Fl_Progress *progressBar = new Fl_Progress(curx, cury, 128, 24);
+    progressBar = new Fl_Progress(curx, cury, 128, 24);
     progressBar->minimum(0);
     progressBar->maximum(127);
     progressBar->value(99);
@@ -276,6 +277,18 @@ void InstrumentEditor::RequestAllButtonCB_redirect(Fl_Widget *w, void *data) {
 
 void InstrumentEditor::RequestAllButtonCB(Fl_Widget *w, void *data) {
     puts("request all button");
+    if (sending_or_receiving) return;
+
+    sending_or_receiving = true;
+
+    for (int i=0; i<128; i++) {
+        progressBar->value(i);
+        RequestInstrumentFromDSP(i);
+        Fl::check();
+        usleep(50000);
+    }
+
+    sending_or_receiving = false;
 }
 
 void InstrumentEditor::DrawProgram(void) {

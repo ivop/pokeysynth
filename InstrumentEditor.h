@@ -52,17 +52,23 @@ private:
     LV2_Atom_Forge_Frame frame;
     uint8_t atom_buffer[1024*128];
 
+    bool sending_or_receiving;
+
     Fl_Double_Window *win;
+
     Fl_Spinner *programSpinner;
     Fl_Input *programName;
     Fl_Radio_Button *channelsButtons[4];
     Fl_Radio_Button *clocksButtons[3];
+
     VolBox *envelopeBoxes[64][16];
     HexLine *volumeValues;
     Fl_Spinner *attackSpin;
     Fl_Spinner *decaySpin;
     Fl_Spinner *sustainSpin;
     Fl_Spinner *releaseSpin;
+
+    Fl_Progress *progressBar;
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
     void HandleProgramSpinner(Fl_Spinner *w, void *data);
