@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "lv2.h"
+#include "uris.h"
 #include "fltk.h"
 
 #include <X11/Xlib.h>
@@ -37,16 +38,6 @@ private:
     LV2_Atom_Forge_Frame frame;
     uint8_t atom_buffer[1024*128];
     LV2_URID_Map *map;
-
-    struct {
-        LV2_URID midi_MidiEvent;
-        LV2_URID atom_Int;
-        LV2_URID atom_eventTransfer;
-        LV2_URID instrument_data;
-        LV2_URID program_number;
-        LV2_URID program_data;
-        LV2_URID request_program;
-    } uris;
 
     Fl_Radio_Button *listenRadioButtons[4];
     static void HandleListenCB_redirect(Fl_Widget *w, void *data);
@@ -208,19 +199,8 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
       }
     }
 
-    uris.midi_MidiEvent     = map->map(map->handle, LV2_MIDI__MidiEvent);
-    uris.atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
-    uris.atom_Int           = map->map(map->handle, LV2_ATOM__Int);
+    init_uris(map);
 
-    uris.instrument_data    = map->map(map->handle,
-                                       POKEYSYNTH_URI"#instrument_data");
-    uris.program_number     = map->map(map->handle,
-                                       POKEYSYNTH_URI"#program_number");
-    uris.program_data       = map->map(map->handle,
-                                       POKEYSYNTH_URI"#program_data");
-    uris.request_program    = map->map(map->handle,
-                                       POKEYSYNTH_URI"#request_program");
-    
     lv2_atom_forge_init(&forge, map);
 
 #if 0

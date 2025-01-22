@@ -6,6 +6,7 @@
 #include <ctype.h>
 
 #include "lv2.h"
+#include "uris.h"
 #include "mzpokey.h"
 #include "PokeySynth.h"
 #include "PokeyInstrument.h"
@@ -60,16 +61,6 @@ private:
     LV2_Atom_Forge_Frame notify_frame;
     LV2_Worker_Schedule *schedule;
 
-    struct {
-        LV2_URID midi_MidiEvent;
-        LV2_URID atom_eventTransfer;
-        LV2_URID atom_Int;
-        LV2_URID instrument_data;
-        LV2_URID program_number;
-        LV2_URID program_data;
-        LV2_URID request_program;
-    } uris;
-    
     int sample_rate;
     int pokey_rate;
     uint64_t current_timestamp;
@@ -127,18 +118,7 @@ PokeySynth::PokeySynth(const double sample_rate,
         throw;
     }
 
-    uris.midi_MidiEvent     = map->map(map->handle, LV2_MIDI__MidiEvent);
-    uris.atom_eventTransfer = map->map(map->handle, LV2_ATOM__eventTransfer);
-    uris.atom_Int           = map->map(map->handle, LV2_ATOM__Int);
-
-    uris.instrument_data    = map->map(map->handle,
-                                       POKEYSYNTH_URI"#instrument_data");
-    uris.program_number     = map->map(map->handle,
-                                       POKEYSYNTH_URI"#program_number");
-    uris.program_data       = map->map(map->handle,
-                                       POKEYSYNTH_URI"#program_data");
-    uris.request_program    = map->map(map->handle,
-                                       POKEYSYNTH_URI"#request_program");
+    init_uris(map);
 
     pokey_rate = 1773447;
     for (unsigned int i=0; i<4; i++) {
