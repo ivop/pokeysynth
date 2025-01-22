@@ -180,7 +180,6 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
         control_update_freq = (float *) data;
         break;
     case POKEYSYNTH_NOTIFY_GUI:
-        puts("connect DSP to GUI notify");
         notify = (const LV2_Atom_Sequence *) data;
         break;
     }
@@ -583,6 +582,10 @@ void PokeySynth::run(uint32_t sample_count) {
                     channel = map_midi_to_pokey_channel(channel);
                     if (channel < 0) continue;
                     instruments[channel].SetVolumeCC(msg[2]);
+                } else if (msg[1] == 120 || msg[1] == 121) { // All Notes Off
+                    for (int c=0; c<4; c++) {
+                        notes_on[c].clear();
+                    }
                 }
 //                else {
 //                    printf("CC%d\n", msg[1]);
