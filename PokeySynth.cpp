@@ -1,14 +1,3 @@
-#include <lv2/atom/atom.h>
-#include <lv2/atom/util.h>
-#include <lv2/atom/forge.h>
-#include <lv2/core/lv2.h>
-#include <lv2/core/lv2_util.h>
-#include <lv2/log/log.h>
-#include <lv2/log/logger.h>
-#include <lv2/midi/midi.h>
-#include <lv2/urid/urid.h>
-#include <lv2/worker/worker.h>
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -16,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "lv2.h"
 #include "mzpokey.h"
 #include "PokeySynth.h"
 #include "PokeyInstrument.h"

@@ -1,3 +1,4 @@
+#pragma once
 #include <FL/Enumerations.H>
 #include <FL/filename.H>
 #include <FL/Fl_Adjuster.H>
