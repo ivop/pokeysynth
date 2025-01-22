@@ -187,22 +187,25 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     lv2_atom_forge_init(&forge, map);
 
-    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+    for (int i=0; i<128; i++) {
+        lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
 
-    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
+        LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
 
-    lv2_atom_forge_key(&forge, uris.program_number);
-    lv2_atom_forge_int(&forge, 3);
+        lv2_atom_forge_key(&forge, uris.program_number);
+        lv2_atom_forge_int(&forge, i);
 
-    lv2_atom_forge_key(&forge, uris.program_data);
-    // unpacked struct should be padded to at least 32-bits
-    int size = sizeof(struct pokey_instrument) / sizeof(uint32_t);
-    lv2_atom_forge_vector(&forge, sizeof(uint32_t), uris.atom_Int, size, &instrdata[3]);
+        lv2_atom_forge_key(&forge, uris.program_data);
+        // unpacked struct should be padded to at least 32-bits
+        int size = sizeof(struct pokey_instrument) / sizeof(uint32_t);
+        lv2_atom_forge_vector(&forge, sizeof(uint32_t), uris.atom_Int, size, &instrdata[i]);
 
-    lv2_atom_forge_pop(&forge, &frame);
+        lv2_atom_forge_pop(&forge, &frame);
 
-    printf("sending %ld bytes\n", lv2_atom_total_size(msg));
-    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+        //printf("sending program %d, %d bytes\n", i, lv2_atom_total_size(msg));
+        write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+        usleep(1000);   // do not send too fast
+    }
 
     // setup UI
 
