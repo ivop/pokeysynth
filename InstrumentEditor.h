@@ -34,7 +34,7 @@ class InstrumentEditor {
 public:
     InstrumentEditor(int width, int starty);
     void DrawProgram(void);
-    int program;
+    unsigned int program;
 
 private:
     Fl_Double_Window *win;

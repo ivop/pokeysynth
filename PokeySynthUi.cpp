@@ -231,7 +231,12 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 #endif
 
-    RequestInstrumentFromDSP(11);
+#if 1
+    for (int i=0; i<128; i++) {
+        RequestInstrumentFromDSP(i);
+        usleep(50000);  // jalv has enough time with 3ms, carla needs 50+
+    }
+#endif
 
     // setup UI
 
@@ -430,6 +435,28 @@ void PokeySynthUi::portEvent(uint32_t port_index,
         break;
     case POKEYSYNTH_NOTIFY_GUI:
         puts("DSP to GUI event");
+        const LV2_Atom_Object* obj = (const LV2_Atom_Object*) buffer;
+        if (obj->body.otype == uris.instrument_data) {
+            puts("gui: received instrument data");
+            const LV2_Atom *pgm = nullptr;
+            const LV2_Atom *pgmdata = nullptr;
+
+            lv2_atom_object_get(obj, uris.program_number, &pgm,
+                                     uris.program_data, &pgmdata,
+                                     0);
+            if (pgm && pgmdata) {
+                uint32_t program_number = ((const LV2_Atom_Int *)pgm)->body;
+                const LV2_Atom_Vector *vec = (const LV2_Atom_Vector *)pgmdata;
+                if (vec->body.child_type == uris.atom_Int) {
+                    printf("gui: received program number %d\n", program_number);
+                    uint8_t *data = (uint8_t *)(&vec->body + 1);
+                    memcpy(&instrdata[program_number], data, sizeof(struct pokey_instrument));
+                }
+                if (program_number == editor->program) {
+                    editor->DrawProgram();
+                }
+            }
+        }
         break;
     }
 }
