@@ -41,6 +41,7 @@ public:
                            LV2_Worker_Respond_Handle handle,
                            uint32_t size,
                            const void *data);
+    LV2_Worker_Status work_response(uint32_t size, const void *data);
 
 private:
     // ports
@@ -661,29 +662,45 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
         if (pgm) {
             program_number = ((const LV2_Atom_Int *)pgm)->body;
             printf("requested program number %d\n", program_number);
-
-            const uint32_t notify_capacity = notify->atom.size;
-            lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
-                                                            notify_capacity);
-
-            LV2_Atom_Forge_Frame frame;
-            lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
-        
-            lv2_atom_forge_key(&forge, uris.program_number);
-            lv2_atom_forge_int(&forge, program_number);
-        
-            lv2_atom_forge_key(&forge, uris.program_data);
-            // unpacked struct should be padded to at least 32-bits
-            int size = sizeof(struct pokey_instrument) / sizeof(uint32_t);
-            lv2_atom_forge_vector(&forge,
-                                  sizeof(uint32_t),
-                                  uris.atom_Int,
-                                  size,
-                                  &instrdata[program_number]);
-
-            lv2_atom_forge_pop(&forge, &frame);
+            respond(handle, sizeof(uint32_t), &program_number);
         }
     }
+
+    return LV2_WORKER_SUCCESS;
+}
+
+// work_response is only used for sending program data to the GUI, so we
+// simply use the data pointer as a pointer to an int which is the pogram
+// number.
+//
+LV2_Worker_Status PokeySynth::work_response(uint32_t size, const void *data) {
+
+    uint32_t program_number = *((uint32_t *)data);
+    printf("send response for pogram number %d\n", program_number);
+
+    const uint32_t notify_capacity = notify->atom.size;
+    lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
+                                                    notify_capacity);
+    lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
+    lv2_atom_forge_frame_time(&forge, 0);
+
+    LV2_Atom_Forge_Frame frame;
+    lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
+        
+    lv2_atom_forge_key(&forge, uris.program_number);
+    lv2_atom_forge_int(&forge, program_number);
+        
+    lv2_atom_forge_key(&forge, uris.program_data);
+    // unpacked struct should be padded to at least 32-bits
+    int xsize = sizeof(struct pokey_instrument) / sizeof(uint32_t);
+    lv2_atom_forge_vector(&forge,
+                          sizeof(uint32_t),
+                          uris.atom_Int,
+                          xsize,
+                          &instrdata[program_number]);
+
+    lv2_atom_forge_pop(&forge, &frame);
+    lv2_atom_forge_pop(&forge, &notify_frame);
 
     return LV2_WORKER_SUCCESS;
 }
@@ -732,7 +749,8 @@ static LV2_Worker_Status work(LV2_Handle instance,
 static LV2_Worker_Status work_response(LV2_Handle instance,
                                        uint32_t size,
                                        const void *data) {
-    return LV2_WORKER_SUCCESS;
+    PokeySynth *ps = (PokeySynth *) instance;
+    return ps->work_response(size, data);
 }
 
 static const void *extension_data(const char *uri) {

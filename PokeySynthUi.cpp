@@ -231,7 +231,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 #endif
 
-    RequestInstrumentFromDSP(0);
+    RequestInstrumentFromDSP(11);
 
     // setup UI
 
