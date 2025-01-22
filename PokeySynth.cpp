@@ -56,7 +56,7 @@ private:
     LV2_URID_Map *map;
     LV2_Log_Logger logger;
     LV2_Atom_Forge forge;
-    LV2_Atom_Forge_Frame frame;
+    LV2_Atom_Forge_Frame notify_frame;
     LV2_Worker_Schedule *schedule;
 
     struct {
@@ -650,6 +650,38 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
                 uint8_t *data = (uint8_t *)(&vec->body + 1);
                 memcpy(&instrdata[program_number], data, sizeof(struct pokey_instrument));
             }
+        }
+    } else if (obj->body.otype == uris.request_program) {
+        uint32_t program_number;
+        const LV2_Atom *pgm = nullptr;
+
+        lv2_atom_object_get(obj, uris.program_number, &pgm,
+                                 0);
+
+        if (pgm) {
+            program_number = ((const LV2_Atom_Int *)pgm)->body;
+            printf("requested program number %d\n", program_number);
+
+            const uint32_t notify_capacity = notify->atom.size;
+            lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
+                                                            notify_capacity);
+
+            LV2_Atom_Forge_Frame frame;
+            lv2_atom_forge_object(&forge, &frame, 0, uris.instrument_data);
+        
+            lv2_atom_forge_key(&forge, uris.program_number);
+            lv2_atom_forge_int(&forge, program_number);
+        
+            lv2_atom_forge_key(&forge, uris.program_data);
+            // unpacked struct should be padded to at least 32-bits
+            int size = sizeof(struct pokey_instrument) / sizeof(uint32_t);
+            lv2_atom_forge_vector(&forge,
+                                  sizeof(uint32_t),
+                                  uris.atom_Int,
+                                  size,
+                                  &instrdata[program_number]);
+
+            lv2_atom_forge_pop(&forge, &frame);
         }
     }
 
