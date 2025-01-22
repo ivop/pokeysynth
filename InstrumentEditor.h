@@ -75,4 +75,7 @@ private:
 
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
+
+    static void RequestCurButtonCB_redirect(Fl_Widget *w, void *data);
+    void RequestCurButtonCB(Fl_Widget *w, void *data);
 };

@@ -64,7 +64,9 @@ void InstrumentEditor::RequestInstrumentFromDSP(unsigned int num) {
 }
 
 // ****************************************************************************
-
+//
+// Volume Envelope Box
+//
 void VolBoxCB(Fl_Widget *w, void *data) {
     InstrumentEditor *ie = (InstrumentEditor *) data;
     VolBox *vb = (VolBox *) w;
@@ -95,7 +97,9 @@ int  VolBox::myypos(void) { return ypos; }
 void VolBox::myposition(int x, int y) { xpos = x; ypos = y; }
 
 // ****************************************************************************
-
+//
+// HexBox - Box With Hexadecimal Values
+//
 HexBox::HexBox(int x, int y, const char *l) : Fl_Box(x,y,12,12,l) {
     box(FL_FLAT_BOX);
     labelsize(12);
@@ -137,7 +141,9 @@ void HexLine::SetValues(uint8_t *v) {
 }
 
 // ****************************************************************************
-
+//
+// InstrumentEditor Constructor
+//
 InstrumentEditor::InstrumentEditor(int width,
                                    int starty,
                                    LV2UI_Write_Function write_function,
@@ -248,7 +254,8 @@ InstrumentEditor::InstrumentEditor(int width,
     tb = new Fl_Button(curx, cury, butwidth, 24, "Request All");
     tb->callback(RequestAllButtonCB_redirect, this);
     curx += butwidth + 8;
-    tb = new Fl_Button(curx, cury, butwidth, 24, "Send All");
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Request Current");
+    tb->callback(RequestCurButtonCB_redirect, this);
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Instrument");
     curx += butwidth + 8;
@@ -262,6 +269,8 @@ InstrumentEditor::InstrumentEditor(int width,
     DrawProgram();
 }
 
+// ****************************************************************************
+
 void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
     ((InstrumentEditor *) data)->HandleProgramSpinner((Fl_Spinner *)w,data);
 }
@@ -271,12 +280,13 @@ void InstrumentEditor::HandleProgramSpinner(Fl_Spinner *w, void *data) {
     DrawProgram();
 }
 
+// ****************************************************************************
+
 void InstrumentEditor::RequestAllButtonCB_redirect(Fl_Widget *w, void *data) {
     ((InstrumentEditor *) data)->RequestAllButtonCB(w, data);
 }
 
 void InstrumentEditor::RequestAllButtonCB(Fl_Widget *w, void *data) {
-    puts("request all button");
     if (sending_or_receiving) return;
 
     sending_or_receiving = true;
@@ -290,6 +300,22 @@ void InstrumentEditor::RequestAllButtonCB(Fl_Widget *w, void *data) {
 
     sending_or_receiving = false;
 }
+
+// ****************************************************************************
+
+void InstrumentEditor::RequestCurButtonCB_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->RequestCurButtonCB(w, data);
+}
+
+void InstrumentEditor::RequestCurButtonCB(Fl_Widget *w, void *data) {
+    if (sending_or_receiving) return;
+    sending_or_receiving = true;
+    RequestInstrumentFromDSP(program);
+    progressBar->value(127);
+    sending_or_receiving = false;
+}
+
+// ****************************************************************************
 
 void InstrumentEditor::DrawProgram(void) {
     struct pokey_instrument *p = &instrdata[program];
