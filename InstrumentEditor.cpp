@@ -17,7 +17,8 @@ void testCB(Fl_Widget *w, void *data) {
 }
 
 // ****************************************************************************
-
+// SEND INSTRUMENT DATA TO DSP
+//
 void InstrumentEditor::SendInstrumentToDSP(unsigned int num) {
     if (num > 127) return;
 
@@ -45,6 +46,9 @@ void InstrumentEditor::SendInstrumentToDSP(unsigned int num) {
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
+// ****************************************************************************
+// REQUEST INSTRUMENT DATA FROM DSP
+//
 void InstrumentEditor::RequestInstrumentFromDSP(unsigned int num) {
     if (num > 127) return;
 
@@ -64,8 +68,7 @@ void InstrumentEditor::RequestInstrumentFromDSP(unsigned int num) {
 }
 
 // ****************************************************************************
-//
-// Volume Envelope Box
+// VOLUME ENVELOPE BOX WIDGET
 //
 void VolBoxCB(Fl_Widget *w, void *data) {
     InstrumentEditor *ie = (InstrumentEditor *) data;
@@ -98,8 +101,7 @@ int  VolBox::myypos(void) { return ypos; }
 void VolBox::myposition(int x, int y) { xpos = x; ypos = y; }
 
 // ****************************************************************************
-//
-// HexBox - Box With Hexadecimal Values
+// HEXBOC WIDGET - Box With Hexadecimal Values
 //
 HexBox::HexBox(int x, int y, const char *l) : Fl_Box(x,y,12,12,l) {
     box(FL_FLAT_BOX);
@@ -321,7 +323,8 @@ void InstrumentEditor::HandleClocksRadios(Fl_Widget *w, void *data) {
 }
 
 // ****************************************************************************
-
+// REQUEST ALL INSTRUMENTS BUTTON
+//
 void InstrumentEditor::RequestAllButtonCB_redirect(Fl_Widget *w, void *data) {
     ((InstrumentEditor *) data)->RequestAllButtonCB(w, data);
 }
@@ -342,7 +345,8 @@ void InstrumentEditor::RequestAllButtonCB(Fl_Widget *w, void *data) {
 }
 
 // ****************************************************************************
-
+// REQUEST CURRENT INSTRUMENT BUTTON
+//
 void InstrumentEditor::RequestCurButtonCB_redirect(Fl_Widget *w, void *data) {
     ((InstrumentEditor *) data)->RequestCurButtonCB(w, data);
 }
@@ -356,7 +360,8 @@ void InstrumentEditor::RequestCurButtonCB(Fl_Widget *w, void *data) {
 }
 
 // ****************************************************************************
-
+// DRAW CURRENT PROGRAM
+//
 void InstrumentEditor::DrawProgram(void) {
     struct pokey_instrument *p = &instrdata[program];
 
