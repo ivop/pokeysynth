@@ -95,6 +95,9 @@ private:
     static void HandleEnvEnd_redirect(Fl_Widget *w, void *data);
     void HandleEnvEnd(Fl_Widget *w, void *data);
 
+    static void HandleADSR_redirect(Fl_Widget *w, void *data);
+    void HandleADSR(Fl_Widget *w, void *data);
+
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
 

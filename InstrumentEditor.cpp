@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "lv2.h"
 #include "fltk.h"
@@ -11,10 +12,12 @@
 
 extern struct pokey_instrument instrdata[128];
 
+#if 0
 void testCB(Fl_Widget *w, void *data) {
     puts("test");
     /*char *result = */ fl_file_chooser("Choose a file", "*.*", NULL);
 }
+#endif
 
 // ****************************************************************************
 // SEND INSTRUMENT DATA TO DSP
@@ -165,7 +168,7 @@ InstrumentEditor::InstrumentEditor(int width,
                                    LV2UI_Write_Function write_function,
                                    LV2UI_Controller controller,
                                    LV2_URID_Map *map) {
-    int cury = starty, curx = 0, savey = 0;
+    int cury = starty, curx = 0;
 
     this->write_function = write_function;
     this->controller = controller;
@@ -233,12 +236,12 @@ InstrumentEditor::InstrumentEditor(int width,
 
     attackSpin = new Fl_Spinner(32, cury, 40, 24, "A");
     attackSpin->minimum(1);
-    attackSpin->maximum(32);
+    attackSpin->maximum(30);
     attackSpin->step(1);
-    attackSpin->value(8);
+    attackSpin->value(4);
     decaySpin = new Fl_Spinner(32+64, cury, 40, 24, "D");
     decaySpin->minimum(1);
-    decaySpin->maximum(32);
+    decaySpin->maximum(30);
     decaySpin->step(1);
     decaySpin->value(8);
     sustainSpin = new Fl_Spinner(32, cury+32, 40, 24, "S");
@@ -248,12 +251,12 @@ InstrumentEditor::InstrumentEditor(int width,
     sustainSpin->value(7);
     releaseSpin= new Fl_Spinner(32+64, cury+32, 40, 24, "R");
     releaseSpin->minimum(1);
-    releaseSpin->maximum(32);
+    releaseSpin->maximum(30);
     releaseSpin->step(1);
-    releaseSpin->value(8);
+    releaseSpin->value(14);
 
     Fl_Button *adsrButton = new Fl_Button(16, cury+64, 128, 24, "ADSR");
-    adsrButton->callback(testCB, this);
+    adsrButton->callback(HandleADSR_redirect, this);
 
     cury += 16*12;
     volumeValues = new HexLine(curx, cury);
@@ -385,6 +388,48 @@ void InstrumentEditor::HandleEnvEnd(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[program];
     p->release_end = envEnd->value();
     SendInstrumentToDSP(program);
+}
+
+// ****************************************************************************
+// ADSR BUTTON - GENRATE ENVELOPE
+//
+void InstrumentEditor::HandleADSR_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleADSR(w,data);
+}
+
+void InstrumentEditor::HandleADSR(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    float A = attackSpin->value();
+    float D = decaySpin->value();
+    float S = sustainSpin->value();
+    float R = releaseSpin->value();
+
+    int i, pos = 0;
+
+    for (i=0; i<(int)A; i++) {
+        p->volume[pos+i] = round(15.0 / A * (i + 1));
+    }
+    pos += i;
+
+    for (i=0; i<(int)D; i++) {
+        p->volume[pos+i] = round(15.0 - ((15.0 - S) / D * (i + 1)));
+    }
+    pos += i;
+
+    p->sustain_loop_start = p->sustain_loop_end = pos - 1;
+
+    for (i=0; i<(int)R; i++) {
+        if ((pos + i) >= 64) break;
+        p->volume[pos+i] = round(S - (S / R * (i + 1)));
+    }
+    pos += i - 1;
+
+    p->release_end = pos;
+
+    for (; pos<64; pos++) p->volume[pos] = 0;
+
+    SendInstrumentToDSP(program);
+    DrawProgram();
 }
 
 // ****************************************************************************
