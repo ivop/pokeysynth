@@ -54,6 +54,9 @@ private:
     Fl_Radio_Button *updateSpeedRadioButtons[4];
     static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleUpdateSpeedCB(Fl_Widget *w, void *data);
+
+    static void AllNotesOffCB_redirect(Fl_Widget *w, void *data);
+    void AllNotesOffCB(Fl_Widget *w, void *data);
 };
 
 // ****************************************************************************
@@ -120,6 +123,28 @@ void PokeySynthUi::HandleUpdateSpeedCB(Fl_Widget *w, void *data) {
     }
     write_function(controller, POKEYSYNTH_CONTROL_UPDATE_FREQ,
             sizeof(float), 0, (const void*) &which);
+}
+
+void PokeySynthUi::AllNotesOffCB_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->AllNotesOffCB(w,data);
+}
+
+void PokeySynthUi::AllNotesOffCB(Fl_Widget *w, void *data) {
+    for (int c=0; c<16; c++) {
+        struct {
+            LV2_Atom atom;
+            uint8_t msg[3];
+        } midimsg;
+
+        midimsg.atom.type = uris.midi_MidiEvent;
+        midimsg.atom.size = 3;
+        midimsg.msg[0] = 0xb0 + c;
+        midimsg.msg[1] = 120;           // CC120 All Notes Off
+        midimsg.msg[2] = 0;
+
+        write_function(controller, POKEYSYNTH_MIDI_IN, sizeof(LV2_Atom) + 3,
+                uris.atom_eventTransfer, &midimsg);
+    }
 }
 
 // ****************************************************************************
@@ -257,6 +282,9 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                         new ArpSlider(curx, cury+y*24, 128, 24);
         arpSpeedSliders[y]->callback(HandleArpSpeedCB_redirect, this);
     }
+
+    Fl_Button *but = new Fl_Button(curx+3*128, cury+3*24, 128, 24, "Panic!");
+    but->callback(AllNotesOffCB_redirect, this);
 
     cury += 96 + 8;
 
