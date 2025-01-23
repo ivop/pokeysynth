@@ -103,7 +103,7 @@ int  VolBox::myypos(void) { return ypos; }
 void VolBox::myposition(int x, int y) { xpos = x; ypos = y; }
 
 // ****************************************************************************
-// HEXBOC WIDGET - Box With Hexadecimal Values
+// HEXBOX WIDGET - Box With Hexadecimal Values
 //
 HexBox::HexBox(int x, int y, const char *l) : Fl_Box(x,y,12,12,l) {
     box(FL_FLAT_BOX);
