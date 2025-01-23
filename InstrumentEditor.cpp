@@ -260,10 +260,13 @@ InstrumentEditor::InstrumentEditor(int width,
     cury += 12;
 
     susLoopStart = new PositionSlider(curx, cury, "Sustain Start");
+    susLoopStart->callback(HandleSusLoopStart_redirect, this);
     cury += 16;
     susLoopEnd = new PositionSlider(curx, cury, "Sustain End");
+    susLoopEnd->callback(HandleSusLoopEnd_redirect, this);
     cury += 16;
     envEnd = new PositionSlider(curx, cury, "Release End");
+    envEnd->callback(HandleEnvEnd_redirect, this);
     cury += 16;
 
     cury += 8;
@@ -340,6 +343,47 @@ void InstrumentEditor::HandleClocksRadios(Fl_Widget *w, void *data) {
     for (which=0; which<3; which++) if (clocksButtons[which]->value()) break;
 
     p->clock = (enum clocks) which;
+    SendInstrumentToDSP(program);
+}
+
+// ****************************************************************************
+// SUSTAIN AND RELEASE SLIDERS
+//
+void InstrumentEditor::HandleSusLoopStart_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleSusLoopStart(w,data);
+}
+
+void InstrumentEditor::HandleSusLoopStart(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+
+    if (susLoopStart->value() > susLoopEnd->value()) {
+        susLoopStart->value(susLoopEnd->value());
+    }
+    p->sustain_loop_start = susLoopStart->value();
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleSusLoopEnd_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleSusLoopEnd(w,data);
+}
+
+void InstrumentEditor::HandleSusLoopEnd(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+
+    if (susLoopEnd->value() < susLoopStart->value()) {
+        susLoopEnd->value(susLoopStart->value());
+    }
+    p->sustain_loop_end  = susLoopEnd->value();
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleEnvEnd_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleEnvEnd(w,data);
+}
+
+void InstrumentEditor::HandleEnvEnd(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->release_end = envEnd->value();
     SendInstrumentToDSP(program);
 }
 

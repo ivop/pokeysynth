@@ -88,6 +88,13 @@ private:
     static void HandleClocksRadios_redirect(Fl_Widget *w, void *data);
     void HandleClocksRadios(Fl_Widget *w, void *data);
 
+    static void HandleSusLoopStart_redirect(Fl_Widget *w, void *data);
+    void HandleSusLoopStart(Fl_Widget *w, void *data);
+    static void HandleSusLoopEnd_redirect(Fl_Widget *w, void *data);
+    void HandleSusLoopEnd(Fl_Widget *w, void *data);
+    static void HandleEnvEnd_redirect(Fl_Widget *w, void *data);
+    void HandleEnvEnd(Fl_Widget *w, void *data);
+
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
 
