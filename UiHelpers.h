@@ -1,3 +1,4 @@
+#pragma once
 #include "fltk.h"
 
 class Label : public Fl_Box {
@@ -29,5 +30,22 @@ public:
         bounds(0,31);
         precision(0);
         step(1);
+    }
+};
+
+class FlatRadioButton : public Fl_Radio_Button {
+public:
+    FlatRadioButton(int x, int y, int w, int h, const char *l=nullptr) :
+        Fl_Radio_Button(x,y,w-1,h-1,l) {
+        box(FL_FLAT_BOX);
+        labelsize(labelsize()-1);
+    }
+    void draw(void) {
+        if (value()) {
+            selection_color(fl_rgb_color(0x70, 0xe0, 0xff));
+        } else {
+            color(fl_rgb_color(0xa0, 0xa0, 0xa0));
+        }
+        Fl_Radio_Button::draw();
     }
 };

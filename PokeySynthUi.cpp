@@ -39,11 +39,11 @@ private:
     uint8_t atom_buffer[1024*128];
     LV2_URID_Map *map;
 
-    Fl_Radio_Button *listenRadioButtons[4];
+    FlatRadioButton *listenRadioButtons[4];
     static void HandleListenCB_redirect(Fl_Widget *w, void *data);
     void HandleListenCB(Fl_Widget *w, void *data);
 
-    Fl_Radio_Button *modesRadioButtons[4][3];
+    FlatRadioButton *modesRadioButtons[4][3];
     static void HandleModesCB_redirect(Fl_Widget *w, void *data);
     void HandleModesCB(Fl_Widget *w, void *data);
 
@@ -51,7 +51,7 @@ private:
     static void HandleArpSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleArpSpeedCB(Fl_Widget *w, void *data);
 
-    Fl_Radio_Button *updateSpeedRadioButtons[4];
+    FlatRadioButton *updateSpeedRadioButtons[4];
     static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleUpdateSpeedCB(Fl_Widget *w, void *data);
 
@@ -224,7 +224,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         };
         for (int x=0; x<4; x++) {
             listenRadioButtons[x] =
-                            new Fl_Radio_Button(curx+x*128, y, 128, 24, t[x]);
+                            new FlatRadioButton(curx+x*128, y, 128, 24, t[x]);
             listenRadioButtons[x]->callback(HandleListenCB_redirect, this);
         }
     }
@@ -238,7 +238,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         const char *t[4] = { "50Hz", "100Hz", "150Hz", "200Hz" };
         for (int x=0; x<4; x++) {
             updateSpeedRadioButtons[x] =
-                new Fl_Radio_Button(curx+x*128, cury, 128, 24, t[x]);
+                new FlatRadioButton(curx+x*128, cury, 128, 24, t[x]);
             updateSpeedRadioButtons[x]->callback(HandleUpdateSpeedCB_redirect, this);
         }
     }
@@ -260,14 +260,15 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         char s[40];
         const char *t[3] = { "Monophonic", "Arpeggiate Up", "Arpeggiate Down" };
         for (int c=0; c<4; c++) {
-            snprintf(s, 40, "Channel %d:", c+1);
+            snprintf(s, 40, "Channel %d .............", c+1);
             Fl_Box *b = new Label(curx, cury+c*24, 128, 24, strdup(s));
             b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+            b->labelsize(b->labelsize()-1);
             Fl_Group *group = new Fl_Group(192, cury+c*24, 384, 24);
             group->begin();
                 for (int x=0; x<3; x++) {
                     modesRadioButtons[c][x] =
-                        new Fl_Radio_Button(curx+128+x*128, cury+c*24,
+                        new FlatRadioButton(curx+128+x*128, cury+c*24,
                                             128, 24, t[x]);
                     modesRadioButtons[c][x]->callback(HandleModesCB_redirect,
                                                                         this);

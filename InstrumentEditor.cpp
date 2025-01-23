@@ -8,7 +8,6 @@
 #include "uris.h"
 #include "PokeyInstrument.h"
 #include "InstrumentEditor.h"
-#include "UiHelpers.h"
 
 extern struct pokey_instrument instrdata[128];
 
@@ -203,7 +202,7 @@ InstrumentEditor::InstrumentEditor(int width,
             "2CH Filter",
             "4CH Linked + Filter" };
         for (int c=0; c<4; c++) {
-            channelsButtons[c] = new Fl_Radio_Button(curx+c*192, cury,
+            channelsButtons[c] = new FlatRadioButton(curx+c*192, cury,
                                                             192, 24, t[c]);
             channelsButtons[c]->callback(HandleChannelsRadios_redirect, this);
         }
@@ -216,7 +215,7 @@ InstrumentEditor::InstrumentEditor(int width,
     clocksGroup->begin(); {
         const char *t[3] = { "15kHz", "64kHz", "1.8MHz" };
         for (int c=0; c<3; c++) {
-            clocksButtons[c] = new Fl_Radio_Button(curx+c*128, cury,
+            clocksButtons[c] = new FlatRadioButton(curx+c*128, cury,
                                                             128, 24, t[c]);
             clocksButtons[c]->callback(HandleClocksRadios_redirect, this);
         }
@@ -278,7 +277,7 @@ InstrumentEditor::InstrumentEditor(int width,
     progressBar->minimum(0);
     progressBar->maximum(127);
     progressBar->value(0);
-    progressBar->color2(fl_rgb_color(0x30,0x60,0x90));
+    progressBar->color2(fl_rgb_color(0x20,0x40,0x80));
     curx += progressBar->w() + 8;
 
     const int butwidth = 144;

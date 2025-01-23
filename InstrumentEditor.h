@@ -1,6 +1,7 @@
 #pragma once
 #include "lv2.h"
 #include "fltk.h"
+#include "UiHelpers.h"
 
 class VolBox : public Fl_Box {
 public:
@@ -64,8 +65,8 @@ private:
 
     Fl_Spinner *programSpinner;
     Fl_Input *programName;
-    Fl_Radio_Button *channelsButtons[4];
-    Fl_Radio_Button *clocksButtons[3];
+    FlatRadioButton *channelsButtons[4];
+    FlatRadioButton *clocksButtons[3];
 
     VolBox *envelopeBoxes[64][16];
     HexLine *volumeValues;
