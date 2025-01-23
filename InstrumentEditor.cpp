@@ -200,6 +200,7 @@ InstrumentEditor::InstrumentEditor(int width,
         for (int c=0; c<3; c++) {
             clocksButtons[c] = new Fl_Radio_Button(curx+c*128, cury,
                                                             128, 24, t[c]);
+            clocksButtons[c]->callback(HandleClocksRadios_redirect, this);
         }
     }
     clocksGroup->end();
@@ -274,7 +275,8 @@ InstrumentEditor::InstrumentEditor(int width,
 }
 
 // ****************************************************************************
-
+// PROGRAM SELECTION SPINNER
+//
 void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
     ((InstrumentEditor *) data)->HandleProgramSpinner((Fl_Spinner *)w,data);
 }
@@ -285,7 +287,8 @@ void InstrumentEditor::HandleProgramSpinner(Fl_Spinner *w, void *data) {
 }
 
 // ****************************************************************************
-
+// CHANNELS RADIO BUTTONS
+//
 void InstrumentEditor::HandleChannelsRadios_redirect(Fl_Widget *w, void *data){
     ((InstrumentEditor *) data)->HandleChannelsRadios(w,data);
 }
@@ -297,6 +300,23 @@ void InstrumentEditor::HandleChannelsRadios(Fl_Widget *w, void *data) {
     for (which=0; which<4; which++) if (channelsButtons[which]->value()) break;
 
     p->channels = (channels_type) which;
+    SendInstrumentToDSP(program);
+}
+
+// ****************************************************************************
+// CLOCKS RADIO BUTTONS
+//
+void InstrumentEditor::HandleClocksRadios_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleClocksRadios(w,data);
+}
+
+void InstrumentEditor::HandleClocksRadios(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+
+    int which = 0;
+    for (which=0; which<3; which++) if (clocksButtons[which]->value()) break;
+
+    p->clock = (enum clocks) which;
     SendInstrumentToDSP(program);
 }
 

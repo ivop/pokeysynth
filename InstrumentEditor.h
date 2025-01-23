@@ -76,6 +76,9 @@ private:
     static void HandleChannelsRadios_redirect(Fl_Widget *w, void *data);
     void HandleChannelsRadios(Fl_Widget *w, void *data);
 
+    static void HandleClocksRadios_redirect(Fl_Widget *w, void *data);
+    void HandleClocksRadios(Fl_Widget *w, void *data);
+
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
 
