@@ -32,6 +32,12 @@ public:
 private:
 };
 
+class PositionSlider : public Fl_Hor_Slider {
+public:
+    PositionSlider(int x, int y, const char *l = nullptr);
+private:
+};
+
 class InstrumentEditor {
 public:
     InstrumentEditor(int width,
@@ -63,6 +69,9 @@ private:
 
     VolBox *envelopeBoxes[64][16];
     HexLine *volumeValues;
+    PositionSlider *susLoopStart;
+    PositionSlider *susLoopEnd;
+    PositionSlider *envEnd;
     Fl_Spinner *attackSpin;
     Fl_Spinner *decaySpin;
     Fl_Spinner *sustainSpin;

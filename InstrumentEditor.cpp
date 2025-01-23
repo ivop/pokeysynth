@@ -124,7 +124,7 @@ void HexBox::inverse(void) {
 
 HexLine::HexLine(int x, int y) : Fl_Group(x,y,64*12,12,nullptr) {
     for (int q=0; q<64; q++) {
-        boxes[q] = new HexBox(q*12+x,y,"F");
+        boxes[q] = new HexBox(q*12+x,y,"");
     }
     end();
 }
@@ -141,6 +141,19 @@ void HexLine::SetValues(uint8_t *v) {
     for (int q=0; q<64; q++) {
         SetValue(q, v[q]);
     }
+}
+
+// ****************************************************************************
+// LOOP/END POSITION SLIDER
+//
+PositionSlider::PositionSlider(int x, int y, const char *l) : Fl_Hor_Slider(x, y, 64*12, 16, nullptr) {
+    box(FL_FLAT_BOX);
+    bounds(0,63);
+    precision(0);
+    step(1);
+    Fl_Box *b = new Fl_Box(x-128, y, 128, 16, l);
+    b->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+    b->labelsize(12);
 }
 
 // ****************************************************************************
@@ -244,8 +257,16 @@ InstrumentEditor::InstrumentEditor(int width,
 
     cury += 16*12;
     volumeValues = new HexLine(curx, cury);
-    cury += 20;
+    cury += 12;
 
+    susLoopStart = new PositionSlider(curx, cury, "Sustain Start");
+    cury += 16;
+    susLoopEnd = new PositionSlider(curx, cury, "Sustain End");
+    cury += 16;
+    envEnd = new PositionSlider(curx, cury, "Release End");
+    cury += 16;
+
+    cury += 8;
     curx = 16;
     progressBar = new Fl_Progress(curx, cury, 128, 24);
     progressBar->minimum(0);
@@ -390,5 +411,8 @@ void InstrumentEditor::DrawProgram(void) {
         }
     }
     volumeValues->SetValues(&p->volume[0]);
+    susLoopStart->value(p->sustain_loop_start);
+    susLoopEnd->value(p->sustain_loop_end);
+    envEnd->value(p->release_end);
 }
 
