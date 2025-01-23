@@ -191,22 +191,25 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     // ---------- TITLE ----------
 
-    Fl_Box *title = new Fl_Box(0,cury,window->w(),32, "PokeySynth");
+    Fl_Box *title = new Fl_Box(16+WIDTH*3/5,64,WIDTH*2/5,56, "PokeySynth");
     title->labelfont(FL_BOLD+FL_ITALIC);
     title->labelsize(28);
+    title->labelcolor(fl_rgb_color(0x20,0x40,0x80));
 
-    Fl_Box *copyright = new Fl_Box(0, title->y()+title->h(),
-                                   window->w(), 20,
+    Fl_Box *copyright = new Fl_Box(title->x(), title->y()+title->h()-8,
+                                   title->w(), 20,
                                    "Version 0.9.0 / Copyright © 2025 "
                                    "by Ivo van Poorten");
     copyright->labelfont(FL_ITALIC);
     copyright->labelsize(10);
 
+#if 0
     cury = copyright->y() + copyright->h();
 
     new Separator(cury, window->w());
 
     cury += 4;
+#endif
 
     // ---------- MIDI CHANNELS / UPDATE SPEED ----------
 

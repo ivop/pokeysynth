@@ -42,7 +42,7 @@ public:
     }
     void draw(void) {
         if (value()) {
-            selection_color(fl_rgb_color(0x70, 0xe0, 0xff));
+            selection_color(FL_BLACK);
         } else {
             color(fl_rgb_color(0xa0, 0xa0, 0xa0));
         }
