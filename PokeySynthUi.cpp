@@ -227,7 +227,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     // ---------- POKEY CHANNELS / ARPEGGIATE SPEED ----------
 
     new Label(0, cury, WIDTH/2, "Pokey Channels");
-    new Label(WIDTH/2, cury, WIDTH/2, "Arpeggiate Speed");
+    new Label(WIDTH/2 + 16, cury, WIDTH/8, "Arp Speed");
 
     cury += 20;
 
@@ -252,12 +252,10 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 
     curx += WIDTH / 2;
-    for (int x=0; x<4; x++) {
-        char s[40];
-        snprintf(s, 40, "Channel %d", x+1);
-        arpSpeedSliders[x] =
-                        new ArpSlider(curx+x*128, cury, 128, 24, strdup(s));
-        arpSpeedSliders[x]->callback(HandleArpSpeedCB_redirect, this);
+    for (int y=0; y<4; y++) {
+        arpSpeedSliders[y] =
+                        new ArpSlider(curx, cury+y*24, 128, 24);
+        arpSpeedSliders[y]->callback(HandleArpSpeedCB_redirect, this);
     }
 
     cury += 96 + 8;

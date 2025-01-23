@@ -73,6 +73,9 @@ private:
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
     void HandleProgramSpinner(Fl_Spinner *w, void *data);
 
+    static void HandleChannelsRadios_redirect(Fl_Widget *w, void *data);
+    void HandleChannelsRadios(Fl_Widget *w, void *data);
+
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
 

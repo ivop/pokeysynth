@@ -13,7 +13,7 @@ extern struct pokey_instrument instrdata[128];
 
 void testCB(Fl_Widget *w, void *data) {
     puts("test");
-    char *result = fl_file_chooser("Choose a file", "*.*", NULL);
+    /*char *result = */ fl_file_chooser("Choose a file", "*.*", NULL);
 }
 
 // ****************************************************************************
@@ -187,6 +187,7 @@ InstrumentEditor::InstrumentEditor(int width,
         for (int c=0; c<4; c++) {
             channelsButtons[c] = new Fl_Radio_Button(curx+c*192, cury,
                                                             192, 24, t[c]);
+            channelsButtons[c]->callback(HandleChannelsRadios_redirect, this);
         }
     };
     channelsGroup->end();
@@ -258,6 +259,7 @@ InstrumentEditor::InstrumentEditor(int width,
     tb = new Fl_Button(curx, cury, butwidth, 24, "Request Current");
     tb->callback(RequestCurButtonCB_redirect, this);
     curx += butwidth + 8;
+#if 0
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Instrument");
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Save Instrument");
@@ -266,6 +268,7 @@ InstrumentEditor::InstrumentEditor(int width,
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Save Bank");
     curx += butwidth + 8;
+#endif
 
     DrawProgram();
 }
@@ -279,6 +282,22 @@ void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
 void InstrumentEditor::HandleProgramSpinner(Fl_Spinner *w, void *data) {
     program = w->value();
     DrawProgram();
+}
+
+// ****************************************************************************
+
+void InstrumentEditor::HandleChannelsRadios_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleChannelsRadios(w,data);
+}
+
+void InstrumentEditor::HandleChannelsRadios(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+
+    int which = 0;
+    for (which=0; which<4; which++) if (channelsButtons[which]->value()) break;
+
+    p->channels = (channels_type) which;
+    SendInstrumentToDSP(program);
 }
 
 // ****************************************************************************
