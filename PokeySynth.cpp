@@ -583,9 +583,9 @@ void PokeySynth::run(uint32_t sample_count) {
                     if (channel < 0) continue;
                     instruments[channel].SetVolumeCC(msg[2]);
                 } else if (msg[1] == 120 || msg[1] == 121) { // All Notes Off
-                    for (int c=0; c<4; c++) {
-                        notes_on[c].clear();
-                    }
+                    channel = map_midi_to_pokey_channel(channel);
+                    if (channel < 0) continue;
+                    notes_on[channel].clear();
                 }
 //                else {
 //                    printf("CC%d\n", msg[1]);
