@@ -82,6 +82,9 @@ void PokeyInstrument::Next(void) {
         if (voldis_idx > instrdata[program].sustain_loop_end) {
             voldis_idx = instrdata[program].sustain_loop_start;
         }
+        if (voldis_idx > instrdata[program].release_end) {
+            silent = true;
+        }
     } else {
         if (voldis_idx > instrdata[program].release_end) {
             silent = true;
