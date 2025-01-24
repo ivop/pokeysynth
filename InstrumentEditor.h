@@ -39,6 +39,21 @@ public:
 private:
 };
 
+class KeyboardEditor : public Fl_Group {
+public:
+    KeyboardEditor(int x, int y, int w, int h, HexLine **lines, int nlines);
+    int handle(int event);
+    void show_cursor(void);
+    void hide_cursor(void);
+private:
+    HexLine **lines;
+    int nlines;
+    int cursorX;
+    int cursorY;
+    bool showCursor;
+    bool has_focus;
+};
+
 class InstrumentEditor {
 public:
     InstrumentEditor(int width,

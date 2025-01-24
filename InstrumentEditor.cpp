@@ -162,6 +162,78 @@ PositionSlider::PositionSlider(int x, int y, const char *l) : Fl_Hor_Slider(x, y
 }
 
 // ****************************************************************************
+// KEYBOARD EDITOR GROUP FOR HEXLINE(S)
+//
+KeyboardEditor::KeyboardEditor(int x, int y, int w, int h, HexLine **lines, int nlines) : Fl_Group(x,y,w,h) {
+    cursorX = cursorY = 0;
+    this->lines = lines;
+    this->nlines = nlines;
+    showCursor = false;
+}
+
+void KeyboardEditor::show_cursor(void) {
+    lines[cursorY]->boxes[cursorX]->inverse();
+}
+
+void KeyboardEditor::hide_cursor(void) {
+    lines[cursorY]->boxes[cursorX]->normal();
+}
+
+int KeyboardEditor::handle(int event) {
+    switch (event) {
+    case FL_FOCUS:
+        has_focus = true;
+        show_cursor();
+        return 1;
+    case FL_UNFOCUS:
+        has_focus = false;
+        hide_cursor();
+        return 1;
+    case FL_ENTER:
+        focus(this);    // make it so we receive keydown/keyup events
+        return 1;
+    case FL_LEAVE:
+        has_focus = false;
+        hide_cursor();
+        return 1;
+    case FL_KEYDOWN:
+        if (has_focus) {
+            switch (Fl::event_key()) {
+            case FL_Left:
+                hide_cursor();
+                cursorX--;
+                if (cursorX < 0) cursorX = 0;
+                show_cursor();
+                break;
+            case FL_Right:
+                hide_cursor();
+                cursorX++;
+                if (cursorX >= 64) cursorX = 63;
+                show_cursor();
+                break;
+            case FL_Up:
+                hide_cursor();
+                cursorY--;
+                if (cursorY < 0) cursorY = 0;
+                show_cursor();
+                break;
+            case FL_Down:
+                hide_cursor();
+                cursorY++;
+                if (cursorY >= nlines) cursorY = nlines-1;
+                show_cursor();
+                break;
+            }
+            return 1;
+        }
+        break;
+    default:
+        break;
+    }
+    return Fl_Group::handle(event);
+}
+
+// ****************************************************************************
 //
 // InstrumentEditor Constructor
 //
@@ -293,8 +365,13 @@ InstrumentEditor::InstrumentEditor(int width,
 
     cury += 16*12;
     volumeValues = new HexLine(curx, cury, "Volume");
+    KeyboardEditor *editVolumeValues = new KeyboardEditor(curx, cury, 64*12, 12, &volumeValues, 1);
+    editVolumeValues->end();
+
     cury += 12;
     distValues = new HexLine(curx, cury, "Distortion");
+    KeyboardEditor *editDistValues = new KeyboardEditor(curx, cury, 64*12, 12, &distValues, 1);
+    editDistValues->end();
     cury += 12;
 
     susLoopStart = new PositionSlider(curx, cury, "Sustain Start");
@@ -311,11 +388,15 @@ InstrumentEditor::InstrumentEditor(int width,
 
     cury += 8;
     typesLine = new HexLine(curx, cury, "Types");
+    KeyboardEditor *editTypesLine = new KeyboardEditor(curx, cury, 64*12, 12, &typesLine, 1);
+    editTypesLine->end();
 
     for (int t=0; t<4; t++) {
         const char *l[4] = { "LSB", ".", ".", "MSB" };
         typeValues[t] = new HexLine(curx, cury+14+t*12, l[t]);
     }
+    KeyboardEditor *editTypeValues = new KeyboardEditor(curx, cury+14, 64*12, 4*12, &typeValues[0], 4);
+    editTypeValues->end();
 
     Fl_Box *tbx;
     for (int t=0; t<4; t++) {
