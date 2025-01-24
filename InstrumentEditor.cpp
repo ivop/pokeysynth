@@ -376,6 +376,7 @@ InstrumentEditor::InstrumentEditor(int width,
     benderRange->step(100);
     benderRange->value(200);
     benderRange->labelsize(12);
+    benderRange->callback(HandleBenderRange_redirect, this);
 
     modwheelDepth = new Fl_Hor_Value_Slider(curx+256, cury+40,
                             256-16, 20, "Modwheel LFO Maximum Depth (cents)");
@@ -384,6 +385,7 @@ InstrumentEditor::InstrumentEditor(int width,
     modwheelDepth->step(1);
     modwheelDepth->value(100);
     modwheelDepth->labelsize(12);
+    modwheelDepth->callback(HandleModwheelDepth_redirect, this);
 
     modwheelSpeed = new Fl_Hor_Value_Slider(curx+512, cury+40,
                             256, 20, "Modwheel LFO Speed (degrees/frame)");
@@ -392,6 +394,7 @@ InstrumentEditor::InstrumentEditor(int width,
     modwheelSpeed->step(1);
     modwheelSpeed->value(90);
     modwheelSpeed->labelsize(12);
+    modwheelSpeed->callback(HandleModwheelSpeed_redirect, this);
 
     cury += 80;
 
@@ -586,6 +589,39 @@ void InstrumentEditor::HandleFilterTranspose_redirect(Fl_Widget *w, void *data){
 void InstrumentEditor::HandleFilterTranspose(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[program];
     p->filtered_transpose = filterTranspose->value();
+    SendInstrumentToDSP(program);
+}
+
+// ****************************************************************************
+// BENDER AND MODSHEEL PARAMETERS
+//
+void InstrumentEditor::HandleBenderRange_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleBenderRange(w,data);
+}
+
+void InstrumentEditor::HandleBenderRange(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->bender_range = benderRange->value();
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleModwheelDepth_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleModwheelDepth(w,data);
+}
+
+void InstrumentEditor::HandleModwheelDepth(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->mod_lfo_maxdepth = modwheelDepth->value();
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleModwheelSpeed_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleModwheelSpeed(w,data);
+}
+
+void InstrumentEditor::HandleModwheelSpeed(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->mod_lfo_speed = modwheelSpeed->value() / 360.0 * 2 * M_PI;
     SendInstrumentToDSP(program);
 }
 

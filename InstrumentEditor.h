@@ -135,6 +135,13 @@ private:
     static void HandleFilterTranspose_redirect(Fl_Widget *w, void *data);
     void HandleFilterTranspose(Fl_Widget *w, void *data);
 
+    static void HandleBenderRange_redirect(Fl_Widget *w, void *data);
+    void HandleBenderRange(Fl_Widget *w, void *data);
+    static void HandleModwheelDepth_redirect(Fl_Widget *w, void *data);
+    void HandleModwheelDepth(Fl_Widget *w, void *data);
+    static void HandleModwheelSpeed_redirect(Fl_Widget *w, void *data);
+    void HandleModwheelSpeed(Fl_Widget *w, void *data);
+
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
 
