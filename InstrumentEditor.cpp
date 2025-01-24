@@ -195,7 +195,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     programName = new Fl_Input(curx+80, cury, 688, 24);
     programName->textfont(FL_COURIER);
-    // todo: add edit callback
+    programName->callback(HandleProgramName_redirect, this);
 
     cury += 32;
 
@@ -434,7 +434,7 @@ InstrumentEditor::InstrumentEditor(int width,
 }
 
 // ****************************************************************************
-// PROGRAM SELECTION SPINNER
+// PROGRAM SELECTION SPINNER AND NAME
 //
 void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
     ((InstrumentEditor *) data)->HandleProgramSpinner((Fl_Spinner *)w,data);
@@ -443,6 +443,19 @@ void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
 void InstrumentEditor::HandleProgramSpinner(Fl_Spinner *w, void *data) {
     program = w->value();
     DrawProgram();
+}
+
+void InstrumentEditor::HandleProgramName_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleProgramName(w,data);
+}
+
+void InstrumentEditor::HandleProgramName(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    char temp[64];
+    memset(temp, 0, 64);
+    snprintf(temp, 64, "%s", programName->value());
+    memcpy(p->name, temp, 64);
+    SendInstrumentToDSP(program);
 }
 
 // ****************************************************************************
