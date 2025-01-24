@@ -341,6 +341,7 @@ InstrumentEditor::InstrumentEditor(int width,
     typesSpeed->bounds(0,15);
     typesSpeed->step(1);
     typesSpeed->labelsize(12);
+    typesSpeed->callback(HandleTypesLoopSpeed_redirect, this);
 
     cury += 3*16;
 
@@ -539,6 +540,49 @@ void InstrumentEditor::HandleTypesLoopEnd(Fl_Widget *w, void *data) {
         typesLoopEnd->value(typesLoopStart->value());
     }
     p->types_end = typesLoopEnd->value();
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleTypesLoopSpeed_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleTypesLoopSpeed(w,data);
+}
+
+void InstrumentEditor::HandleTypesLoopSpeed(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->types_speed = typesSpeed->value();
+    SendInstrumentToDSP(program);
+}
+
+// ****************************************************************************
+// FILTER OPTIONS
+//
+void InstrumentEditor::HandleFilterDetune_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleFilterDetune(w,data);
+}
+
+void InstrumentEditor::HandleFilterDetune(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->filtered_detune = filterDetune->value();
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleFilterVol2_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleFilterVol2(w,data);
+}
+
+void InstrumentEditor::HandleFilterVol2(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->filtered_vol2  = filterVol2->value() / 100.0;
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleFilterTranspose_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleFilterTranspose(w,data);
+}
+
+void InstrumentEditor::HandleFilterTranspose(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->filtered_transpose = filterTranspose->value();
     SendInstrumentToDSP(program);
 }
 

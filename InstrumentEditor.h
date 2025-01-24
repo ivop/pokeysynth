@@ -125,6 +125,15 @@ private:
     void HandleTypesLoopStart(Fl_Widget *w, void *data);
     static void HandleTypesLoopEnd_redirect(Fl_Widget *w, void *data);
     void HandleTypesLoopEnd(Fl_Widget *w, void *data);
+    static void HandleTypesLoopSpeed_redirect(Fl_Widget *w, void *data);
+    void HandleTypesLoopSpeed(Fl_Widget *w, void *data);
+
+    static void HandleFilterDetune_redirect(Fl_Widget *w, void *data);
+    void HandleFilterDetune(Fl_Widget *w, void *data);
+    static void HandleFilterVol2_redirect(Fl_Widget *w, void *data);
+    void HandleFilterVol2(Fl_Widget *w, void *data);
+    static void HandleFilterTranspose_redirect(Fl_Widget *w, void *data);
+    void HandleFilterTranspose(Fl_Widget *w, void *data);
 
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
