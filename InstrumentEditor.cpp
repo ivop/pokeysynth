@@ -124,10 +124,13 @@ void HexBox::inverse(void) {
     redraw();
 };
 
-HexLine::HexLine(int x, int y) : Fl_Group(x,y,64*12,12,nullptr) {
+HexLine::HexLine(int x, int y, const char *l) : Fl_Group(x,y,64*12,12,nullptr){
     for (int q=0; q<64; q++) {
         boxes[q] = new HexBox(q*12+x,y,"");
     }
+    Fl_Box *b = new Fl_Box(x-128, y,128, 16, l);
+    b->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+    b->labelsize(12);
     end();
 }
 
@@ -177,6 +180,8 @@ InstrumentEditor::InstrumentEditor(int width,
     new Label(0, cury,width, "Instrument Editor");
     cury += 20;
 
+    // ---------- Program number / name
+
     curx = (width -768) / 2;
     programSpinner = new Fl_Spinner(curx,cury, 64, 24);
     programSpinner->minimum(0);
@@ -190,8 +195,11 @@ InstrumentEditor::InstrumentEditor(int width,
 
     programName = new Fl_Input(curx+80, cury, 688, 24);
     programName->textfont(FL_COURIER);
+    // todo: add edit callback
 
     cury += 32;
+
+    // ---------- Channels
 
     curx = (width - 768) / 2;
     Fl_Group *channelsGroup = new Fl_Group(curx, cury, 768, 24);
@@ -210,6 +218,8 @@ InstrumentEditor::InstrumentEditor(int width,
     channelsGroup->end();
     cury += 24 + 8;
 
+    // ---------- Clocks
+
     curx = (width - 384) / 2;
     Fl_Group *clocksGroup = new Fl_Group(curx, cury, 384, 24);
     clocksGroup->begin(); {
@@ -223,6 +233,9 @@ InstrumentEditor::InstrumentEditor(int width,
     clocksGroup->end();
 
     cury += 24 + 8;
+
+    // ---------- Envelope
+
     curx = (width - (64*12)) / 2;
 
     for (int p=0; p<64; p++) {
@@ -232,6 +245,8 @@ InstrumentEditor::InstrumentEditor(int width,
             envelopeBoxes[p][q]->myposition(p, q);
         }
     }
+
+    // ---------- ADSR
 
     attackSpin = new Fl_Spinner(32, cury, 40, 24, "A");
     attackSpin->minimum(1);
@@ -257,8 +272,29 @@ InstrumentEditor::InstrumentEditor(int width,
     Fl_Button *adsrButton = new Fl_Button(16, cury+64, 128, 24, "ADSR");
     adsrButton->callback(HandleADSR_redirect, this);
 
+    // ---------- Distortions
+
+    int xx = curx + 64*12 + 16;
+
+    for (int d=0; d<=DIST_POLY5_SQUARE; d++) {
+        const char *t[5] = {
+            "0 - Pure",
+            "1 - Noise",
+            "2 - Buzzy Bass",
+            "3 - Gritty Bass",
+            "4 - Poly5 Square"
+        };
+        distButtons[d] = new Fl_Button(xx, cury+d*20, 128, 19, t[d]);
+        distButtons[d]->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+        distButtons[d]->callback(HandleDistButtons_redirect, this);
+    }
+
+    // ---------- Volume / Distortion lines
+
     cury += 16*12;
-    volumeValues = new HexLine(curx, cury);
+    volumeValues = new HexLine(curx, cury, "Volume");
+    cury += 12;
+    distValues = new HexLine(curx, cury, "Distortion");
     cury += 12;
 
     susLoopStart = new PositionSlider(curx, cury, "Sustain Start");
@@ -270,6 +306,8 @@ InstrumentEditor::InstrumentEditor(int width,
     envEnd = new PositionSlider(curx, cury, "Release End");
     envEnd->callback(HandleEnvEnd_redirect, this);
     cury += 16;
+
+    // ---------- Progress bar, test buttons
 
     cury += 8;
     curx = 16;
@@ -432,6 +470,29 @@ void InstrumentEditor::HandleADSR(Fl_Widget *w, void *data) {
 }
 
 // ****************************************************************************
+// DISTORTION BUTTONS, FILL DIST TABLE
+//
+void InstrumentEditor::HandleDistButtons_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleDistButtons(w, data);
+}
+
+void InstrumentEditor::HandleDistButtons(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    int d, i;
+    for (d=0; d<=DIST_POLY5_SQUARE; d++) {
+        if (w == distButtons[d]) break;
+    }
+    for (i=0; i<=p->release_end; i++) {
+        p->distortion[i] = (enum distortions) d;
+    }
+    for (; i<64; i++) {
+        p->distortion[i] = (enum distortions) 0;
+    }
+    SendInstrumentToDSP(program);
+    DrawProgram();
+}
+
+// ****************************************************************************
 // REQUEST ALL INSTRUMENTS BUTTON
 //
 void InstrumentEditor::RequestAllButtonCB_redirect(Fl_Widget *w, void *data) {
@@ -499,6 +560,7 @@ void InstrumentEditor::DrawProgram(void) {
         }
     }
     volumeValues->SetValues(&p->volume[0]);
+    distValues->SetValues((uint8_t *)&p->distortion[0]);
     susLoopStart->value(p->sustain_loop_start);
     susLoopEnd->value(p->sustain_loop_end);
     envEnd->value(p->release_end);

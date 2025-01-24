@@ -26,7 +26,7 @@ private:
 
 class HexLine : public Fl_Group {
 public:
-    HexLine(int x, int y);
+    HexLine(int x, int y, const char *l = nullptr);
     HexBox *boxes[64];
     void SetValue(int index, unsigned int value);
     void SetValues(uint8_t *values);
@@ -78,6 +78,9 @@ private:
     Fl_Spinner *sustainSpin;
     Fl_Spinner *releaseSpin;
 
+    HexLine *distValues;
+    Fl_Button *distButtons[5];
+
     Fl_Progress *progressBar;
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
@@ -98,6 +101,9 @@ private:
 
     static void HandleADSR_redirect(Fl_Widget *w, void *data);
     void HandleADSR(Fl_Widget *w, void *data);
+
+    static void HandleDistButtons_redirect(Fl_Widget *w, void *data);
+    void HandleDistButtons(Fl_Widget *w, void *data);
 
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
