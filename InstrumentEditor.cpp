@@ -307,7 +307,41 @@ InstrumentEditor::InstrumentEditor(int width,
     envEnd->callback(HandleEnvEnd_redirect, this);
     cury += 16;
 
+    // ---------- Types and Values
+
+    cury += 8;
+    typesLine = new HexLine(curx, cury, "Types");
+
+    for (int t=0; t<4; t++) {
+        const char *l[4] = { "LSB", ".", ".", "MSB" };
+        typeValues[t] = new HexLine(curx, cury+14+t*12, l[t]);
+    }
+
+    Fl_Box *tbx;
+    for (int t=0; t<4; t++) {
+        const char *l[4] = {
+            "0 - MIDI Note",
+            "1 - MIDI +/- Note",
+            "2 - MIDI +/- Cents",
+            "3 - Fixed Divider"
+        };
+        tbx = new Fl_Box(xx, cury+t*12, 128, 12, l[t]);
+        tbx->labelsize(12);
+        tbx->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    }
+
+    cury += 14 + 4*12;
+    typesLoopStart = new PositionSlider(curx, cury, "Loop Start");
+    typesLoopStart->callback(HandleTypesLoopStart_redirect, this);
+
+    typesLoopEnd = new PositionSlider(curx, cury+16, "Loop End");
+    typesLoopEnd->callback(HandleTypesLoopEnd_redirect, this);
+
+    cury += 3*16;
+
     // ---------- Progress bar, test buttons
+
+    new Separator(cury, width);
 
     cury += 8;
     curx = 16;
@@ -424,6 +458,35 @@ void InstrumentEditor::HandleEnvEnd_redirect(Fl_Widget *w, void *data) {
 void InstrumentEditor::HandleEnvEnd(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[program];
     p->release_end = envEnd->value();
+    SendInstrumentToDSP(program);
+}
+
+// ****************************************************************************
+// TYPES LOOP SLIDERS
+//
+void InstrumentEditor::HandleTypesLoopStart_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleTypesLoopStart(w,data);
+}
+
+void InstrumentEditor::HandleTypesLoopStart(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    if (typesLoopStart->value() > typesLoopEnd->value()) {
+        typesLoopStart->value(typesLoopEnd->value());
+    }
+    p->types_loop = typesLoopStart->value();
+    SendInstrumentToDSP(program);
+}
+
+void InstrumentEditor::HandleTypesLoopEnd_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleTypesLoopEnd(w,data);
+}
+
+void InstrumentEditor::HandleTypesLoopEnd(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    if (typesLoopEnd->value() < typesLoopStart->value()) {
+        typesLoopEnd->value(typesLoopStart->value());
+    }
+    p->types_end = typesLoopEnd->value();
     SendInstrumentToDSP(program);
 }
 
@@ -564,5 +627,17 @@ void InstrumentEditor::DrawProgram(void) {
     susLoopStart->value(p->sustain_loop_start);
     susLoopEnd->value(p->sustain_loop_end);
     envEnd->value(p->release_end);
+
+    typesLine->SetValues(p->types);
+    for (int n=0; n<4; n++) {
+        uint8_t values[64] = {0};
+        for (int x=0; x<64; x++) {
+            values[x] = (p->values[x] >> (n*4)) & 0xff;
+        }
+        typeValues[n]->SetValues(values);
+    }
+
+    typesLoopStart->value(p->types_loop);
+    typesLoopEnd->value(p->types_end);
 }
 

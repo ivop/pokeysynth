@@ -81,6 +81,12 @@ private:
     HexLine *distValues;
     Fl_Button *distButtons[5];
 
+    HexLine *typesLine;
+    HexLine *typeValues[4];
+
+    PositionSlider *typesLoopStart;
+    PositionSlider *typesLoopEnd;
+
     Fl_Progress *progressBar;
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
@@ -104,6 +110,11 @@ private:
 
     static void HandleDistButtons_redirect(Fl_Widget *w, void *data);
     void HandleDistButtons(Fl_Widget *w, void *data);
+
+    static void HandleTypesLoopStart_redirect(Fl_Widget *w, void *data);
+    void HandleTypesLoopStart(Fl_Widget *w, void *data);
+    static void HandleTypesLoopEnd_redirect(Fl_Widget *w, void *data);
+    void HandleTypesLoopEnd(Fl_Widget *w, void *data);
 
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);
