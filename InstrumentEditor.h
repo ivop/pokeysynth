@@ -87,6 +87,14 @@ private:
     PositionSlider *typesLoopStart;
     PositionSlider *typesLoopEnd;
 
+    Fl_Hor_Value_Slider *filterDetune;
+    Fl_Hor_Value_Slider *filterVol2;
+    Fl_Check_Button *filterTranspose;
+
+    Fl_Hor_Value_Slider *benderRange;
+    Fl_Hor_Value_Slider *modwheelDepth;
+    Fl_Hor_Value_Slider *modwheelSpeed;
+
     Fl_Progress *progressBar;
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);

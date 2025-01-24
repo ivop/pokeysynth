@@ -339,6 +339,53 @@ InstrumentEditor::InstrumentEditor(int width,
 
     cury += 3*16;
 
+    // Filter Options
+
+    filterDetune = new Fl_Hor_Value_Slider(curx, cury,
+                                    256-16, 20, "Filter Detune (cents)");
+    filterDetune->bounds(-100,100);
+    filterDetune->precision(0);
+    filterDetune->step(1);
+    filterDetune->value(0);
+    filterDetune->labelsize(12);
+
+    filterVol2 = new Fl_Hor_Value_Slider(curx+256, cury,
+                                    256-16, 20, "Filter Detune Volume (%)");
+    filterVol2->bounds(0,100);
+    filterVol2->precision(0);
+    filterVol2->step(1);
+    filterVol2->value(50);
+    filterVol2->labelsize(12);
+
+    filterTranspose = new Fl_Check_Button(curx+512, cury,
+                                256-16, 20, "Filter Transpose Octave Down");
+
+    benderRange = new Fl_Hor_Value_Slider(curx, cury+40,
+                                256-16, 20, "Pitchwheel +/- Range (cents)");
+    benderRange->bounds(0,1200);
+    benderRange->precision(0);
+    benderRange->step(100);
+    benderRange->value(200);
+    benderRange->labelsize(12);
+
+    modwheelDepth = new Fl_Hor_Value_Slider(curx+256, cury+40,
+                            256-16, 20, "Modwheel LFO Maximum Depth (cents)");
+    modwheelDepth->bounds(0,200);
+    modwheelDepth->precision(0);
+    modwheelDepth->step(1);
+    modwheelDepth->value(100);
+    modwheelDepth->labelsize(12);
+
+    modwheelSpeed = new Fl_Hor_Value_Slider(curx+512, cury+40,
+                            256, 20, "Modwheel LFO Speed (degrees/frame)");
+    modwheelSpeed->bounds(0,360);
+    modwheelSpeed->precision(0);
+    modwheelSpeed->step(1);
+    modwheelSpeed->value(90);
+    modwheelSpeed->labelsize(12);
+
+    cury += 80;
+
     // ---------- Progress bar, test buttons
 
     new Separator(cury, width);
@@ -348,7 +395,7 @@ InstrumentEditor::InstrumentEditor(int width,
     progressBar = new Fl_Progress(curx, cury, 128, 24);
     progressBar->minimum(0);
     progressBar->maximum(127);
-    progressBar->value(0);
+    progressBar->value(127);
     progressBar->color2(fl_rgb_color(0x20,0x40,0x80));
     curx += progressBar->w() + 8;
 
@@ -639,5 +686,13 @@ void InstrumentEditor::DrawProgram(void) {
 
     typesLoopStart->value(p->types_loop);
     typesLoopEnd->value(p->types_end);
+
+    filterDetune->value(p->filtered_detune);
+    filterVol2->value(p->filtered_vol2 * 100);
+    filterTranspose->value(p->filtered_transpose);
+
+    benderRange->value(p->bender_range);
+    modwheelDepth->value(p->mod_lfo_maxdepth);
+    modwheelSpeed->value(p->mod_lfo_speed / (2*M_PI) * 360);
 }
 
