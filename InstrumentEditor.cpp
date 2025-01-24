@@ -354,6 +354,7 @@ InstrumentEditor::InstrumentEditor(int width,
     filterDetune->step(1);
     filterDetune->value(0);
     filterDetune->labelsize(12);
+    filterDetune->callback(HandleFilterDetune_redirect, this);
 
     filterVol2 = new Fl_Hor_Value_Slider(curx+256, cury,
                                     256-16, 20, "Filter Detune Volume (%)");
@@ -362,9 +363,11 @@ InstrumentEditor::InstrumentEditor(int width,
     filterVol2->step(1);
     filterVol2->value(50);
     filterVol2->labelsize(12);
+    filterVol2->callback(HandleFilterVol2_redirect, this);
 
     filterTranspose = new Fl_Check_Button(curx+512, cury,
                                 256-16, 20, "Filter Transpose Octave Down");
+    filterTranspose->callback(HandleFilterTranspose_redirect, this);
 
     benderRange = new Fl_Hor_Value_Slider(curx, cury+40,
                                 256-16, 20, "Pitchwheel +/- Range (cents)");
