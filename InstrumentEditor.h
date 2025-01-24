@@ -87,6 +87,8 @@ private:
     PositionSlider *typesLoopStart;
     PositionSlider *typesLoopEnd;
 
+    Fl_Hor_Value_Slider *typesSpeed;
+
     Fl_Hor_Value_Slider *filterDetune;
     Fl_Hor_Value_Slider *filterVol2;
     Fl_Check_Button *filterTranspose;

@@ -337,6 +337,11 @@ InstrumentEditor::InstrumentEditor(int width,
     typesLoopEnd = new PositionSlider(curx, cury+16, "Loop End");
     typesLoopEnd->callback(HandleTypesLoopEnd_redirect, this);
 
+    typesSpeed = new Fl_Hor_Value_Slider(xx, cury, 128, 16, "Speed");
+    typesSpeed->bounds(0,15);
+    typesSpeed->step(1);
+    typesSpeed->labelsize(12);
+
     cury += 3*16;
 
     // Filter Options
@@ -686,6 +691,7 @@ void InstrumentEditor::DrawProgram(void) {
 
     typesLoopStart->value(p->types_loop);
     typesLoopEnd->value(p->types_end);
+    typesSpeed->value(p->types_speed);
 
     filterDetune->value(p->filtered_detune);
     filterVol2->value(p->filtered_vol2 * 100);
