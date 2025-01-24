@@ -5,11 +5,9 @@ class Label : public Fl_Box {
 public:
     Label(int x, int y, int w, int h, const char *label = nullptr)
         : Fl_Box(x,y,w,h,label) {
-        box(FL_FLAT_BOX);
         labelsize(14);
     }
     Label(int x, int y, int w, const char *label = nullptr) : Fl_Box(x,y,w,20,label) {
-        box(FL_FLAT_BOX);
         labelsize(14);
         labelfont(FL_BOLD);
     }
