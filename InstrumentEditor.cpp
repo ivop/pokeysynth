@@ -276,7 +276,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     int xx = curx + 64*12 + 16;
 
-    for (int d=0; d<=DIST_POLY5_SQUARE; d++) {
+    for (int d=0; d<DIST_COUNT; d++) {
         const char *t[5] = {
             "0 - Pure",
             "1 - Noise",
@@ -479,7 +479,7 @@ void InstrumentEditor::HandleDistButtons_redirect(Fl_Widget *w, void *data) {
 void InstrumentEditor::HandleDistButtons(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[program];
     int d, i;
-    for (d=0; d<=DIST_POLY5_SQUARE; d++) {
+    for (d=0; d<DIST_COUNT; d++) {
         if (w == distButtons[d]) break;
     }
     for (i=0; i<=p->release_end; i++) {
