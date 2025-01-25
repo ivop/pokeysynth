@@ -630,7 +630,7 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
             program_number = ((const LV2_Atom_Int *)pgm)->body;
             const LV2_Atom_Vector *vec = (const LV2_Atom_Vector *)pgmdata;
             if (vec->body.child_type == uris.atom_Int) {
-                printf("received program number %d\n", program_number);
+                printf("dsp: received program number %d\n", program_number);
                 uint8_t *data = (uint8_t *)(&vec->body + 1);
                 memcpy(&instrdata[program_number], data, sizeof(struct pokey_instrument));
             }
@@ -644,7 +644,7 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
 
         if (pgm) {
             program_number = ((const LV2_Atom_Int *)pgm)->body;
-            printf("requested program number %d\n", program_number);
+            printf("dsp: requested program number %d\n", program_number);
             respond(handle, sizeof(uint32_t), &program_number);
         }
     }
