@@ -62,6 +62,7 @@ enum note_types {
     TYPE_NOTE_PLUS_CENTS,   // same as note, but offset +/- by x cents
     TYPE_FIXED_DIVIDER      // fixed divider/frequency, e.g. for drum sounds
 };
+#define TYPES_COUNT (TYPE_FIXED_DIVIDER+1)
 
 class PokeyInstrument {
 public:

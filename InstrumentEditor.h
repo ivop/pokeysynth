@@ -45,11 +45,12 @@ public:
     int handle(int event);
     void show_cursor(void);
     void hide_cursor(void);
+    char last_char;
+    int cursorX;
+    int cursorY;
 private:
     HexLine **lines;
     int nlines;
-    int cursorX;
-    int cursorY;
     bool showCursor;
     bool has_focus;
 };
@@ -98,6 +99,11 @@ private:
 
     HexLine *typesLine;
     HexLine *typeValues[8];
+
+    KeyboardEditor *editVolumeValues;
+    KeyboardEditor *editDistValues;
+    KeyboardEditor *editTypesLine;
+    KeyboardEditor *editTypeValues;
 
     PositionSlider *typesLoopStart;
     PositionSlider *typesLoopEnd;
@@ -158,6 +164,9 @@ private:
     void HandleModwheelDepth(Fl_Widget *w, void *data);
     static void HandleModwheelSpeed_redirect(Fl_Widget *w, void *data);
     void HandleModwheelSpeed(Fl_Widget *w, void *data);
+
+    static void HandleKeyboardEditor_redirect(Fl_Widget *w, void *data);
+    void HandleKeyboardEditor(KeyboardEditor *w, void *data);
 
     static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestAllButtonCB(Fl_Widget *w, void *data);

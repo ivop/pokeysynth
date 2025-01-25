@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <math.h>
+#include <ctype.h>
 
 #include "lv2.h"
 #include "fltk.h"
@@ -14,7 +15,7 @@ extern struct pokey_instrument instrdata[128];
 #if 0
 void testCB(Fl_Widget *w, void *data) {
     puts("test");
-    /*char *result = */ fl_file_chooser("Choose a file", "*.*", NULL);
+    ///*char *result = */ fl_file_chooser("Choose a file", "*.*", NULL);
 }
 #endif
 
@@ -198,7 +199,8 @@ int KeyboardEditor::handle(int event) {
         return 1;
     case FL_KEYDOWN:
         if (has_focus) {
-            switch (Fl::event_key()) {
+            int key = Fl::event_key();
+            switch (key) {
             case FL_Left:
                 hide_cursor();
                 cursorX--;
@@ -223,6 +225,11 @@ int KeyboardEditor::handle(int event) {
                 if (cursorY >= nlines) cursorY = nlines-1;
                 show_cursor();
                 break;
+            }
+            char text = Fl::event_text()[0];
+            last_char = text;
+            if (isxdigit(text) || text == '+' || text == '-') {
+                do_callback();
             }
             return 1;
         }
@@ -365,12 +372,16 @@ InstrumentEditor::InstrumentEditor(int width,
 
     cury += 16*12;
     volumeValues = new HexLine(curx, cury, "Volume");
-    KeyboardEditor *editVolumeValues = new KeyboardEditor(curx, cury, 64*12, 12, &volumeValues, 1);
+    editVolumeValues = new KeyboardEditor(curx, cury, 64*12, 12, &volumeValues, 1);
+    editVolumeValues->add(volumeValues);
+    editVolumeValues->callback(HandleKeyboardEditor_redirect, this);
     editVolumeValues->end();
 
     cury += 12;
     distValues = new HexLine(curx, cury, "Distortion");
-    KeyboardEditor *editDistValues = new KeyboardEditor(curx, cury, 64*12, 12, &distValues, 1);
+    editDistValues = new KeyboardEditor(curx, cury, 64*12, 12, &distValues, 1);
+    editDistValues->add(distValues);
+    editDistValues->callback(HandleKeyboardEditor_redirect, this);
     editDistValues->end();
     cury += 12;
 
@@ -388,14 +399,20 @@ InstrumentEditor::InstrumentEditor(int width,
 
     cury += 8;
     typesLine = new HexLine(curx, cury, "Types");
-    KeyboardEditor *editTypesLine = new KeyboardEditor(curx, cury, 64*12, 12, &typesLine, 1);
+    editTypesLine = new KeyboardEditor(curx, cury, 64*12, 12, &typesLine, 1);
+    editTypesLine->add(typesLine);
+    editTypesLine->callback(HandleKeyboardEditor_redirect, this);
     editTypesLine->end();
 
     for (int t=0; t<8; t++) {
         const char *l[8] = { "LSB", ".", ".", ".", ".", ".", ".", "MSB" };
         typeValues[t] = new HexLine(curx, cury+14+t*12, l[t]);
     }
-    KeyboardEditor *editTypeValues = new KeyboardEditor(curx, cury+14, 64*12, 8*12, &typeValues[0], 8);
+    editTypeValues = new KeyboardEditor(curx, cury+14, 64*12, 8*12, &typeValues[0], 8);
+    for (int t=0; t<8; t++) {
+        editTypeValues->add(typeValues[t]);
+    }
+    editTypeValues->callback(HandleKeyboardEditor_redirect, this);
     editTypeValues->end();
 
     Fl_Box *tbx;
@@ -779,6 +796,56 @@ void InstrumentEditor::HandleDistButtons(Fl_Widget *w, void *data) {
     }
     for (; i<64; i++) {
         p->distortion[i] = (enum distortions) 0;
+    }
+    SendInstrumentToDSP(program);
+    DrawProgram();
+}
+
+// ****************************************************************************
+// KEYBOARD EDITOR HANDLER
+// Just use one callback for all edits
+//
+void InstrumentEditor::HandleKeyboardEditor_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *)data)->HandleKeyboardEditor((KeyboardEditor *)w, data);
+}
+
+void InstrumentEditor::HandleKeyboardEditor(KeyboardEditor *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    char key = tolower(w->last_char);
+    uint32_t v;
+
+    if (isxdigit(key)) {
+        v = key > '9' ? key - 'a' + 10 : key - '0';
+        if (w == editVolumeValues) {
+            p->volume[w->cursorX] = v;
+        } else if (w == editDistValues) {
+            if (v >= DIST_COUNT) return;
+            p->distortion[w->cursorX] = (enum distortions) v;
+        } else if (w == editTypesLine) {
+            if (v >= TYPES_COUNT) return;
+            p->types[w->cursorX] = v;
+        } else if (w == editTypeValues) {
+        }
+    } else {
+        if (w == editVolumeValues) {
+            v = p->volume[w->cursorX];
+            v += key == '+' ? 1 : -1;
+            v &= 0x0f;
+            p->volume[w->cursorX] = v;
+        } else if (w == editDistValues) {
+            v = p->distortion[w->cursorX];
+            v += key == '+' ? 1 : -1;
+            v &= 0x0f;
+            if (v >= DIST_COUNT) return;
+            p->distortion[w->cursorX] = (enum distortions) v;
+        } else if (w == editTypesLine) {
+            v = p->types[w->cursorX];
+            v += key == '+' ? 1 : -1;
+            v &= 0x0f;
+            if (v >= TYPES_COUNT) return;
+            p->types[w->cursorX] = v;
+        } else if (w == editTypeValues) {
+        }
     }
     SendInstrumentToDSP(program);
     DrawProgram();
