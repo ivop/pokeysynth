@@ -825,6 +825,12 @@ void InstrumentEditor::HandleKeyboardEditor(KeyboardEditor *w, void *data) {
             if (v >= TYPES_COUNT) return;
             p->types[w->cursorX] = v;
         } else if (w == editTypeValues) {
+            int shift = w->cursorY * 4;
+            uint32_t mask = 0xf << shift;
+            v <<= shift;
+            printf("debug: mask = %08x, v=%08x\n", ~mask, v);
+            p->values[w->cursorX] &= ~mask;
+            p->values[w->cursorX] |= v;
         }
     } else {
         if (w == editVolumeValues) {
@@ -845,6 +851,9 @@ void InstrumentEditor::HandleKeyboardEditor(KeyboardEditor *w, void *data) {
             if (v >= TYPES_COUNT) return;
             p->types[w->cursorX] = v;
         } else if (w == editTypeValues) {
+            v = p->values[w->cursorX];
+            v += key == '+' ? 1 : -1;
+            p->values[w->cursorX] = v;
         }
     }
     SendInstrumentToDSP(program);
@@ -928,7 +937,7 @@ void InstrumentEditor::DrawProgram(void) {
     for (int n=0; n<8; n++) {
         uint8_t values[64] = {0};
         for (int x=0; x<64; x++) {
-            values[x] = (p->values[x] >> (n*4)) & 0xff;
+            values[x] = (p->values[x] >> (n*4)) & 0xf;
         }
         typeValues[n]->SetValues(values);
     }
