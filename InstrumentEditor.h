@@ -45,6 +45,7 @@ public:
     int handle(int event);
     void show_cursor(void);
     void hide_cursor(void);
+    void advance_cursor(void);
     char last_char;
     int cursorX;
     int cursorY;

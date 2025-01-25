@@ -180,6 +180,19 @@ void KeyboardEditor::hide_cursor(void) {
     lines[cursorY]->boxes[cursorX]->normal();
 }
 
+void KeyboardEditor::advance_cursor(void) {
+    hide_cursor();
+    if (cursorY) {
+        cursorY--;
+    } else {
+        cursorX++;
+        if (cursorX >= 64) {
+            cursorX = 63;
+        }
+    }
+    show_cursor();
+}
+
 int KeyboardEditor::handle(int event) {
     switch (event) {
     case FL_FOCUS:
@@ -832,6 +845,7 @@ void InstrumentEditor::HandleKeyboardEditor(KeyboardEditor *w, void *data) {
             p->values[w->cursorX] &= ~mask;
             p->values[w->cursorX] |= v;
         }
+        w->advance_cursor();
     } else {
         if (w == editVolumeValues) {
             v = p->volume[w->cursorX];
