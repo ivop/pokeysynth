@@ -391,11 +391,11 @@ InstrumentEditor::InstrumentEditor(int width,
     KeyboardEditor *editTypesLine = new KeyboardEditor(curx, cury, 64*12, 12, &typesLine, 1);
     editTypesLine->end();
 
-    for (int t=0; t<4; t++) {
-        const char *l[4] = { "LSB", ".", ".", "MSB" };
+    for (int t=0; t<8; t++) {
+        const char *l[8] = { "LSB", ".", ".", ".", ".", ".", ".", "MSB" };
         typeValues[t] = new HexLine(curx, cury+14+t*12, l[t]);
     }
-    KeyboardEditor *editTypeValues = new KeyboardEditor(curx, cury+14, 64*12, 4*12, &typeValues[0], 4);
+    KeyboardEditor *editTypeValues = new KeyboardEditor(curx, cury+14, 64*12, 8*12, &typeValues[0], 8);
     editTypeValues->end();
 
     Fl_Box *tbx;
@@ -411,7 +411,7 @@ InstrumentEditor::InstrumentEditor(int width,
         tbx->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     }
 
-    cury += 14 + 4*12;
+    cury += 14 + 8*12;
     typesLoopStart = new PositionSlider(curx, cury, "Loop Start");
     typesLoopStart->callback(HandleTypesLoopStart_redirect, this);
 
@@ -858,7 +858,7 @@ void InstrumentEditor::DrawProgram(void) {
     envEnd->value(p->release_end);
 
     typesLine->SetValues(p->types);
-    for (int n=0; n<4; n++) {
+    for (int n=0; n<8; n++) {
         uint8_t values[64] = {0};
         for (int x=0; x<64; x++) {
             values[x] = (p->values[x] >> (n*4)) & 0xff;

@@ -97,7 +97,7 @@ private:
     Fl_Button *distButtons[5];
 
     HexLine *typesLine;
-    HexLine *typeValues[4];
+    HexLine *typeValues[8];
 
     PositionSlider *typesLoopStart;
     PositionSlider *typesLoopEnd;
