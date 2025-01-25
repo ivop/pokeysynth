@@ -20,7 +20,8 @@ class PokeySynthUi {
 public:
     PokeySynthUi(LV2UI_Write_Function write_function,
                  LV2UI_Controller controller,
-                 const LV2_Feature *const *features);
+                 const LV2_Feature *const *features,
+                 const char *bundle_path);
     void portEvent(uint32_t port_index,
                    uint32_t buffer_size,
                    uint32_t format,
@@ -34,6 +35,7 @@ public:
 private:
     LV2UI_Write_Function write_function;
     LV2UI_Controller controller;
+    const char *bundle_path;
     LV2_Atom_Forge forge;
     LV2_Atom_Forge_Frame frame;
     uint8_t atom_buffer[1024*128];
@@ -162,9 +164,12 @@ void EditorTabCB(Fl_Widget *w, void *data) {
 
 PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                            LV2UI_Controller controller,
-                           const LV2_Feature *const *features) :
+                           const LV2_Feature *const *features,
+                           const char *bundle_path) :
     write_function(write_function),
     controller(controller) {
+
+    this->bundle_path = strdup(bundle_path);
 
     for (int i = 0; features[i]; ++i) {
         if (!strcmp (features[i]->URI, LV2_UI__parent)) {
@@ -297,7 +302,12 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     new Separator(cury, window->w());
     cury += 4;
 
-    editor = new InstrumentEditor(window->w(), cury, write_function, controller, map);
+    editor = new InstrumentEditor(window->w(),
+                                  cury,
+                                  write_function,
+                                  controller,
+                                  map,
+                                  this->bundle_path);
 
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();
@@ -439,7 +449,7 @@ static LV2UI_Handle instantiate(const struct LV2UI_Descriptor *descriptor,
 
     PokeySynthUi *ui;
     try {
-        ui = new PokeySynthUi(write_function, controller, features);
+      ui = new PokeySynthUi(write_function, controller, features, bundle_path);
     }
     catch (std::exception& exc) {
         fprintf(stderr, "UI instantiation failed.\n");

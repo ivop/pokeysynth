@@ -12,15 +12,9 @@
 #include "uris.h"
 #include "PokeyInstrument.h"
 #include "InstrumentEditor.h"
+#include "LoadSaveInstruments.h"
 
 extern struct pokey_instrument instrdata[128];
-
-#if 1
-void testCB(Fl_Widget *w, void *data) {
-    puts("test");
-    ///*char *result = */ fl_file_chooser("Choose a file", "*.*", NULL);
-}
-#endif
 
 // ****************************************************************************
 // SEND INSTRUMENT DATA TO DSP
@@ -267,11 +261,14 @@ InstrumentEditor::InstrumentEditor(int width,
                                    int starty,
                                    LV2UI_Write_Function write_function,
                                    LV2UI_Controller controller,
-                                   LV2_URID_Map *map) {
+                                   LV2_URID_Map *map,
+                                   const char *bundle_path) :
+    write_function(write_function),
+    controller(controller),
+    bundle_path(bundle_path) {
+
     int cury = starty, curx = 0;
 
-    this->write_function = write_function;
-    this->controller = controller;
     lv2_atom_forge_init(&forge, map);
     sending_or_receiving = false;
 
@@ -576,16 +573,18 @@ InstrumentEditor::InstrumentEditor(int width,
     tb = new Fl_Button(curx, cury, butwidth, 24, "Request Current");
     tb->callback(RequestCurButtonCB_redirect, this);
     curx += butwidth + 8;
-#if 0
+
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Instrument");
+    tb->callback(HandleLoadInstrument_redirect, this);
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Save Instrument");
+    tb->callback(HandleSaveInstrument_redirect, this);
     curx += butwidth + 8;
+
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Bank");
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Save Bank");
     curx += butwidth + 8;
-#endif
 
     DrawProgram();
 }
@@ -1102,3 +1101,36 @@ void InstrumentEditor::DrawProgram(void) {
     modwheelSpeed->value(p->mod_lfo_speed / (2*M_PI) * 360);
 }
 
+// ****************************************************************************
+// LOAD/SAVE INSTRUMENT
+//
+void InstrumentEditor::HandleLoadInstrument_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleLoadInstrument(w, data);
+}
+
+void InstrumentEditor::HandleLoadInstrument(Fl_Widget *w, void *data) {
+    LoadSaveInstruments io;
+    char *filename = fl_file_chooser("Load Instrument", "*.ins", bundle_path);
+
+    if (filename) {
+        if (!io.LoadInstrument(program, filename)) {
+            fl_message("Error: %s", io.error_message);
+        }
+    }
+    DrawProgram();
+}
+
+void InstrumentEditor::HandleSaveInstrument_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleSaveInstrument(w, data);
+}
+
+void InstrumentEditor::HandleSaveInstrument(Fl_Widget *w, void *data) {
+    LoadSaveInstruments io;
+    char *filename = fl_file_chooser("Save Instrument", "*.ins", bundle_path);
+
+    if (filename) {
+        if (!io.SaveInstrument(program, filename)) {
+            fl_message("Error: %s", io.error_message);
+        }
+    }
+}

@@ -62,7 +62,8 @@ public:
                      int starty,
                      LV2UI_Write_Function write_function,
                      LV2UI_Controller controller,
-                     LV2_URID_Map *map);
+                     LV2_URID_Map *map,
+                     const char *bundle_path);
     void DrawProgram(void);
     unsigned int program;
 
@@ -72,6 +73,7 @@ public:
 private:
     LV2UI_Write_Function write_function;
     LV2UI_Controller controller;
+    const char *bundle_path;
     LV2_Atom_Forge forge;
     LV2_Atom_Forge_Frame frame;
     uint8_t atom_buffer[1024*128];
@@ -181,4 +183,9 @@ private:
 
     static void RequestCurButtonCB_redirect(Fl_Widget *w, void *data);
     void RequestCurButtonCB(Fl_Widget *w, void *data);
+
+    static void HandleLoadInstrument_redirect(Fl_Widget *w, void *data);
+    void HandleLoadInstrument(Fl_Widget *w, void *data);
+    static void HandleSaveInstrument_redirect(Fl_Widget *w, void *data);
+    void HandleSaveInstrument(Fl_Widget *w, void *data);
 };
