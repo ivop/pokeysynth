@@ -582,8 +582,10 @@ InstrumentEditor::InstrumentEditor(int width,
     curx += butwidth + 8;
 
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Bank");
+    tb->callback(HandleLoadBank_redirect, this);
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Save Bank");
+    tb->callback(HandleSaveBank_redirect, this);
     curx += butwidth + 8;
 
     DrawProgram();
@@ -1102,7 +1104,7 @@ void InstrumentEditor::DrawProgram(void) {
 }
 
 // ****************************************************************************
-// LOAD/SAVE INSTRUMENT
+// LOAD/SAVE INSTRUMENT(S)
 //
 void InstrumentEditor::HandleLoadInstrument_redirect(Fl_Widget *w, void *data){
     ((InstrumentEditor *) data)->HandleLoadInstrument(w, data);
@@ -1130,6 +1132,37 @@ void InstrumentEditor::HandleSaveInstrument(Fl_Widget *w, void *data) {
 
     if (filename) {
         if (!io.SaveInstrument(program, filename)) {
+            fl_message("Error: %s", io.error_message);
+        }
+    }
+}
+
+void InstrumentEditor::HandleLoadBank_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleLoadBank(w, data);
+}
+
+void InstrumentEditor::HandleLoadBank(Fl_Widget *w, void *data) {
+    LoadSaveInstruments io;
+    char *filename = fl_file_chooser("Load Bank", "*.bnk", bundle_path);
+
+    if (filename) {
+        if (!io.LoadBank(filename)) {
+            fl_message("Error: %s", io.error_message);
+        }
+    }
+    DrawProgram();
+}
+
+void InstrumentEditor::HandleSaveBank_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleSaveBank(w, data);
+}
+
+void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
+    LoadSaveInstruments io;
+    char *filename = fl_file_chooser("Save Bank", "*.bnk", bundle_path);
+
+    if (filename) {
+        if (!io.SaveBank(filename)) {
             fl_message("Error: %s", io.error_message);
         }
     }

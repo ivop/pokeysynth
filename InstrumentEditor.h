@@ -188,4 +188,9 @@ private:
     void HandleLoadInstrument(Fl_Widget *w, void *data);
     static void HandleSaveInstrument_redirect(Fl_Widget *w, void *data);
     void HandleSaveInstrument(Fl_Widget *w, void *data);
+
+    static void HandleLoadBank_redirect(Fl_Widget *w, void *data);
+    void HandleLoadBank(Fl_Widget *w, void *data);
+    static void HandleSaveBank_redirect(Fl_Widget *w, void *data);
+    void HandleSaveBank(Fl_Widget *w, void *data);
 };

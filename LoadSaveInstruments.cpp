@@ -13,6 +13,8 @@
 #define POKEYSYNTH_BANK_MAGIC       "POKEYSYNTH_BANK!"
 #define FILE_FORMAT_VERSION         1
 
+// ****************************************************************************
+
 LoadSaveInstruments::LoadSaveInstruments(void) {
     error_message = "No errors";
 }
@@ -21,6 +23,7 @@ bool LoadSaveInstruments::LoadInstrument(int program, const char *filename) {
     std::ifstream input(filename);
 
     if (!input.is_open()) {
+        error_message = "Unable to open file!";
         return false;
     }
 
@@ -34,10 +37,13 @@ bool LoadSaveInstruments::LoadInstrument(int program, const char *filename) {
     return true;
 }
 
+// ****************************************************************************
+
 bool LoadSaveInstruments::SaveInstrument(int program, const char *filename) {
     std::ofstream output(filename);
 
     if (!output.is_open()) {
+        error_message = "Unable to open file!";
         return false;
     }
 
@@ -51,13 +57,67 @@ bool LoadSaveInstruments::SaveInstrument(int program, const char *filename) {
     return true;
 }
 
+// ****************************************************************************
+
 bool LoadSaveInstruments::LoadBank(const char *filename) {
+    char magic[16];
+    int file_format_version = 0;
+    std::ifstream input(filename);
+
+    if (!input.is_open()) {
+        error_message = "Unable to open file!";
+        return false;
+    }
+
+    input.read(magic, MAGIC_LENGTH);
+    if (memcmp(magic, POKEYSYNTH_BANK_MAGIC, MAGIC_LENGTH)) {
+        error_message = "Wrong file format!";
+        return false;
+    }
+    file_format_version = input.get();
+    if (file_format_version != FILE_FORMAT_VERSION) {
+        error_message = "File format version mismatch!";
+        return false;
+    }
+
+    for (int p=0; p<=127; p++) {
+        if (!load_instrument(input, p)) {
+            input.close();
+            error_message = "Loading bank failed!";
+            return false;
+        }
+    }
+
+    input.close();
     return true;
 }
 
+// ****************************************************************************
+
 bool LoadSaveInstruments::SaveBank(const char *filename) {
+    std::ofstream output(filename);
+
+    if (!output.is_open()) {
+        error_message = "Unable to open file!";
+        return false;
+    }
+
+    output.write(POKEYSYNTH_BANK_MAGIC, MAGIC_LENGTH);
+    output << (uint8_t) FILE_FORMAT_VERSION;
+
+    for (int p=0; p<=127; p++) {
+        if (!save_instrument(output, p)) {
+            output.close();
+            error_message = "Saving bank failed!";
+            return false;
+        }
+    }
+
+    output.close();
     return true;
 }
+
+// ****************************************************************************
 
 bool LoadSaveInstruments::load_instrument(std::ifstream &input, int program) {
     struct pokey_instrument *p = &instrdata[program];
@@ -91,7 +151,7 @@ bool LoadSaveInstruments::load_instrument(std::ifstream &input, int program) {
     input.read((char *) p->types, INSTRUMENT_LENGTH);
 
     for (int i=0; i<INSTRUMENT_LENGTH; i++) {
-        p->values[i] = read_uint32(input);
+        temp.values[i] = read_uint32(input);
     }
 
     temp.types_end = input.get();
@@ -117,6 +177,8 @@ bool LoadSaveInstruments::load_instrument(std::ifstream &input, int program) {
 
     return true;
 }
+
+// ****************************************************************************
 
 bool LoadSaveInstruments::save_instrument(std::ofstream &output, int program) {
     struct pokey_instrument *p = &instrdata[program];
@@ -160,14 +222,15 @@ bool LoadSaveInstruments::save_instrument(std::ofstream &output, int program) {
     return output.good();
 }
 
+// ****************************************************************************
 // Endian Safe reading and writing of (u)int32_t
 //
 uint32_t LoadSaveInstruments::read_uint32(std::ifstream &input) {
     uint32_t value;
     value  = input.get();
-    value |= input.get() <<  8;
-    value |= input.get() << 16;
-    value |= input.get() << 24;
+    value |= ((uint32_t) input.get()) <<  8;
+    value |= ((uint32_t) input.get()) << 16;
+    value |= ((uint32_t) input.get()) << 24;
     return value;
 }
 
@@ -194,6 +257,6 @@ void LoadSaveInstruments::write_float(std::ofstream &output, float value) {
         uint32_t intval;
         float floatval;
     } outvalue;
-    outvalue.intval = value;
+    outvalue.floatval = value;
     write_uint32(output, outvalue.intval);
 }
