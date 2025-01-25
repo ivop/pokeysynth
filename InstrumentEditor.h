@@ -106,6 +106,10 @@ private:
     KeyboardEditor *editTypesLine;
     KeyboardEditor *editTypeValues;
 
+    FlatRadioButton *chordType[6];
+    FlatRadioButton *chordAdd[7];
+    FlatRadioButton *chordInversion[4];
+
     PositionSlider *typesLoopStart;
     PositionSlider *typesLoopEnd;
 
@@ -151,6 +155,9 @@ private:
     void HandleTypesLoopEnd(Fl_Widget *w, void *data);
     static void HandleTypesLoopSpeed_redirect(Fl_Widget *w, void *data);
     void HandleTypesLoopSpeed(Fl_Widget *w, void *data);
+
+    static void HandleChordsButton_redirect(Fl_Widget *w, void *data);
+    void HandleChordsButton(Fl_Widget *w, void *data);
 
     static void HandleFilterDetune_redirect(Fl_Widget *w, void *data);
     void HandleFilterDetune(Fl_Widget *w, void *data);

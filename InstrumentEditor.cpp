@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <math.h>
 #include <ctype.h>
+#include <vector>
+#include <set>
+#include <array>
 
 #include "lv2.h"
 #include "fltk.h"
@@ -12,7 +15,7 @@
 
 extern struct pokey_instrument instrdata[128];
 
-#if 0
+#if 1
 void testCB(Fl_Widget *w, void *data) {
     puts("test");
     ///*char *result = */ fl_file_chooser("Choose a file", "*.*", NULL);
@@ -414,7 +417,7 @@ InstrumentEditor::InstrumentEditor(int width,
     // ---------- Types and Values
 
     cury += 8;
-    typesLine = new HexLine(curx, cury, "Types");
+    typesLine = new HexLine(curx, cury, "Type");
     editTypesLine = new KeyboardEditor(curx, cury, 64*12, 12, &typesLine, 1);
     editTypesLine->add(typesLine);
     editTypesLine->callback(HandleKeyboardEditor_redirect, this);
@@ -431,6 +434,8 @@ InstrumentEditor::InstrumentEditor(int width,
     editTypeValues->callback(HandleKeyboardEditor_redirect, this);
     editTypeValues->end();
 
+    // ---------- Types Helper
+
     Fl_Box *tbx;
     for (int t=0; t<4; t++) {
         const char *l[4] = {
@@ -444,11 +449,49 @@ InstrumentEditor::InstrumentEditor(int width,
         tbx->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
     }
 
+    // ---------- Chord Helper
+
+    Fl_Group *chordTypeGroup = new Fl_Group(16, cury, 96, 3*16);
+    for (int c=0; c<6; c++) {
+        const char *t[6] = { "Major", "Minor", "sus2", "sus4", "Aug", "Dim" };
+        int x = 16 + (c&1)*48;
+        int y = cury + (c>>1)*16;
+        chordType[c] = new FlatRadioButton(x, y, 48, 16, t[c]);
+    }
+    chordType[0]->setonly();
+    chordTypeGroup->end();
+
+    Fl_Group *chordAddGroup = new Fl_Group(16, cury+4+3*16, 96, 4*16);
+    for (int c=0; c<7; c++) {
+        const char *t[7] = { "-", "7", "Maj7", "6", "add9", "add11", "add13" };
+        int x = 16 + (c&1)*48;
+        int y = cury + 4 + 3*16 + (c>>1)*16;
+        chordAdd[c] = new FlatRadioButton(x, y, 48, 16, t[c]);
+    }
+    chordAdd[0]->setonly();
+    chordAddGroup->end();
+
+    Fl_Group *chordInversionGroup = new Fl_Group(16, cury+8+7*16, 96, 2*16);
+    for (int c=0; c<4; c++) {
+        const char *t[4] = { "Root", "1st", "2nd", "3rd" };
+        int x = 16 + (c&1)*48;
+        int y = cury + 8 + 7*16 + (c>>1)*16;
+        chordInversion[c] = new FlatRadioButton(x, y, 48, 16, t[c]);
+    }
+    chordInversion[0]->setonly();
+    chordInversionGroup->end();
+
+    Fl_Button *chordButton = new Fl_Button(16, cury+12+9*16, 96, 16, "Chord");
+    chordButton->labelsize(chordButton->labelsize()-1);
+    chordButton->callback(HandleChordsButton_redirect, this);
+
+    // ---------- Types Loop
+
     cury += 14 + 8*12;
-    typesLoopStart = new PositionSlider(curx, cury, "Loop Start");
+    typesLoopStart = new PositionSlider(curx, cury, "Loop");
     typesLoopStart->callback(HandleTypesLoopStart_redirect, this);
 
-    typesLoopEnd = new PositionSlider(curx, cury+16, "Loop End");
+    typesLoopEnd = new PositionSlider(curx, cury+16, "End");
     typesLoopEnd->callback(HandleTypesLoopEnd_redirect, this);
 
     typesSpeed = new Fl_Hor_Value_Slider(xx, cury, 128, 16, "Speed");
@@ -873,6 +916,93 @@ void InstrumentEditor::HandleKeyboardEditor(KeyboardEditor *w, void *data) {
             p->values[w->cursorX] = v;
         }
     }
+    SendInstrumentToDSP(program);
+    DrawProgram();
+}
+
+// ****************************************************************************
+// CHORD ARPEGGIATOR BUTTON
+//
+void InstrumentEditor::HandleChordsButton_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleChordsButton(w, data);
+}
+
+void InstrumentEditor::HandleChordsButton(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    static std::vector<int> chord[6] = {
+        { 0, 4, 7 },    // Major
+        { 0, 3, 7 },    // Minor
+        { 0, 2, 7 },    // Suspended 2nd
+        { 0, 5, 7 },    // Suspended 4th
+        { 0, 4, 8 },    // Augmented
+        { 0, 3, 6 }     // Diminished
+    };
+    static std::array<int,7> addNote = {
+        0,  // Root
+        10, // 7th
+        11, // Major 7th
+        9,  // 6th
+        14, // 9th
+        17, // 11th
+        21  // 13th
+    };
+    static std::vector<int> inversion[4] = {
+        { 0,   0,   0,   0 },   // Root position
+        { 0, -12, -12, -12 },   // 1st Inversion
+        { 0,   0, -12, -12 },   // 2nd Inversion
+        { 0,   0,   0, -12 }    // 3rd Inversion
+    };
+
+    int whichChord = 0;
+    int whichAdd = 0;
+    int whichInversion = 0;
+
+    for (int c=0; c<6; c++) {
+        if (chordType[c]->value()) {
+            whichChord = c;
+            break;
+        }
+    }
+    for (int a=0; a<7; a++) {
+        if (chordAdd[a]->value()) {
+            whichAdd = a;
+            break;
+        }
+    }
+    for (int i=0; i<4; i++) {
+        if (chordInversion[i]->value()) {
+            whichInversion = i;
+            break;
+        }
+    }
+
+    // clear all types data
+    for (int i=0; i<64; i++) {
+        p->types[i] = 0;
+        p->values[i] = 0;
+    }
+
+    std::vector<int> input = chord[whichChord];
+    if (whichAdd) {
+        input.push_back(addNote[whichAdd]);
+    }
+
+    std::set<int> result;
+
+    for (auto it1 = input.begin(), it2 = inversion[whichInversion].begin();
+            it1 != input.end(); it1++, it2++) {
+        result.insert(*it1 + *it2);
+    }
+
+    int i = 0;
+    for (auto x : result) {
+        p->types[i] = TYPE_NOTE_PLUS_NOTE;
+        p->values[i] = x;
+        i++;
+    }
+    p->types_loop = 0;
+    p->types_end = i - 1;
+
     SendInstrumentToDSP(program);
     DrawProgram();
 }
