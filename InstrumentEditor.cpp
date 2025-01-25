@@ -241,7 +241,10 @@ int KeyboardEditor::handle(int event) {
             }
             char text = Fl::event_text()[0];
             last_char = text;
-            if (isxdigit(text) || text == '+' || text == '-') {
+            if (isxdigit(text) || text == '+' || text == '-' || text == '=') {
+                if (text == '=') {
+                    last_char = '+';
+                }
                 do_callback();
             }
             return 1;
