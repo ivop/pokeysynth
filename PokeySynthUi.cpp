@@ -297,6 +297,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     Fl_Button *but = new Fl_Button(curx+3*128, cury+3*24, 128, 24, "Panic!");
     but->callback(AllNotesOffCB_redirect, this);
+    but->clear_visible_focus();
 
     cury += 96 + 8;
 

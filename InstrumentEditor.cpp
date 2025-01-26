@@ -192,6 +192,7 @@ PositionSlider::PositionSlider(int x, int y, const char *l) : Fl_Hor_Slider(x, y
     Fl_Box *b = new Fl_Box(x-128, y, 128, 16, l);
     b->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
     b->labelsize(12);
+    color(fl_rgb_color(0xb0, 0xb0, 0xb0));
 }
 
 // ****************************************************************************
@@ -406,6 +407,7 @@ InstrumentEditor::InstrumentEditor(int width,
         const int w[3] = { 30, 42, 56 };
         adsrButtons[i] = new Fl_Button(xx, cury+64, w[i], 20, t[i]);
         adsrButtons[i]->callback(HandleADSR_redirect, this);
+        adsrButtons[i]->clear_visible_focus();
         xx += w[i];
     }
 
@@ -424,6 +426,7 @@ InstrumentEditor::InstrumentEditor(int width,
         distButtons[d] = new Fl_Button(xx, cury+d*20, 128, 19, t[d]);
         distButtons[d]->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
         distButtons[d]->callback(HandleDistButtons_redirect, this);
+        distButtons[d]->clear_visible_focus();
     }
 
     // ---------- Volume / Distortion lines
@@ -523,6 +526,7 @@ InstrumentEditor::InstrumentEditor(int width,
     Fl_Button *chordButton = new Fl_Button(16, cury+12+9*16, 96, 16, "Chord");
     chordButton->labelsize(chordButton->labelsize()-1);
     chordButton->callback(HandleChordsButton_redirect, this);
+    chordButton->clear_visible_focus();
 
     // ---------- Types Loop
 
@@ -620,16 +624,20 @@ InstrumentEditor::InstrumentEditor(int width,
 #endif
 
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Instrument");
+    tb->clear_visible_focus();
     tb->callback(HandleLoadInstrument_redirect, this);
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Save Instrument");
+    tb->clear_visible_focus();
     tb->callback(HandleSaveInstrument_redirect, this);
     curx += butwidth + 8;
 
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Bank");
+    tb->clear_visible_focus();
     tb->callback(HandleLoadBank_redirect, this);
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Save Bank");
+    tb->clear_visible_focus();
     tb->callback(HandleSaveBank_redirect, this);
     curx += butwidth + 8;
 
