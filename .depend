@@ -1,7 +1,6 @@
 PokeySynth.o: PokeySynth.cpp lv2.h uris.h mzpokey.h PokeySynth.h \
  PokeyInstrument.h LoadSaveInstruments.h
-PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h Tuning.h \
- test_instruments.cpp
+PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h Tuning.h
 Tuning.o: Tuning.cpp Tuning.h PokeyInstrument.h
 mzpokey.o: mzpokey.cpp mzpokey.h remez.h
 remez.o: remez.cpp remez.h
