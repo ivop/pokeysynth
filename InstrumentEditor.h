@@ -106,6 +106,7 @@ private:
     Fl_Spinner *decaySpin;
     Fl_Spinner *sustainSpin;
     Fl_Spinner *releaseSpin;
+    Fl_Button *adsrButtons[3];
 
     HexLine *distValues;
     Fl_Button *distButtons[5];

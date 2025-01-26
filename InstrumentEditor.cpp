@@ -400,12 +400,18 @@ InstrumentEditor::InstrumentEditor(int width,
     releaseSpin->step(1);
     releaseSpin->value(14);
 
-    Fl_Button *adsrButton = new Fl_Button(16, cury+64, 128, 24, "ADSR");
-    adsrButton->callback(HandleADSR_redirect, this);
+    int xx = 16;
+    for (int i=0; i<3; i++) {
+        const char *t[3] = { "AD", "ADR", "ADSR" };
+        const int w[3] = { 30, 42, 56 };
+        adsrButtons[i] = new Fl_Button(xx, cury+64, w[i], 20, t[i]);
+        adsrButtons[i]->callback(HandleADSR_redirect, this);
+        xx += w[i];
+    }
 
     // ---------- Distortions
 
-    int xx = curx + 64*12 + 16;
+    xx = curx + 64*12 + 16;
 
     for (int d=0; d<DIST_COUNT; d++) {
         const char *t[5] = {
@@ -849,27 +855,46 @@ void InstrumentEditor::HandleADSR(Fl_Widget *w, void *data) {
     float S = sustainSpin->value();
     float R = releaseSpin->value();
 
-    int i, pos = 0;
+    int which, i, pos = 0;
+
+    for (which=0; which<3; which++) {
+        if (adsrButtons[which] == w) break;
+    }
 
     for (i=0; i<(int)A; i++) {
         p->volume[pos+i] = round(15.0 / A * (i + 1));
     }
     pos += i;
 
-    for (i=0; i<(int)D; i++) {
-        p->volume[pos+i] = round(15.0 - ((15.0 - S) / D * (i + 1)));
+    if (which == 1 || which == 2) {     // ADR and ADSR
+        for (i=0; i<(int)D; i++) {
+            p->volume[pos+i] = round(15.0 - ((15.0 - S) / D * (i + 1)));
+        }
+        pos += i;
+
+        if (which == 2) {   // ADSR
+            p->sustain_loop_start = p->sustain_loop_end = pos - 1;
+        }
+
+        for (i=0; i<(int)R; i++) {
+            if ((pos + i) >= 64) break;
+            p->volume[pos+i] = round(S - (S / R * (i + 1)));
+        }
+        pos += i - 1;
+
+        if (which == 1) {   // ADR
+            p->sustain_loop_start = p->sustain_loop_end = pos;
+        }
+
+        p->release_end = pos;
+    } else {                            // AD
+        for (i=0; i<(int)D; i++) {
+            if ((pos + i) >= 64) break;
+            p->volume[pos+i] = round(15.0 - (15.0 / D * (i + 1)));
+        }
+        pos += i - 1;
+        p->release_end = p->sustain_loop_start = p->sustain_loop_end = pos;
     }
-    pos += i;
-
-    p->sustain_loop_start = p->sustain_loop_end = pos - 1;
-
-    for (i=0; i<(int)R; i++) {
-        if ((pos + i) >= 64) break;
-        p->volume[pos+i] = round(S - (S / R * (i + 1)));
-    }
-    pos += i - 1;
-
-    p->release_end = pos;
 
     for (; pos<64; pos++) p->volume[pos] = 0;
 
