@@ -552,12 +552,16 @@ InstrumentEditor::InstrumentEditor(int width,
 
     cury += 80;
 
-    // ---------- Progress bar, test buttons
+    // ---------- Buttons
 
     new Separator(cury, width);
 
     cury += 8;
-    curx = 16;
+    const int butwidth = 144;
+    Fl_Button *tb;
+    curx = (width - 16 - 4*(butwidth+8))/2;
+
+#if 0
     progressBar = new Fl_Progress(curx, cury, 128, 24);
     progressBar->minimum(0);
     progressBar->maximum(127);
@@ -565,14 +569,13 @@ InstrumentEditor::InstrumentEditor(int width,
     progressBar->color2(fl_rgb_color(0x20,0x40,0x80));
     curx += progressBar->w() + 8;
 
-    const int butwidth = 144;
-    Fl_Button *tb;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Request All");
     tb->callback(RequestAllButtonCB_redirect, this);
     curx += butwidth + 8;
     tb = new Fl_Button(curx, cury, butwidth, 24, "Request Current");
     tb->callback(RequestCurButtonCB_redirect, this);
     curx += butwidth + 8;
+#endif
 
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Instrument");
     tb->callback(HandleLoadInstrument_redirect, this);
@@ -1008,6 +1011,7 @@ void InstrumentEditor::HandleChordsButton(Fl_Widget *w, void *data) {
     DrawProgram();
 }
 
+#if 0
 // ****************************************************************************
 // REQUEST ALL INSTRUMENTS BUTTON
 //
@@ -1044,6 +1048,7 @@ void InstrumentEditor::RequestCurButtonCB(Fl_Widget *w, void *data) {
     progressBar->value(127);
     sending_or_receiving = false;
 }
+#endif
 
 // ****************************************************************************
 // DRAW CURRENT PROGRAM

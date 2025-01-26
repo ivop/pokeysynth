@@ -125,7 +125,7 @@ private:
     Fl_Hor_Value_Slider *modwheelDepth;
     Fl_Hor_Value_Slider *modwheelSpeed;
 
-    Fl_Progress *progressBar;
+    //Fl_Progress *progressBar;
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
     void HandleProgramSpinner(Fl_Spinner *w, void *data);
@@ -178,11 +178,10 @@ private:
     static void HandleKeyboardEditor_redirect(Fl_Widget *w, void *data);
     void HandleKeyboardEditor(KeyboardEditor *w, void *data);
 
-    static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
-    void RequestAllButtonCB(Fl_Widget *w, void *data);
-
-    static void RequestCurButtonCB_redirect(Fl_Widget *w, void *data);
-    void RequestCurButtonCB(Fl_Widget *w, void *data);
+    //static void RequestAllButtonCB_redirect(Fl_Widget *w, void *data);
+    //void RequestAllButtonCB(Fl_Widget *w, void *data);
+    //static void RequestCurButtonCB_redirect(Fl_Widget *w, void *data);
+    //void RequestCurButtonCB(Fl_Widget *w, void *data);
 
     static void HandleLoadInstrument_redirect(Fl_Widget *w, void *data);
     void HandleLoadInstrument(Fl_Widget *w, void *data);
