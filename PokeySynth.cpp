@@ -10,8 +10,15 @@
 #include "mzpokey.h"
 #include "PokeySynth.h"
 #include "PokeyInstrument.h"
+#include "LoadSaveInstruments.h"
 
 #include <map>
+
+#if __linux__ || __APPLE__
+#define PATH_SEPARATOR '/'
+#elif _WIN32
+#define PATH_SEPARATOR '\\'
+#endif
 
 enum pokey_update_frequency {
     UPDATE_50HZ,
@@ -82,6 +89,8 @@ private:
 
     int auto_arp_count[4];
     int auto_arp_pos[4];
+
+    const char *bank_filename;
 };
 
 static float intervals[4];
@@ -137,6 +146,12 @@ PokeySynth::PokeySynth(const double sample_rate,
     }
 
     lv2_atom_forge_init(&forge, map);
+
+    char path[4096];
+    snprintf(path, 4096, "%s%c%s", bundle_path, PATH_SEPARATOR, "default.bnk");
+
+    LoadSaveInstruments io;
+    io.LoadBank(path);
 }
 
 // ****************************************************************************

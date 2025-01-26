@@ -16,4 +16,12 @@ void init_uris(LV2_URID_Map *map) {
                                        POKEYSYNTH_URI"#program_data");
     uris.request_program    = map->map(map->handle,
                                        POKEYSYNTH_URI"#request_program");
+
+    uris.filename_object    = map->map(map->handle,
+                                       POKEYSYNTH_URI"#filename_object");
+    uris.bank_filename      = map->map(map->handle,
+                                       POKEYSYNTH_URI"#bank_filename");
+
+    uris.request_bank_filename = map->map(map->handle,
+                                      POKEYSYNTH_URI"#request_bank_filename");
 }
