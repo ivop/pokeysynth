@@ -70,7 +70,10 @@ public:
     void SendInstrumentToDSP(unsigned int num);
     void RequestInstrumentFromDSP(unsigned int num);
 
-    void LoadBank(const char *filename);
+    bool LoadBank(const char *filename);
+    bool SaveBank(void);
+
+    bool is_dirty(void);
 
 private:
     LV2UI_Write_Function write_function;
@@ -81,6 +84,7 @@ private:
     LV2_Atom_Forge_Frame frame;
     uint8_t atom_buffer[1024*128];
 
+    bool dirty;
     bool sending_or_receiving;
 
     Fl_Double_Window *win;

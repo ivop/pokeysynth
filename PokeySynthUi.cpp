@@ -22,6 +22,7 @@ public:
                  LV2UI_Controller controller,
                  const LV2_Feature *const *features,
                  const char *bundle_path);
+    ~PokeySynthUi(void);
     void portEvent(uint32_t port_index,
                    uint32_t buffer_size,
                    uint32_t format,
@@ -364,6 +365,24 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 #else
     #error "Unsupported platform"
 #endif
+}
+
+PokeySynthUi::~PokeySynthUi(void) {
+    puts("ui: destructor");
+    if (editor->is_dirty()) {
+       int answer = fl_choice("There are unsaved edits.\n\n"
+              "Note that closing without saving will instruct\n"
+              "the DSP to reload the uneditted bank\n"
+              "from disk!\n", "Close without saving", "Save Bank", NULL);
+        printf("ui: answer = %d\n", answer);
+        if (answer == 1) {
+            if (!editor->SaveBank()) {
+                // todo: tell editor to notify DSP to reload
+            }
+        } else {
+            // todo: tell editor to notify DSP to reload
+        }
+    }
 }
 
 // ****************************************************************************

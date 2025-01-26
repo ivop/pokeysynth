@@ -22,6 +22,8 @@ extern struct pokey_instrument instrdata[128];
 void InstrumentEditor::SendInstrumentToDSP(unsigned int num) {
     if (num > 127) return;
 
+    dirty = true;
+
     lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
 
     LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
@@ -271,6 +273,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     lv2_atom_forge_init(&forge, map);
     sending_or_receiving = false;
+    dirty = false;
 
     new Label(0, cury,width, "Instrument Editor");
     cury += 20;
@@ -1124,8 +1127,11 @@ void InstrumentEditor::HandleLoadInstrument(Fl_Widget *w, void *data) {
             fl_message("Error: %s", io.error_message);
         }
     }
+    dirty = true;
     DrawProgram();
 }
+
+// ----------------------------------------------------------------------------
 
 void InstrumentEditor::HandleSaveInstrument_redirect(Fl_Widget *w, void *data){
     ((InstrumentEditor *) data)->HandleSaveInstrument(w, data);
@@ -1142,6 +1148,8 @@ void InstrumentEditor::HandleSaveInstrument(Fl_Widget *w, void *data) {
     }
 }
 
+// ----------------------------------------------------------------------------
+
 void InstrumentEditor::HandleLoadBank_redirect(Fl_Widget *w, void *data) {
     ((InstrumentEditor *) data)->HandleLoadBank(w, data);
 }
@@ -1153,10 +1161,15 @@ void InstrumentEditor::HandleLoadBank(Fl_Widget *w, void *data) {
     if (filename) {
         if (!io.LoadBank(filename)) {
             fl_message("Error: %s", io.error_message);
+            return;
         }
     }
+    bank_filename = strdup(filename);
+    // todo: notify DSP to load same file
     DrawProgram();
 }
+
+// ----------------------------------------------------------------------------
 
 void InstrumentEditor::HandleSaveBank_redirect(Fl_Widget *w, void *data) {
     ((InstrumentEditor *) data)->HandleSaveBank(w, data);
@@ -1169,15 +1182,41 @@ void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
     if (filename) {
         if (!io.SaveBank(filename)) {
             fl_message("Error: %s", io.error_message);
+            return;
         }
     }
+    bank_filename = strdup(filename);
+    dirty = false;
+    // todo: notify DSP to either load the same file, or update internal path
 }
 
-void InstrumentEditor::LoadBank(const char *filename) {
+// ----------------------------------------------------------------------------
+
+bool InstrumentEditor::LoadBank(const char *filename) {
     LoadSaveInstruments io;
-    bank_filename = strdup(filename);
-    if (!io.LoadBank(bank_filename)) {
+    if (!io.LoadBank(filename)) {
         fl_message("Loading bank. Error: %s\n", io.error_message);
+        return false;
     }
+    bank_filename = strdup(filename);
     DrawProgram();
+    return true;
+}
+
+bool InstrumentEditor::SaveBank(void) {
+    LoadSaveInstruments io;
+    if (bank_filename) {
+        if (!io.SaveBank(bank_filename)) {
+            fl_message("Saving bank. Error: %s\n", io.error_message);
+            return false;
+        }
+    } else {
+        fl_message("Saving bank failed. No filename\n");
+        return false;
+    }
+    return true;
+}
+
+bool InstrumentEditor::is_dirty() {
+    return dirty;
 }
