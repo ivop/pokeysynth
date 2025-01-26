@@ -606,6 +606,11 @@ InstrumentEditor::InstrumentEditor(int width,
     modwheelSpeed->labelsize(12);
     modwheelSpeed->callback(HandleModwheelSpeed_redirect, this);
 
+    auto botclr = new Fl_Button(width-16-48, cury+40, 48, 16, "Clear");
+    botclr->clear_visible_focus();
+    botclr->labelsize(botclr->labelsize()-1);
+    botclr->callback(HandleBottomClear_redirect, this);
+
     cury += 80;
 
     // ---------- Buttons
@@ -1123,6 +1128,18 @@ void InstrumentEditor::HandleTypesClear(Fl_Widget *w, void *data) {
         v = 0;
     }
     p->types_loop = p->types_end = p->types_speed = 0;
+    SendInstrumentToDSP(program);
+    DrawProgram();
+}
+
+void InstrumentEditor::HandleBottomClear_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleBottomClear(w, data);
+}
+
+void InstrumentEditor::HandleBottomClear(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    p->filtered_detune = p->filtered_vol2 = p->filtered_transpose = 0;
+    p->bender_range = p->mod_lfo_speed = p->mod_lfo_maxdepth = 0;
     SendInstrumentToDSP(program);
     DrawProgram();
 }

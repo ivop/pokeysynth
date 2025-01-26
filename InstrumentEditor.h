@@ -208,4 +208,6 @@ private:
     void HandleVolumeClear(Fl_Widget *w, void *data);
     static void HandleTypesClear_redirect(Fl_Widget *w, void *data);
     void HandleTypesClear(Fl_Widget *w, void *data);
+    static void HandleBottomClear_redirect(Fl_Widget *w, void *data);
+    void HandleBottomClear(Fl_Widget *w, void *data);
 };
