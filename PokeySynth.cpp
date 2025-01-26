@@ -672,6 +672,13 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
         }
     } else if (obj->body.otype == uris.filename_object) {
         puts("dsp: received new filename");
+        const LV2_Atom_String *path = nullptr;
+        lv2_atom_object_get(obj, uris.bank_filename, &path, 0);
+        if (path) {
+            const char *f = (const char *)LV2_ATOM_BODY(path);
+            printf("dsp: set bank_filename to '%s'\n", f);
+            bank_filename = strdup(f);
+        }
     } else if (obj->body.otype == uris.reload_bank) {
         puts("dsp: received reload bank command");
         LoadSaveInstruments io;
