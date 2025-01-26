@@ -203,4 +203,9 @@ private:
     void HandleLoadBank(Fl_Widget *w, void *data);
     static void HandleSaveBank_redirect(Fl_Widget *w, void *data);
     void HandleSaveBank(Fl_Widget *w, void *data);
+
+    static void HandleVolumeClear_redirect(Fl_Widget *w, void *data);
+    void HandleVolumeClear(Fl_Widget *w, void *data);
+    static void HandleTypesClear_redirect(Fl_Widget *w, void *data);
+    void HandleTypesClear(Fl_Widget *w, void *data);
 };

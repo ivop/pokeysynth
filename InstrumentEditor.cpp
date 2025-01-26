@@ -438,6 +438,11 @@ InstrumentEditor::InstrumentEditor(int width,
     editVolumeValues->callback(HandleKeyboardEditor_redirect, this);
     editVolumeValues->end();
 
+    auto volclr = new Fl_Button(16, cury, 48, 16, "Clear");
+    volclr->labelsize(volclr->labelsize()-1);
+    volclr->clear_visible_focus();
+    volclr->callback(HandleVolumeClear_redirect, this);
+
     cury += 12;
     distValues = new HexLine(curx, cury, "Distortion");
     editDistValues = new KeyboardEditor(curx, cury, 64*12, 12, &distValues, 1);
@@ -542,6 +547,11 @@ InstrumentEditor::InstrumentEditor(int width,
     typesSpeed->step(1);
     typesSpeed->labelsize(12);
     typesSpeed->callback(HandleTypesLoopSpeed_redirect, this);
+
+    auto typclr = new Fl_Button(xx, cury-24, 48, 16, "Clear");
+    typclr->labelsize(typclr->labelsize()-1);
+    typclr->clear_visible_focus();
+    typclr->callback(HandleTypesClear_redirect, this);
 
     cury += 3*16;
 
@@ -1076,6 +1086,43 @@ void InstrumentEditor::HandleChordsButton(Fl_Widget *w, void *data) {
     p->types_loop = 0;
     p->types_end = i - 1;
 
+    SendInstrumentToDSP(program);
+    DrawProgram();
+}
+
+// ****************************************************************************
+// CLEAR VOLUME, TYPES, ETC...
+//
+void InstrumentEditor::HandleVolumeClear_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleVolumeClear(w, data);
+}
+
+void InstrumentEditor::HandleVolumeClear(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    for (auto &v : p->volume) {
+        v = 0;
+    }
+    for (auto &d : p->distortion) {
+        d = DIST_PURE;
+    }
+    p->sustain_loop_start = p->sustain_loop_end = p->release_end = 0;
+    SendInstrumentToDSP(program);
+    DrawProgram();
+}
+
+void InstrumentEditor::HandleTypesClear_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleTypesClear(w, data);
+}
+
+void InstrumentEditor::HandleTypesClear(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    for (auto &t : p->types) {
+        t = 0;
+    }
+    for (auto &v : p->values) {
+        v = 0;
+    }
+    p->types_loop = p->types_end = p->types_speed = 0;
     SendInstrumentToDSP(program);
     DrawProgram();
 }
