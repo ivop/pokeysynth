@@ -16,6 +16,7 @@ extern struct uris_s {
     LV2_URID filename_object;
     LV2_URID bank_filename;
     LV2_URID request_bank_filename;
+    LV2_URID reload_bank;
 } uris;
 
 void init_uris(LV2_URID_Map *map);

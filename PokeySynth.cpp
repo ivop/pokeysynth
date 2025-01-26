@@ -50,6 +50,7 @@ public:
                            uint32_t size,
                            const void *data);
     LV2_Worker_Status work_response(uint32_t size, const void *data);
+    void SendBankFilename(void);
 
 private:
     // ports
@@ -149,6 +150,7 @@ PokeySynth::PokeySynth(const double sample_rate,
 
     char path[4096];
     snprintf(path, 4096, "%s%c%s", bundle_path, PATH_SEPARATOR, "default.bnk");
+    bank_filename = strdup(path);
 
     LoadSaveInstruments io;
     io.LoadBank(path);
@@ -608,9 +610,15 @@ void PokeySynth::run(uint32_t sample_count) {
                 break;
             }
         } else if (lv2_atom_forge_is_object_type(&forge, ev->body.type)) { 
-            schedule->schedule_work(schedule->handle,
-                                    lv2_atom_total_size(&ev->body),
-                                    &ev->body);
+
+            const LV2_Atom_Object* obj = (const LV2_Atom_Object*) &ev->body;
+            if (obj->body.otype == uris.request_bank_filename) {
+                SendBankFilename();
+            } else {
+                schedule->schedule_work(schedule->handle,
+                                        lv2_atom_total_size(&ev->body),
+                                        &ev->body);
+            }
         }
     }
 
@@ -674,7 +682,7 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
 LV2_Worker_Status PokeySynth::work_response(uint32_t size, const void *data) {
 
     uint32_t program_number = *((uint32_t *)data);
-    printf("send response for pogram number %d\n", program_number);
+    printf("dsp: send response for pogram number %d\n", program_number);
 
     const uint32_t notify_capacity = notify->atom.size;
     lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
@@ -701,6 +709,25 @@ LV2_Worker_Status PokeySynth::work_response(uint32_t size, const void *data) {
     lv2_atom_forge_pop(&forge, &notify_frame);
 
     return LV2_WORKER_SUCCESS;
+}
+
+void PokeySynth::SendBankFilename(void) {
+    puts("dsp: send bank filename");
+
+    const uint32_t notify_capacity = notify->atom.size;
+    lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
+                                                    notify_capacity);
+    lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
+    lv2_atom_forge_frame_time(&forge, 0);
+
+    LV2_Atom_Forge_Frame frame;
+    lv2_atom_forge_object(&forge, &frame, 0, uris.filename_object);
+
+    lv2_atom_forge_key(&forge, uris.bank_filename);
+    lv2_atom_forge_path(&forge, bank_filename, strlen(bank_filename));
+
+    lv2_atom_forge_pop(&forge, &frame);
+    lv2_atom_forge_pop(&forge, &notify_frame);
 }
 
 // ****************************************************************************

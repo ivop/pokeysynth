@@ -1172,3 +1172,12 @@ void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
         }
     }
 }
+
+void InstrumentEditor::LoadBank(const char *filename) {
+    LoadSaveInstruments io;
+    bank_filename = strdup(filename);
+    if (!io.LoadBank(bank_filename)) {
+        fl_message("Loading bank. Error: %s\n", io.error_message);
+    }
+    DrawProgram();
+}

@@ -59,6 +59,8 @@ private:
 
     static void AllNotesOffCB_redirect(Fl_Widget *w, void *data);
     void AllNotesOffCB(Fl_Widget *w, void *data);
+
+    void RequestBankFilename(void);
 };
 
 // ****************************************************************************
@@ -328,6 +330,8 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 #endif
 
+    RequestBankFilename();
+
     if (!parentWindow) return;
 
     Window w = fl_xid(window);
@@ -404,7 +408,6 @@ void PokeySynthUi::portEvent(uint32_t port_index,
         updateSpeedRadioButtons[vi]->setonly();
         break;
     case POKEYSYNTH_NOTIFY_GUI:
-        puts("DSP to GUI event");
         const LV2_Atom_Object* obj = (const LV2_Atom_Object*) buffer;
         if (obj->body.otype == uris.instrument_data) {
             puts("gui: received instrument data");
@@ -426,9 +429,29 @@ void PokeySynthUi::portEvent(uint32_t port_index,
                     editor->DrawProgram();
                 }
             }
+        } else if (obj->body.otype == uris.filename_object) {
+            puts("gui: received filename object");
+            const LV2_Atom_String *path = nullptr;
+
+            lv2_atom_object_get(obj, uris.bank_filename, &path, 0);
+            const char *f = (const char *)LV2_ATOM_BODY(path);
+            editor->LoadBank(f);
         }
         break;
     }
+}
+
+// ****************************************************************************
+
+void PokeySynthUi::RequestBankFilename(void) {
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+
+    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
+                                                   &frame,
+                                                   0,
+                                                   uris.request_bank_filename);
+    lv2_atom_forge_pop(&forge, &frame);
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
 // ****************************************************************************

@@ -70,10 +70,13 @@ public:
     void SendInstrumentToDSP(unsigned int num);
     void RequestInstrumentFromDSP(unsigned int num);
 
+    void LoadBank(const char *filename);
+
 private:
     LV2UI_Write_Function write_function;
     LV2UI_Controller controller;
     const char *bundle_path;
+    const char *bank_filename;
     LV2_Atom_Forge forge;
     LV2_Atom_Forge_Frame frame;
     uint8_t atom_buffer[1024*128];

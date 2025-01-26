@@ -24,4 +24,6 @@ void init_uris(LV2_URID_Map *map) {
 
     uris.request_bank_filename = map->map(map->handle,
                                       POKEYSYNTH_URI"#request_bank_filename");
+    uris.reload_bank        = map->map(map->handle,
+                                       POKEYSYNTH_URI"#reload_bank");
 }
