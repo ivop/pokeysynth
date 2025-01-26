@@ -75,6 +75,9 @@ public:
 
     bool is_dirty(void);
 
+    void SendReloadFromFileToDSP(void);
+    void SendNewPathnameToDSP(void);
+
 private:
     LV2UI_Write_Function write_function;
     LV2UI_Controller controller;

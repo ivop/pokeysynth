@@ -670,6 +670,12 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
             printf("dsp: requested program number %d\n", program_number);
             respond(handle, sizeof(uint32_t), &program_number);
         }
+    } else if (obj->body.otype == uris.filename_object) {
+        puts("dsp: received new filename");
+    } else if (obj->body.otype == uris.reload_bank) {
+        puts("dsp: received reload bank command");
+        LoadSaveInstruments io;
+        io.LoadBank(bank_filename);
     }
 
     return LV2_WORKER_SUCCESS;

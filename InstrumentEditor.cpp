@@ -69,6 +69,39 @@ void InstrumentEditor::RequestInstrumentFromDSP(unsigned int num) {
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
+
+// ****************************************************************************
+// SEND NEW BANK FILENAME TO DSP
+//
+void InstrumentEditor::SendNewPathnameToDSP(void) {
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+
+    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
+                                                       &frame,
+                                                       0,
+                                                       uris.filename_object);
+
+    lv2_atom_forge_key(&forge, uris.bank_filename);
+    lv2_atom_forge_path(&forge, bank_filename, strlen(bank_filename));
+
+    lv2_atom_forge_pop(&forge, &frame);
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+}
+
+// ****************************************************************************
+// TELL DSP TO RELOAD BANK FROM FILENAME IT KNOWS
+//
+void InstrumentEditor::SendReloadFromFileToDSP(void) {
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+
+    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
+                                                       &frame,
+                                                       0,
+                                                       uris.reload_bank);
+    lv2_atom_forge_pop(&forge, &frame);
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+}
+
 // ****************************************************************************
 // VOLUME ENVELOPE BOX WIDGET
 //
@@ -1165,7 +1198,8 @@ void InstrumentEditor::HandleLoadBank(Fl_Widget *w, void *data) {
         }
     }
     bank_filename = strdup(filename);
-    // todo: notify DSP to load same file
+    SendNewPathnameToDSP();
+    SendReloadFromFileToDSP();
     DrawProgram();
 }
 
@@ -1187,7 +1221,7 @@ void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
     }
     bank_filename = strdup(filename);
     dirty = false;
-    // todo: notify DSP to either load the same file, or update internal path
+    SendNewPathnameToDSP();
 }
 
 // ----------------------------------------------------------------------------

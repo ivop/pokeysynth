@@ -374,13 +374,15 @@ PokeySynthUi::~PokeySynthUi(void) {
               "Note that closing without saving will instruct\n"
               "the DSP to reload the uneditted bank\n"
               "from disk!\n", "Close without saving", "Save Bank", NULL);
-        printf("ui: answer = %d\n", answer);
         if (answer == 1) {
             if (!editor->SaveBank()) {
-                // todo: tell editor to notify DSP to reload
+                // if saving fails we might be in big trouble, but try
+                // to reload anyway. if it's only a permission problem,
+                // reload should succeed.
+                editor->SendReloadFromFileToDSP();
             }
         } else {
-            // todo: tell editor to notify DSP to reload
+            editor->SendReloadFromFileToDSP();
         }
     }
 }
