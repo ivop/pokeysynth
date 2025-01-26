@@ -1,8 +1,8 @@
 /*
  * mzpokey.c - POKEY sound chip emulation, v1.6
  *
- * Copyright (C) 2002-218 Michael Borisov, Krzystof Nikiel, Perry McFarlane,
- *                        Petr Stehlík, Piotr Fusik
+ * Copyright (C) 2002-2018 Michael Borisov, Krzystof Nikiel, Perry McFarlane,
+ *                         Petr Stehlík, Piotr Fusik
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
