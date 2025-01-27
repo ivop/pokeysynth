@@ -1346,6 +1346,7 @@ void InstrumentEditor::HandleLoadBank(Fl_Widget *w, void *data) {
     SendNewPathnameToDSP();
     SendReloadFromFileToDSP();
     DrawProgram();
+    dirty = false;
 }
 
 // ----------------------------------------------------------------------------
