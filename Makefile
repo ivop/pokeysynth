@@ -1,5 +1,5 @@
-CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override
-#CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override
+CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override -Wzero-as-null-pointer-constant
+#CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override -Wzero-as-null-pointer-constant
 LIBS=-lm
 SRC=PokeySynth.cpp PokeyInstrument.cpp Tuning.cpp mzpokey.cpp remez.cpp \
 	uris.cpp LoadSaveInstruments.cpp

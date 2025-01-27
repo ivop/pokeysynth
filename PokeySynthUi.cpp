@@ -526,6 +526,6 @@ static const LV2UI_Descriptor ui_descriptor = {
 LV2_SYMBOL_EXPORT const LV2UI_Descriptor * 	lv2ui_descriptor (uint32_t index) {
     switch (index) {
         case 0:     return &ui_descriptor;
-        default:    return 0;
+        default:    return nullptr;
     }
 }
