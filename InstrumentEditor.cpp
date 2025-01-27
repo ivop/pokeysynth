@@ -630,9 +630,6 @@ InstrumentEditor::InstrumentEditor(int width,
 
     // ---------- Buttons
 
-    new Separator(cury, width);
-
-    cury += 8;
     const int butwidth = 144;
     Fl_Button *tb;
     curx = (width - 16 - 4*(butwidth+8))/2;

@@ -41,6 +41,10 @@ private:
     uint8_t atom_buffer[1024*128];
     LV2_URID_Map *map;
 
+    const char *sapr_filename;
+    Fl_Input *saprFilename;
+    Fl_Box *saprStatus;
+
     FlatRadioButton *listenRadioButtons[4];
     static void HandleListenCB_redirect(Fl_Widget *w, void *data);
     void HandleListenCB(Fl_Widget *w, void *data);
@@ -60,7 +64,18 @@ private:
     static void Panic_redirect(Fl_Widget *w, void *data);
     void Panic(Fl_Widget *w, void *data);
 
-    void RequestBankFilename(void);
+    void SendShort(LV2_URID urid);
+    void SendSaprFilename(void);
+
+    static void HandleBrowseSapr_redirect(Fl_Widget *w, void *data);
+    void HandleBrowseSapr(Fl_Widget *w, void *data);
+    static void HandleSaprStart_redirect(Fl_Widget *w, void *data);
+    void HandleSaprStart(Fl_Widget *w, void *data);
+    static void HandleSaprStop_redirect(Fl_Widget *w, void *data);
+    void HandleSaprStop(Fl_Widget *w, void *data);
+
+    static void HandleSaprFilename_redirect(Fl_Widget *w, void *data);
+    void HandleSaprFilename(Fl_Widget *w, void *data);
 };
 
 // ****************************************************************************
@@ -206,7 +221,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     Fl::visual(FL_DOUBLE|FL_INDEX);
 
 #define WIDTH 1088
-#define HEIGHT 848
+#define HEIGHT 872
 
     window = new Fl_Double_Window(WIDTH, HEIGHT);
 
@@ -223,14 +238,6 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                                    "by Ivo van Poorten");
     copyright->labelfont(FL_ITALIC);
     copyright->labelsize(10);
-
-#if 0
-    cury = copyright->y() + copyright->h();
-
-    new Separator(cury, window->w());
-
-    cury += 4;
-#endif
 
     // ---------- MIDI CHANNELS / UPDATE SPEED ----------
 
@@ -263,7 +270,8 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         for (int x=0; x<4; x++) {
             updateSpeedRadioButtons[x] =
                 new FlatRadioButton(curx+x*128, cury, 128, 24, t[x]);
-            updateSpeedRadioButtons[x]->callback(HandleUpdateSpeedCB_redirect, this);
+            updateSpeedRadioButtons[x]->callback(HandleUpdateSpeedCB_redirect,
+                                                                        this);
         }
     }
     group3->end();
@@ -326,26 +334,57 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                                   map,
                                   this->bundle_path);
 
+    // ---------- SAP-R RECORDING ----------
+
+    cury = HEIGHT - 32;
+
+    new Separator(cury, window->w());
+    cury += 8;
+
+    curx = 16;
+
+    auto pck = new Fl_Pack(curx, cury, WIDTH-32, 20);
+    pck->type(FL_HORIZONTAL);
+    pck->spacing(1);
+
+    auto sapr = new Fl_Box(0, 0, 64, 24, "SAP-R");
+    sapr->labelfont(FL_BOLD);
+    sapr->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    auto fn = new Fl_Box(0, 0, 80, 24, "Filename:");
+    fn->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    saprFilename = new Fl_Input(0,0, 416, 24);
+    saprFilename->callback(HandleSaprFilename_redirect, this);
+
+    auto browse = new Fl_Button(0,0, 24, 24, "...");
+    browse->callback(HandleBrowseSapr_redirect, this);
+
+    auto status = new Fl_Box(0,0,64,24, "Status:");
+    status->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+
+    saprStatus = new Fl_Box(0,0,96,24, "Stopped");
+    saprStatus->labelcolor(fl_rgb_color(0x20,0x80,0x40));
+    saprStatus->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    auto mss = new Fl_Check_Button(0,0,176, 24, "MIDI Start/Stop Song");
+    mss->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+    auto start = new Fl_Button(0,0, 64, 24, "Start");
+    start->callback(HandleSaprStart_redirect, this);
+    auto stop = new Fl_Button(0,0, 64, 24, "Stop");
+    stop->callback(HandleSaprStop_redirect, this);
+
+    pck->end();
+
+    // END
+
     window->size_range(window->w(),window->h(),window->w(),window->h());
     window->end();
     window->show();
 
-#if 0
-    // Send all instrument data to DSP
-    for (int i=0; i<128; i++) {
-        editor->SendInstrumentToDSP(i);
-        usleep(1000);   // do not send too fast
-    }
-#endif
-
-#if 0
-    for (int i=0; i<128; i++) {
-        editor->RequestInstrumentFromDSP(i);
-        usleep(50000);  // jalv has enough time with 3ms, carla needs 50+
-    }
-#endif
-
-    RequestBankFilename();
+    SendShort(uris.request_bank_filename);
+    SendShort(uris.request_sapr_filename);
 
     if (!parentWindow) return;
 
@@ -437,11 +476,26 @@ void PokeySynthUi::portEvent(uint32_t port_index,
             }
         } else if (obj->body.otype == uris.filename_object) {
             puts("gui: received filename object");
-            const LV2_Atom_String *path = nullptr;
+            const LV2_Atom_String *bpath = nullptr;
+            const LV2_Atom_String *spath = nullptr;
 
-            lv2_atom_object_get(obj, uris.bank_filename, &path, 0);
-            const char *f = (const char *)LV2_ATOM_BODY(path);
-            editor->LoadBank(f);
+            lv2_atom_object_get(obj, uris.bank_filename, &bpath,
+                                     uris.sapr_filename, &spath,
+                                     0);
+            if (bpath) {
+                const char *f = (const char *)LV2_ATOM_BODY(bpath);
+                editor->LoadBank(f);
+            } else {
+                const char *f = (const char *)LV2_ATOM_BODY(spath);
+                sapr_filename = strdup(f);
+                saprFilename->label(sapr_filename);
+            }
+        } else if (obj->body.otype == uris.start_sapr) {
+            saprStatus->labelcolor(FL_RED);
+            saprStatus->label("Recording");
+        } else if (obj->body.otype == uris.stop_sapr) {
+            saprStatus->labelcolor(FL_GREEN);
+            saprStatus->label("Stopped");
         }
         break;
         }
@@ -451,16 +505,75 @@ void PokeySynthUi::portEvent(uint32_t port_index,
 }
 
 // ****************************************************************************
-
-void PokeySynthUi::RequestBankFilename(void) {
+// SEND MESSAGES TO DSP
+//
+void PokeySynthUi::SendShort(LV2_URID urid) {
     lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
 
     LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
                                                    &frame,
                                                    0,
-                                                   uris.request_bank_filename);
+                                                   urid);
     lv2_atom_forge_pop(&forge, &frame);
     write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
+}
+
+void PokeySynthUi::SendSaprFilename(void) {
+    puts("ui: send sapr_filename");
+}
+
+// ****************************************************************************
+// BROWSE SAPR OUTPUT FILENAME
+//
+void PokeySynthUi::HandleBrowseSapr_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleBrowseSapr(w,data);
+}
+
+void PokeySynthUi::HandleBrowseSapr(Fl_Widget *w, void *data) {
+    auto path = saprFilename->value();
+    auto newpath = fl_file_chooser("Save SAP-R to...", "*.sapr", path);
+    if (newpath) {
+        saprFilename->value(newpath);
+        if (sapr_filename) {
+            free(sapr_filename);
+        }
+        sapr_filename = strdup(newpath);
+        SendSaprFilename();
+    }
+}
+
+// ****************************************************************************
+// SAPR FILENAME INPUT CALLBACK
+//
+void PokeySynthUi::HandleSaprFilename_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleSaprFilename(w,data);
+}
+
+void PokeySynthUi::HandleSaprFilename(Fl_Widget *w, void *data) {
+    if (sapr_filename) {
+        free(sapr_filename);
+    }
+    sapr_filename = strdup(saprFilename->value());
+    SendSaprFilename();
+}
+
+// ****************************************************************************
+// SAP-R START/STOP BUTTONS
+//
+void PokeySynthUi::HandleSaprStart_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleSaprStart(w,data);
+}
+
+void PokeySynthUi::HandleSaprStart(Fl_Widget *w, void *data) {
+    SendShort(uris.start_sapr);
+}
+
+void PokeySynthUi::HandleSaprStop_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->HandleSaprStop(w,data);
+}
+
+void PokeySynthUi::HandleSaprStop(Fl_Widget *w, void *data) {
+    SendShort(uris.stop_sapr);
 }
 
 // ****************************************************************************

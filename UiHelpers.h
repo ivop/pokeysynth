@@ -47,3 +47,47 @@ public:
         Fl_Radio_Button::draw();
     }
 };
+
+class HorizontalLayout : public Fl_Group {
+public:
+    HorizontalLayout(int x, int y, int w, int h) : Fl_Group(x,y,w,h) {
+    }
+    void draw(void) {
+        int n = children();
+        int nvis = 0;
+        for (int c=0; c<n; c++) {
+            if (child(c)->visible()) {
+                nvis++;
+            }
+        }
+        float ww = (float) w() / nvis;
+        for (int c=0; c<n; c++) {
+            if (child(c)->visible()) {
+                child(c)->resize(x()+c*ww, y(), ww, h());
+            }
+        }
+        Fl_Group::draw();
+    }
+};
+
+class VerticalLayout : public Fl_Group {
+public:
+    VerticalLayout(int x, int y, int w, int h) : Fl_Group(x,y,w,h) {
+    }
+    void draw(void) {
+        int n = children();
+        int nvis = 0;
+        for (int c=0; c<n; c++) {
+            if (child(c)->visible()) {
+                nvis++;
+            }
+        }
+        float hh = (float) h() / nvis;
+        for (int c=0; c<n; c++) {
+            if (child(c)->visible()) {
+                child(c)->resize(x(), y()+c*hh, w(), hh);
+            }
+        }
+        Fl_Group::draw();
+    }
+};

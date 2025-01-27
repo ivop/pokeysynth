@@ -21,9 +21,20 @@ void init_uris(LV2_URID_Map *map) {
                                        POKEYSYNTH_URI"#filename_object");
     uris.bank_filename      = map->map(map->handle,
                                        POKEYSYNTH_URI"#bank_filename");
+    uris.bank_filename      = map->map(map->handle,
+                                       POKEYSYNTH_URI"#sapr_filename");
 
     uris.request_bank_filename = map->map(map->handle,
                                       POKEYSYNTH_URI"#request_bank_filename");
     uris.reload_bank        = map->map(map->handle,
                                        POKEYSYNTH_URI"#reload_bank");
+    uris.request_bank_filename = map->map(map->handle,
+                                      POKEYSYNTH_URI"#request_sapr_filename");
+
+    uris.enable_midi_sapr   = map->map(map->handle,
+                                       POKEYSYNTH_URI"#enable_midi_sapr");
+    uris.start_sapr         = map->map(map->handle,
+                                       POKEYSYNTH_URI"#start_sapr");
+    uris.stop_sapr          = map->map(map->handle,
+                                       POKEYSYNTH_URI"#stop_sapr");
 }
