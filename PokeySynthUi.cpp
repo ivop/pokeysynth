@@ -6,8 +6,7 @@
 #include "lv2.h"
 #include "uris.h"
 #include "fltk.h"
-
-#include <X11/Xlib.h>
+#include "platform.h"
 
 #include "PokeySynth.h"
 #include "PokeyInstrument.h"
@@ -336,36 +335,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     if (!parentWindow) return;
 
-    Window w = fl_xid(window);
-
-//    printf("debug: window = %llx\n", (unsigned long long ) w);
-//    printf("debug: parentWindow = %llx\n", (unsigned long long) parentWindow);
-
-#ifdef __linux__
-    XSync(fl_display, False);
-    Fl::check();
-    Fl::flush();
-    usleep(100000);
-
-    XUnmapWindow(fl_display, w);
-
-    XSync(fl_display, False);
-    Fl::check();
-    Fl::flush();
-    usleep(100000);
-
-    XReparentWindow(fl_display, w, (Window) parentWindow, 0,0);
-    XMapWindow(fl_display, w);
-    XSync(fl_display, False);
-#elif _WIN32
-    // windows code goes here, reparent HWND
-    #error "WIN32 support not implemented yet"
-#elif __APPLE__
-    // macOS code goes here, reparent NSView
-    #error "macOS support not implemented yet"
-#else
-    #error "Unsupported platform"
-#endif
+    ReparentWindow(fl_xid(window), (Window) parentWindow);
 }
 
 PokeySynthUi::~PokeySynthUi(void) {

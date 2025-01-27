@@ -11,14 +11,9 @@
 #include "PokeySynth.h"
 #include "PokeyInstrument.h"
 #include "LoadSaveInstruments.h"
+#include "platform.h"
 
 #include <map>
-
-#if __linux__ || __APPLE__
-#define PATH_SEPARATOR '/'
-#elif _WIN32
-#define PATH_SEPARATOR '\\'
-#endif
 
 enum pokey_update_frequency {
     UPDATE_50HZ,
