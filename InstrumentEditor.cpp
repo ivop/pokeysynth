@@ -1341,12 +1341,12 @@ void InstrumentEditor::HandleLoadBank(Fl_Widget *w, void *data) {
             fl_message("Error: %s", io.error_message);
             return;
         }
+        bank_filename = strdup(filename);
+        SendNewPathnameToDSP();
+        SendReloadFromFileToDSP();
+        DrawProgram();
+        dirty = false;
     }
-    bank_filename = strdup(filename);
-    SendNewPathnameToDSP();
-    SendReloadFromFileToDSP();
-    DrawProgram();
-    dirty = false;
 }
 
 // ----------------------------------------------------------------------------
@@ -1364,10 +1364,10 @@ void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
             fl_message("Error: %s", io.error_message);
             return;
         }
+        bank_filename = strdup(filename);
+        dirty = false;
+        SendNewPathnameToDSP();
     }
-    bank_filename = strdup(filename);
-    dirty = false;
-    SendNewPathnameToDSP();
 }
 
 // ----------------------------------------------------------------------------
