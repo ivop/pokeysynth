@@ -57,8 +57,8 @@ private:
     static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleUpdateSpeedCB(Fl_Widget *w, void *data);
 
-    static void AllNotesOffCB_redirect(Fl_Widget *w, void *data);
-    void AllNotesOffCB(Fl_Widget *w, void *data);
+    static void Panic_redirect(Fl_Widget *w, void *data);
+    void Panic(Fl_Widget *w, void *data);
 
     void RequestBankFilename(void);
 };
@@ -129,11 +129,11 @@ void PokeySynthUi::HandleUpdateSpeedCB(Fl_Widget *w, void *data) {
             sizeof(float), 0, (const void*) &which);
 }
 
-void PokeySynthUi::AllNotesOffCB_redirect(Fl_Widget *w, void *data) {
-    ((PokeySynthUi *) data)->AllNotesOffCB(w,data);
+void PokeySynthUi::Panic_redirect(Fl_Widget *w, void *data) {
+    ((PokeySynthUi *) data)->Panic(w,data);
 }
 
-void PokeySynthUi::AllNotesOffCB(Fl_Widget *w, void *data) {
+void PokeySynthUi::Panic(Fl_Widget *w, void *data) {
     for (int c=0; c<16; c++) {
         struct {
             LV2_Atom atom;
@@ -145,6 +145,20 @@ void PokeySynthUi::AllNotesOffCB(Fl_Widget *w, void *data) {
         midimsg.msg[0] = 0xb0 + c;
         midimsg.msg[1] = 120;           // CC120 All Notes Off
         midimsg.msg[2] = 0;
+
+        write_function(controller, POKEYSYNTH_MIDI_IN, sizeof(LV2_Atom) + 3,
+                uris.atom_eventTransfer, &midimsg);
+
+        midimsg.msg[0] = 0xb0 + c;
+        midimsg.msg[1] = 0x01;          // CC1 ModWheel
+        midimsg.msg[2] = 0;
+
+        write_function(controller, POKEYSYNTH_MIDI_IN, sizeof(LV2_Atom) + 3,
+                uris.atom_eventTransfer, &midimsg);
+
+        midimsg.msg[0] = 0xb0 + c;
+        midimsg.msg[1] = 0x07;          // CC7 Volume
+        midimsg.msg[2] = 127;
 
         write_function(controller, POKEYSYNTH_MIDI_IN, sizeof(LV2_Atom) + 3,
                 uris.atom_eventTransfer, &midimsg);
@@ -295,7 +309,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     }
 
     Fl_Button *but = new Fl_Button(curx+3*128, cury+3*24, 128, 24, "Panic!");
-    but->callback(AllNotesOffCB_redirect, this);
+    but->callback(Panic_redirect, this);
     but->clear_visible_focus();
 
     cury += 96 + 8;
