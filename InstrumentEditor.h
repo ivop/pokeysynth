@@ -91,8 +91,6 @@ private:
     bool program_base_1;
     bool sending_or_receiving;
 
-    Fl_Double_Window *win;
-
     Fl_Check_Button *display128Check;
 
     Fl_Spinner *programSpinner;

@@ -115,7 +115,7 @@ PokeySynth::PokeySynth(const double sample_rate,
             LV2_LOG__log,           &logger.log, false,
             LV2_URID__map,          &map,        true,
             LV2_WORKER__schedule,   &schedule,   true,
-            NULL);
+            nullptr);
 
     lv2_log_logger_set_map(&logger, map);
     if (missing) {
@@ -193,6 +193,8 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
         break;
     case POKEYSYNTH_NOTIFY_GUI:
         notify = (const LV2_Atom_Sequence *) data;
+        break;
+    default:
         break;
     }
 }
@@ -603,10 +605,13 @@ void PokeySynth::run(uint32_t sample_count) {
 //                    printf("CC%d\n", msg[1]);
 //                }
                 break;
+            default:
+                break;
             }
         } else if (lv2_atom_forge_is_object_type(&forge, ev->body.type)) { 
 
-            const LV2_Atom_Object* obj = (const LV2_Atom_Object*) &ev->body;
+            const LV2_Atom_Object* obj =
+                (const LV2_Atom_Object*) (void *) &ev->body;
             if (obj->body.otype == uris.request_bank_filename) {
                 SendBankFilename();
             } else {
@@ -787,12 +792,12 @@ static LV2_Worker_Status work_response(LV2_Handle instance,
 }
 
 static const void *extension_data(const char *uri) {
-    static const LV2_Worker_Interface worker = { work, work_response, NULL };
+    static const LV2_Worker_Interface worker = { work, work_response, nullptr };
 
     if (!strcmp(uri, LV2_WORKER__interface)) {
         return &worker;
     }
-    return NULL;
+    return nullptr;
 }
 
 static const LV2_Descriptor descriptor = {
@@ -807,5 +812,5 @@ static const LV2_Descriptor descriptor = {
 };
 
 LV2_SYMBOL_EXPORT const LV2_Descriptor *lv2_descriptor(uint32_t index) {
-    return !index ? &descriptor : NULL;
+    return !index ? &descriptor : nullptr;
 }

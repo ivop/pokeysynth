@@ -242,7 +242,7 @@ void LoadSaveInstruments::write_uint32(std::ofstream &output, uint32_t value) {
 }
 
 float LoadSaveInstruments::read_float(std::ifstream &input) {
-    static_assert(sizeof(float) == sizeof(uint32_t));
+    static_assert(sizeof(float) == sizeof(uint32_t), "Weird");
     union {
         uint32_t intval;
         float floatval;
@@ -252,7 +252,7 @@ float LoadSaveInstruments::read_float(std::ifstream &input) {
 }
 
 void LoadSaveInstruments::write_float(std::ofstream &output, float value) {
-    static_assert(sizeof(float) == sizeof(uint32_t));
+    static_assert(sizeof(float) == sizeof(uint32_t), "Weird");
     union {
         uint32_t intval;
         float floatval;

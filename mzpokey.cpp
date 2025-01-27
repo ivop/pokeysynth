@@ -1201,6 +1201,8 @@ void mzpokey_write_register(struct mzpokey_context *mzp,
     case SKCTL:
         Update_skctl(ps, val);
         break;
+    default:
+        break;
     }
 }
 

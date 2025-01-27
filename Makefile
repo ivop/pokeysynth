@@ -1,5 +1,5 @@
-CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override -Wzero-as-null-pointer-constant
-#CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override -Wzero-as-null-pointer-constant
+CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override -Wzero-as-null-pointer-constant -Wno-c99-designator
+#CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter -Wsuggest-override -Wzero-as-null-pointer-constant -Wno-c99-designator
 LIBS=-lm
 SRC=PokeySynth.cpp PokeyInstrument.cpp Tuning.cpp mzpokey.cpp remez.cpp \
 	uris.cpp LoadSaveInstruments.cpp
@@ -10,6 +10,8 @@ OBJUI=$(SRCUI:.cpp=.o)
 LV2DIR=pokeysynth.lv2
 POKEYSYNTHSO=$(LV2DIR)/pokeysynth.so
 POKEYSYNTHUISO=$(LV2DIR)/pokeysynth_ui.so
+
+#include warnings.mk
 
 all: $(POKEYSYNTHSO) $(POKEYSYNTHUISO)
 

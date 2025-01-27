@@ -271,6 +271,8 @@ int KeyboardEditor::handle(int event) {
                 if (cursorY >= nlines) cursorY = nlines-1;
                 show_cursor();
                 break;
+            default:
+                break;
             }
             char text = Fl::event_text()[0];
             last_char = text;
@@ -1052,7 +1054,7 @@ void InstrumentEditor::HandleChordsButton(Fl_Widget *w, void *data) {
         { 0, 4, 8 },    // Augmented
         { 0, 3, 6 }     // Diminished
     };
-    static std::array<int,7> addNote = {
+    static std::array<int,7> addNote = {{
         0,  // Root
         10, // 7th
         11, // Major 7th
@@ -1060,7 +1062,7 @@ void InstrumentEditor::HandleChordsButton(Fl_Widget *w, void *data) {
         14, // 9th
         17, // 11th
         21  // 13th
-    };
+    }};
     static std::vector<int> inversion[4] = {
         { 0,   0,   0,   0 },   // Root position
         { 0, -12, -12, -12 },   // 1st Inversion

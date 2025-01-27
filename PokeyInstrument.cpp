@@ -200,6 +200,7 @@ uint32_t PokeyInstrument::GetAudf(void) {
         }
         break;
     case CHANNELS_NONE:
+    default:
         break;
     }
 

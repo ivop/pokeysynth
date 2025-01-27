@@ -64,6 +64,7 @@ uint16_t Tuning::GetPokeyDivider(enum distortions dist,
     switch (dist) {
     case DIST_PURE:
     case DIST_NOISE:
+    default:
         break;
     case DIST_BUZZY_BASS:
         if (clk == CLOCK_DIV114) {
@@ -117,6 +118,8 @@ uint16_t Tuning::FindClosest(uint16_t div,
         while (bottom % 3 == 0 || bottom % 5 == 0) bottom--;
         break;
     case DIST_POLY5_SQUARE:
+    case DIST_PURE:
+    case DIST_NOISE:
     default:    // dists where a single up/down is enough to meet requirements
         top++;
         bottom--;

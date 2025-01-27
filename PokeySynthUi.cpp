@@ -344,7 +344,7 @@ PokeySynthUi::~PokeySynthUi(void) {
        int answer = fl_choice("There are unsaved edits.\n\n"
               "Note that closing without saving will instruct\n"
               "the DSP to reload the uneditted bank\n"
-              "from disk!\n", "Close without saving", "Save Bank", NULL);
+              "from disk!\n", "Close without saving", "Save Bank", nullptr);
         if (answer == 1) {
             if (!editor->SaveBank()) {
                 // if saving fails we might be in big trouble, but try
@@ -399,7 +399,7 @@ void PokeySynthUi::portEvent(uint32_t port_index,
     case POKEYSYNTH_CONTROL_UPDATE_FREQ:
         updateSpeedRadioButtons[vi]->setonly();
         break;
-    case POKEYSYNTH_NOTIFY_GUI:
+    case POKEYSYNTH_NOTIFY_GUI: {
         const LV2_Atom_Object* obj = (const LV2_Atom_Object*) buffer;
         if (obj->body.otype == uris.instrument_data) {
             puts("gui: received instrument data");
@@ -429,6 +429,9 @@ void PokeySynthUi::portEvent(uint32_t port_index,
             const char *f = (const char *)LV2_ATOM_BODY(path);
             editor->LoadBank(f);
         }
+        break;
+        }
+    default:
         break;
     }
 }
