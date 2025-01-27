@@ -337,6 +337,12 @@ InstrumentEditor::InstrumentEditor(int width,
     programName->textfont(FL_COURIER);
     programName->callback(HandleProgramName_redirect, this);
 
+    auto clrinstr = new Fl_Button(width-128-16, cury, 128, 20,
+                                                        "Clear Instrument");
+    clrinstr->labelsize(clrinstr->labelsize()-1);
+    clrinstr->clear_visible_focus();
+    clrinstr->callback(HandleClearInstrument_redirect, this);
+
     cury += 32;
 
     // ---------- Channels
@@ -1133,12 +1139,8 @@ void InstrumentEditor::HandleVolumeClear_redirect(Fl_Widget *w, void *data) {
 
 void InstrumentEditor::HandleVolumeClear(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[program];
-    for (auto &v : p->volume) {
-        v = 0;
-    }
-    for (auto &d : p->distortion) {
-        d = DIST_PURE;
-    }
+    for (auto &v : p->volume) { v = 0; }
+    for (auto &d : p->distortion) { d = DIST_PURE; }
     p->sustain_loop_start = p->sustain_loop_end = p->release_end = 0;
     SendInstrumentToDSP(program);
     DrawProgram();
@@ -1150,12 +1152,8 @@ void InstrumentEditor::HandleTypesClear_redirect(Fl_Widget *w, void *data) {
 
 void InstrumentEditor::HandleTypesClear(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[program];
-    for (auto &t : p->types) {
-        t = 0;
-    }
-    for (auto &v : p->values) {
-        v = 0;
-    }
+    for (auto &t : p->types) { t = 0; }
+    for (auto &v : p->values) { v = 0; }
     p->types_loop = p->types_end = p->types_speed = 0;
     SendInstrumentToDSP(program);
     DrawProgram();
@@ -1169,6 +1167,27 @@ void InstrumentEditor::HandleBottomClear(Fl_Widget *w, void *data) {
     struct pokey_instrument *p = &instrdata[program];
     p->filtered_detune = p->filtered_vol2 = p->filtered_transpose = 0;
     p->bender_range = p->mod_lfo_speed = p->mod_lfo_maxdepth = 0;
+    SendInstrumentToDSP(program);
+    DrawProgram();
+}
+
+void InstrumentEditor::HandleClearInstrument_redirect(Fl_Widget *w, void *data){
+    ((InstrumentEditor *) data)->HandleClearInstrument(w, data);
+}
+
+void InstrumentEditor::HandleClearInstrument(Fl_Widget *w, void *data) {
+    struct pokey_instrument *p = &instrdata[program];
+    for (auto &v : p->volume) { v = 0; }
+    for (auto &d : p->distortion) { d = DIST_PURE; }
+    p->sustain_loop_start = p->sustain_loop_end = p->release_end = 0;
+    for (auto &t : p->types) { t = 0; }
+    for (auto &v : p->values) { v = 0; }
+    p->types_loop = p->types_end = p->types_speed = 0;
+    p->filtered_detune = p->filtered_vol2 = p->filtered_transpose = 0;
+    p->bender_range = p->mod_lfo_speed = p->mod_lfo_maxdepth = 0;
+    p->channels = CHANNELS_1CH;
+    p->clock = CLOCK_DIV114;
+    memset(p->name, 0, sizeof(p->name));
     SendInstrumentToDSP(program);
     DrawProgram();
 }
