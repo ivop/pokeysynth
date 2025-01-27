@@ -38,7 +38,7 @@ public:
         box(FL_FLAT_BOX);
         labelsize(labelsize()-1);
     }
-    void draw(void) {
+    void draw(void) override {
         if (value()) {
             selection_color(FL_BLACK);
         } else {

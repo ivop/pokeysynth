@@ -42,7 +42,7 @@ private:
 class KeyboardEditor : public Fl_Group {
 public:
     KeyboardEditor(int x, int y, int w, int h, HexLine **lines, int nlines);
-    int handle(int event);
+    int handle(int event) override;
     void show_cursor(void);
     void hide_cursor(void);
     void advance_cursor(void);
