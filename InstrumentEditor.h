@@ -88,9 +88,12 @@ private:
     uint8_t atom_buffer[1024*128];
 
     bool dirty;
+    bool program_base_1;
     bool sending_or_receiving;
 
     Fl_Double_Window *win;
+
+    Fl_Check_Button *display128Check;
 
     Fl_Spinner *programSpinner;
     Fl_Input *programName;
@@ -137,6 +140,9 @@ private:
     Fl_Hor_Value_Slider *modwheelSpeed;
 
     //Fl_Progress *progressBar;
+
+    static void HandleDisplay128_redirect(Fl_Widget *w, void *data);
+    void HandleDisplay128(Fl_Widget *w, void *data);
 
     static void HandleProgramSpinner_redirect(Fl_Widget *w, void *data);
     void HandleProgramSpinner(Fl_Spinner *w, void *data);

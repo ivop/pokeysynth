@@ -314,6 +314,12 @@ InstrumentEditor::InstrumentEditor(int width,
 
     // ---------- Program number / name
 
+    display128Check = new Fl_Check_Button(16, cury, 128, 20, "Display 1-128");
+    display128Check->callback(HandleDisplay128_redirect, this);
+    display128Check->labelsize(display128Check->labelsize()-1);
+    display128Check->clear_visible_focus();
+    program_base_1 = false;
+
     curx = (width -768) / 2;
     programSpinner = new Fl_Spinner(curx,cury, 64, 24);
     programSpinner->minimum(0);
@@ -548,7 +554,7 @@ InstrumentEditor::InstrumentEditor(int width,
     typesSpeed->labelsize(12);
     typesSpeed->callback(HandleTypesLoopSpeed_redirect, this);
 
-    auto typclr = new Fl_Button(xx, cury-24, 48, 16, "Clear");
+    auto typclr = new Fl_Button(width-16-48, cury-24, 48, 16, "Clear");
     typclr->labelsize(typclr->labelsize()-1);
     typclr->clear_visible_focus();
     typclr->callback(HandleTypesClear_redirect, this);
@@ -577,6 +583,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     filterTranspose = new Fl_Check_Button(curx+512, cury,
                                 256-16, 20, "Filter Transpose Octave Down");
+    filterTranspose->clear_visible_focus();
     filterTranspose->callback(HandleFilterTranspose_redirect, this);
 
     benderRange = new Fl_Hor_Value_Slider(curx, cury+40,
@@ -662,12 +669,32 @@ InstrumentEditor::InstrumentEditor(int width,
 // ****************************************************************************
 // PROGRAM SELECTION SPINNER AND NAME
 //
+void InstrumentEditor::HandleDisplay128_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleDisplay128(w,data);
+}
+
+void InstrumentEditor::HandleDisplay128(Fl_Widget *w, void *data) {
+    int v = programSpinner->value();
+    if (display128Check->value()) {
+        program_base_1 = true;
+        programSpinner->minimum(1);
+        programSpinner->maximum(128);
+        programSpinner->value(v+1);
+    } else {
+        program_base_1 = false;
+        programSpinner->minimum(0);
+        programSpinner->maximum(127);
+        programSpinner->value(v-1);
+    }
+    programSpinner->redraw();
+}
+
 void InstrumentEditor::HandleProgramSpinner_redirect(Fl_Widget *w, void *data){
     ((InstrumentEditor *) data)->HandleProgramSpinner((Fl_Spinner *)w,data);
 }
 
 void InstrumentEditor::HandleProgramSpinner(Fl_Spinner *w, void *data) {
-    program = w->value();
+    program = w->value() - program_base_1;
     DrawProgram();
 }
 
