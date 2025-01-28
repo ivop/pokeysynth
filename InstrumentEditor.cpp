@@ -303,7 +303,8 @@ InstrumentEditor::InstrumentEditor(int width,
                                    const char *bundle_path) :
     write_function(write_function),
     controller(controller),
-    bundle_path(bundle_path) {
+    bundle_path(bundle_path),
+    bank_filename(nullptr) {
 
     int cury = starty, curx = 0;
 
@@ -1338,6 +1339,9 @@ void InstrumentEditor::HandleLoadBank(Fl_Widget *w, void *data) {
             fl_message("Error: %s", io.error_message);
             return;
         }
+        if (bank_filename) {
+            free(bank_filename);
+        }
         bank_filename = strdup(filename);
         SendNewPathnameToDSP();
         SendReloadFromFileToDSP();
@@ -1361,6 +1365,9 @@ void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
             fl_message("Error: %s", io.error_message);
             return;
         }
+        if (bank_filename) {
+            free(bank_filename);
+        }
         bank_filename = strdup(filename);
         dirty = false;
         SendNewPathnameToDSP();
@@ -1374,6 +1381,9 @@ bool InstrumentEditor::LoadBank(const char *filename) {
     if (!io.LoadBank(filename)) {
         fl_message("Loading bank. Error: %s\n", io.error_message);
         return false;
+    }
+    if (bank_filename) {
+        free(bank_filename);
     }
     bank_filename = strdup(filename);
     DrawProgram();

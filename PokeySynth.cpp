@@ -45,7 +45,7 @@ public:
                            uint32_t size,
                            const void *data);
     LV2_Worker_Status work_response(uint32_t size, const void *data);
-    void SendBankFilename(void);
+    void SendFilenames();
 
 private:
     // ports
@@ -86,7 +86,8 @@ private:
     int auto_arp_count[4];
     int auto_arp_pos[4];
 
-    const char *bank_filename;
+    char *bank_filename;
+    char *sapr_filename;
 };
 
 static float intervals[4];
@@ -146,6 +147,9 @@ PokeySynth::PokeySynth(const double sample_rate,
     char path[4096];
     snprintf(path, 4096, "%s%c%s", bundle_path, PATH_SEPARATOR, "default.bnk");
     bank_filename = strdup(path);
+
+    snprintf(path, 4096, "%s%c%s", bundle_path, PATH_SEPARATOR, "output.sapr");
+    sapr_filename = strdup(path);
 
     LoadSaveInstruments io;
     io.LoadBank(path);
@@ -612,8 +616,8 @@ void PokeySynth::run(uint32_t sample_count) {
 
             const LV2_Atom_Object* obj =
                 (const LV2_Atom_Object*) (void *) &ev->body;
-            if (obj->body.otype == uris.request_bank_filename) {
-                SendBankFilename();
+            if (obj->body.otype == uris.request_filenames) {
+                SendFilenames();
             } else {
                 schedule->schedule_work(schedule->handle,
                                         lv2_atom_total_size(&ev->body),
@@ -724,8 +728,8 @@ LV2_Worker_Status PokeySynth::work_response(uint32_t size, const void *data) {
     return LV2_WORKER_SUCCESS;
 }
 
-void PokeySynth::SendBankFilename(void) {
-    puts("dsp: send bank filename");
+void PokeySynth::SendFilenames() {
+    puts("dsp: send filenames");
 
     const uint32_t notify_capacity = notify->atom.size;
     lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
@@ -738,6 +742,9 @@ void PokeySynth::SendBankFilename(void) {
 
     lv2_atom_forge_key(&forge, uris.bank_filename);
     lv2_atom_forge_path(&forge, bank_filename, strlen(bank_filename));
+
+    lv2_atom_forge_key(&forge, uris.sapr_filename);
+    lv2_atom_forge_path(&forge, sapr_filename, strlen(sapr_filename));
 
     lv2_atom_forge_pop(&forge, &frame);
     lv2_atom_forge_pop(&forge, &notify_frame);

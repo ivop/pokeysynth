@@ -41,7 +41,7 @@ private:
     uint8_t atom_buffer[1024*128];
     LV2_URID_Map *map;
 
-    const char *sapr_filename;
+    char *sapr_filename;
     Fl_Input *saprFilename;
     Fl_Box *saprStatus;
 
@@ -201,6 +201,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     controller(controller) {
 
     this->bundle_path = strdup(bundle_path);
+    sapr_filename = nullptr;
 
     for (int i = 0; features[i]; ++i) {
         if (!strcmp (features[i]->URI, LV2_UI__parent)) {
@@ -383,8 +384,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     window->end();
     window->show();
 
-    SendShort(uris.request_bank_filename);
-    SendShort(uris.request_sapr_filename);
+    SendShort(uris.request_filenames);
 
     if (!parentWindow) return;
 
@@ -485,10 +485,14 @@ void PokeySynthUi::portEvent(uint32_t port_index,
             if (bpath) {
                 const char *f = (const char *)LV2_ATOM_BODY(bpath);
                 editor->LoadBank(f);
-            } else {
+            } 
+            if (spath) {
                 const char *f = (const char *)LV2_ATOM_BODY(spath);
+                if (sapr_filename) {
+                    free(sapr_filename);
+                }
                 sapr_filename = strdup(f);
-                saprFilename->label(sapr_filename);
+                saprFilename->value(sapr_filename);
             }
         } else if (obj->body.otype == uris.start_sapr) {
             saprStatus->labelcolor(FL_RED);
