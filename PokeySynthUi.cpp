@@ -523,8 +523,17 @@ void PokeySynthUi::SendShort(LV2_URID urid) {
 }
 
 void PokeySynthUi::SendSaprFilename(void) {
-    puts("ui: send sapr_filename");
-    // todo: actually send it
+    lv2_atom_forge_set_buffer(&forge, atom_buffer, sizeof(atom_buffer));
+
+    LV2_Atom *msg = (LV2_Atom *) lv2_atom_forge_object(&forge,
+                                                       &frame,
+                                                       0,
+                                                       uris.filename_object);
+    lv2_atom_forge_key(&forge, uris.sapr_filename);
+    lv2_atom_forge_path(&forge, sapr_filename, strlen(sapr_filename));
+
+    lv2_atom_forge_pop(&forge, &frame);
+    write_function(controller, 0, lv2_atom_total_size(msg), uris.atom_eventTransfer, msg);
 }
 
 // ****************************************************************************
