@@ -152,7 +152,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     sapr_filename = strdup(path);
 
     LoadSaveInstruments io;
-    io.LoadBank(path);
+    io.LoadBank(bank_filename);
 }
 
 // ****************************************************************************
