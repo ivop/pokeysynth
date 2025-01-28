@@ -701,6 +701,12 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
         puts("dsp: received reload bank command");
         LoadSaveInstruments io;
         io.LoadBank(bank_filename);
+    } else if (obj->body.otype == uris.start_sapr) {
+        puts("dsp: start sap-r recording");
+        //todo
+    } else if (obj->body.otype == uris.stop_sapr) {
+        puts("dsp: stopt sap-r recording");
+        //todo
     }
 
     return LV2_WORKER_SUCCESS;
