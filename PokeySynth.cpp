@@ -676,6 +676,7 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
         }
     } else if (obj->body.otype == uris.filename_object) {
         puts("dsp: received new filename");
+        // todo: receive sapr_filename
         const LV2_Atom_String *path = nullptr;
         lv2_atom_object_get(obj, uris.bank_filename, &path, 0);
         if (path) {
