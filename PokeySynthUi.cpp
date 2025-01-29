@@ -22,7 +22,7 @@ public:
                  const LV2_Feature *const *features,
                  const char *bundle_path);
     ~PokeySynthUi(void);
-    void portEvent(uint32_t port_index,
+    void PortEvent(uint32_t port_index,
                    uint32_t buffer_size,
                    uint32_t format,
                    const void *buffer);
@@ -417,7 +417,7 @@ PokeySynthUi::~PokeySynthUi(void) {
 //
 // HANDLE INCOMING PORT EVENTS
 //
-void PokeySynthUi::portEvent(uint32_t port_index,
+void PokeySynthUi::PortEvent(uint32_t port_index,
                              uint32_t buffer_size,
                              uint32_t format,
                              const void *buffer) {
@@ -637,7 +637,7 @@ static void port_event(LV2UI_Handle ui,
                        uint32_t format,
                        const void *buffer) {
     PokeySynthUi* psui = static_cast<PokeySynthUi *>(ui);
-    if (psui) psui->portEvent(port_index, buffer_size, format, buffer);
+    if (psui) psui->PortEvent(port_index, buffer_size, format, buffer);
 }
 
 // ----------------------------------------------------------------------------
