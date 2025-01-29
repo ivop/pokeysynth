@@ -29,6 +29,21 @@ public:
         precision(0);
         step(1);
     }
+    int handle(int event) override {
+        if (event == FL_ENTER) {
+            this->take_focus();
+            return 1;
+        }
+        if (event == FL_MOUSEWHEEL) {
+            int v = this->value();
+            v += Fl::event_dy();
+            if (v < this->minimum()) v = this->minimum();
+            if (v > this->maximum()) v = this->maximum();
+            this->value(v);
+            return 1;
+        }
+        return Fl_Hor_Value_Slider::handle(event);
+    }
 };
 
 class FlatRadioButton : public Fl_Radio_Button {
