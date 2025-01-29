@@ -28,22 +28,31 @@ public:
         bounds(0,31);
         precision(0);
         step(1);
+        has_focus = false;
     }
     int handle(int event) override {
         if (event == FL_ENTER) {
             this->take_focus();
+            has_focus = true;
             return 1;
         }
-        if (event == FL_MOUSEWHEEL) {
+        if (event == FL_LEAVE) {
+            has_focus = false;
+            return 1;
+        }
+        if (event == FL_MOUSEWHEEL && has_focus) {
             int v = this->value();
             v += Fl::event_dy();
             if (v < this->minimum()) v = this->minimum();
             if (v > this->maximum()) v = this->maximum();
             this->value(v);
+            this->do_callback();
             return 1;
         }
         return Fl_Hor_Value_Slider::handle(event);
     }
+private:
+    bool has_focus;
 };
 
 class FlatRadioButton : public Fl_Radio_Button {

@@ -36,7 +36,9 @@ private:
 class PositionSlider : public Fl_Hor_Slider {
 public:
     PositionSlider(int x, int y, const char *l = nullptr);
+    int handle(int event) override;
 private:
+    bool has_focus;
 };
 
 class KeyboardEditor : public Fl_Group {

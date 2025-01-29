@@ -189,10 +189,29 @@ PositionSlider::PositionSlider(int x, int y, const char *l) : Fl_Hor_Slider(x, y
     bounds(0,63);
     precision(0);
     step(1);
+    has_focus = false;
     Fl_Box *b = new Fl_Box(x-128, y, 128, 16, l);
     b->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
     b->labelsize(12);
     color(fl_rgb_color(0xb0, 0xb0, 0xb0));
+}
+
+int PositionSlider::handle(int event) {
+    if (event == FL_ENTER) {
+        this->take_focus();
+        has_focus = true;
+        return 1;
+    }
+    if (event == FL_LEAVE) {
+        has_focus = false;
+        return 1;
+    }
+    if (event == FL_MOUSEWHEEL && has_focus) {
+        this->value(this->value() + Fl::event_dy());
+        this->do_callback();
+        return 1;
+    }
+    return Fl_Hor_Slider::handle(event);
 }
 
 // ****************************************************************************
@@ -572,7 +591,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     // Filter Options
 
-    filterDetune = new Fl_Hor_Value_Slider(curx, cury,
+    filterDetune = new ArpSlider(curx, cury,
                                     256-16, 20, "Filter Detune (cents)");
     filterDetune->bounds(-100,100);
     filterDetune->precision(0);
@@ -581,7 +600,7 @@ InstrumentEditor::InstrumentEditor(int width,
     filterDetune->labelsize(12);
     filterDetune->callback(HandleFilterDetune_redirect, this);
 
-    filterVol2 = new Fl_Hor_Value_Slider(curx+256, cury,
+    filterVol2 = new ArpSlider(curx+256, cury,
                                     256-16, 20, "Filter Detune Volume (%)");
     filterVol2->bounds(0,100);
     filterVol2->precision(0);
@@ -595,7 +614,7 @@ InstrumentEditor::InstrumentEditor(int width,
     filterTranspose->clear_visible_focus();
     filterTranspose->callback(HandleFilterTranspose_redirect, this);
 
-    benderRange = new Fl_Hor_Value_Slider(curx, cury+40,
+    benderRange = new ArpSlider(curx, cury+40,
                                 256-16, 20, "Pitchwheel +/- Range (cents)");
     benderRange->bounds(0,1200);
     benderRange->precision(0);
@@ -604,7 +623,7 @@ InstrumentEditor::InstrumentEditor(int width,
     benderRange->labelsize(12);
     benderRange->callback(HandleBenderRange_redirect, this);
 
-    modwheelDepth = new Fl_Hor_Value_Slider(curx+256, cury+40,
+    modwheelDepth = new ArpSlider(curx+256, cury+40,
                             256-16, 20, "Modwheel LFO Maximum Depth (cents)");
     modwheelDepth->bounds(0,200);
     modwheelDepth->precision(0);
@@ -613,7 +632,7 @@ InstrumentEditor::InstrumentEditor(int width,
     modwheelDepth->labelsize(12);
     modwheelDepth->callback(HandleModwheelDepth_redirect, this);
 
-    modwheelSpeed = new Fl_Hor_Value_Slider(curx+512, cury+40,
+    modwheelSpeed = new ArpSlider(curx+512, cury+40,
                             256, 20, "Modwheel LFO Speed (degrees/frame)");
     modwheelSpeed->bounds(0,360);
     modwheelSpeed->precision(0);
