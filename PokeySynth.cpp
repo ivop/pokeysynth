@@ -614,8 +614,12 @@ void PokeySynth::run(uint32_t sample_count) {
                     if (channel < 0) continue;
                     notes_on[channel].clear();
                 } else if (msg[1] == 14) {      // CC 14 start/stop
+                    channel = map_midi_to_pokey_channel(channel);
+                    if (channel < 0) continue;
                     if (msg[2] >= 64) {
+                        StartSaprRecording();
                     } else {
+                        StopSaprRecording();
                     }
                 }
 //                else {
