@@ -604,6 +604,7 @@ void PokeySynth::run(uint32_t sample_count) {
                     channel = map_midi_to_pokey_channel(channel);
                     if (channel < 0) continue;
                     notes_on[channel].clear();
+                } else if (msg[1] == 14) {      // CC 14 start/stop
                 }
 //                else {
 //                    printf("CC%d\n", msg[1]);

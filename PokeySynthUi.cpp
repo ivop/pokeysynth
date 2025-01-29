@@ -355,7 +355,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     auto fn = new Fl_Box(0, 0, 80, 24, "Filename:");
     fn->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    saprFilename = new Fl_Input(0,0, 416, 24);
+    saprFilename = new Fl_Input(0,0, 512-16, 24);
     saprFilename->callback(HandleSaprFilename_redirect, this);
 
     auto browse = new Fl_Button(0,0, 24, 24, "...");
@@ -364,12 +364,14 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     auto status = new Fl_Box(0,0,64,24, "Status:");
     status->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 
-    saprStatus = new Fl_Box(0,0,96,24, "Stopped");
+//    saprStatus = new Fl_Box(0,0,80,24, "Recording");
+//    saprStatus->labelcolor(FL_RED);
+    saprStatus = new Fl_Box(0,0,80,24, "Stopped");
     saprStatus->labelcolor(fl_rgb_color(0x20,0x80,0x40));
     saprStatus->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    auto mss = new Fl_Check_Button(0,0,176, 24, "MIDI Start/Stop Song");
-    mss->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+    auto trg = new Fl_Box(0, 0, 112, 24, "Trigger: CC14");
+    trg->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
     auto start = new Fl_Button(0,0, 64, 24, "Start");
     start->callback(HandleSaprStart_redirect, this);
