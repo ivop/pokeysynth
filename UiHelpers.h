@@ -21,9 +21,9 @@ public:
     }
 };
 
-class ArpSlider : public Fl_Hor_Value_Slider {
+class MouseWheelSlider : public Fl_Hor_Value_Slider {
 public:
-    ArpSlider(int x, int y, int w, int h, const char *l=nullptr) :
+    MouseWheelSlider(int x, int y, int w, int h, const char *l=nullptr) :
         Fl_Hor_Value_Slider(x, y, w, h, l) {
         bounds(0,31);
         precision(0);

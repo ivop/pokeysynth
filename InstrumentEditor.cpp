@@ -591,7 +591,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     // Filter Options
 
-    filterDetune = new ArpSlider(curx, cury,
+    filterDetune = new MouseWheelSlider(curx, cury,
                                     256-16, 20, "Filter Detune (cents)");
     filterDetune->bounds(-100,100);
     filterDetune->precision(0);
@@ -600,7 +600,7 @@ InstrumentEditor::InstrumentEditor(int width,
     filterDetune->labelsize(12);
     filterDetune->callback(HandleFilterDetune_redirect, this);
 
-    filterVol2 = new ArpSlider(curx+256, cury,
+    filterVol2 = new MouseWheelSlider(curx+256, cury,
                                     256-16, 20, "Filter Detune Volume (%)");
     filterVol2->bounds(0,100);
     filterVol2->precision(0);
@@ -614,7 +614,7 @@ InstrumentEditor::InstrumentEditor(int width,
     filterTranspose->clear_visible_focus();
     filterTranspose->callback(HandleFilterTranspose_redirect, this);
 
-    benderRange = new ArpSlider(curx, cury+40,
+    benderRange = new MouseWheelSlider(curx, cury+40,
                                 256-16, 20, "Pitchwheel +/- Range (cents)");
     benderRange->bounds(0,1200);
     benderRange->precision(0);
@@ -623,7 +623,7 @@ InstrumentEditor::InstrumentEditor(int width,
     benderRange->labelsize(12);
     benderRange->callback(HandleBenderRange_redirect, this);
 
-    modwheelDepth = new ArpSlider(curx+256, cury+40,
+    modwheelDepth = new MouseWheelSlider(curx+256, cury+40,
                             256-16, 20, "Modwheel LFO Maximum Depth (cents)");
     modwheelDepth->bounds(0,200);
     modwheelDepth->precision(0);
@@ -632,7 +632,7 @@ InstrumentEditor::InstrumentEditor(int width,
     modwheelDepth->labelsize(12);
     modwheelDepth->callback(HandleModwheelDepth_redirect, this);
 
-    modwheelSpeed = new ArpSlider(curx+512, cury+40,
+    modwheelSpeed = new MouseWheelSlider(curx+512, cury+40,
                             256, 20, "Modwheel LFO Speed (degrees/frame)");
     modwheelSpeed->bounds(0,360);
     modwheelSpeed->precision(0);

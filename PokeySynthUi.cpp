@@ -313,7 +313,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     curx += WIDTH / 2;
     for (int y=0; y<4; y++) {
         arpSpeedSliders[y] =
-                        new ArpSlider(curx, cury+y*24, 128, 24);
+                        new MouseWheelSlider(curx, cury+y*24, 128, 24);
         arpSpeedSliders[y]->callback(HandleArpSpeedCB_redirect, this);
     }
 
