@@ -88,6 +88,10 @@ private:
 
     char *bank_filename;
     char *sapr_filename;
+
+    void StartSaprRecording(void);
+    void StopSaprRecording(void);
+    FILE *sapr_output;
 };
 
 static float intervals[4];
@@ -109,7 +113,8 @@ PokeySynth::PokeySynth(const double sample_rate,
     ticks(0),
     interval(0),
     auto_arp_count{0},
-    auto_arp_pos{0} {
+    auto_arp_pos{0},
+    sapr_output(nullptr) {
 
     const char *missing = lv2_features_query(
             features,
@@ -543,6 +548,10 @@ void PokeySynth::play(void) {
         mzpokey_write_register(mzp, (enum pokey_register) r, registers[r], 0);
     }
 
+    if (sapr_output) {
+        fwrite(registers, 9, 1, sapr_output);
+    }
+
     for (unsigned int c=0; c<4; c++) {
         instruments[c].Next();
     }
@@ -605,6 +614,9 @@ void PokeySynth::run(uint32_t sample_count) {
                     if (channel < 0) continue;
                     notes_on[channel].clear();
                 } else if (msg[1] == 14) {      // CC 14 start/stop
+                    if (msg[2] >= 64) {
+                    } else {
+                    }
                 }
 //                else {
 //                    printf("CC%d\n", msg[1]);
@@ -619,6 +631,10 @@ void PokeySynth::run(uint32_t sample_count) {
                 (const LV2_Atom_Object*) (void *) &ev->body;
             if (obj->body.otype == uris.request_filenames) {
                 SendFilenames();
+            } else if (obj->body.otype == uris.start_sapr) {
+                StartSaprRecording();
+            } else if (obj->body.otype == uris.stop_sapr) {
+                StopSaprRecording();
             } else {
                 schedule->schedule_work(schedule->handle,
                                         lv2_atom_total_size(&ev->body),
@@ -702,12 +718,6 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
         puts("dsp: received reload bank command");
         LoadSaveInstruments io;
         io.LoadBank(bank_filename);
-    } else if (obj->body.otype == uris.start_sapr) {
-        puts("dsp: start sap-r recording");
-        //todo
-    } else if (obj->body.otype == uris.stop_sapr) {
-        puts("dsp: stopt sap-r recording");
-        //todo
     }
 
     return LV2_WORKER_SUCCESS;
@@ -769,6 +779,52 @@ void PokeySynth::SendFilenames() {
 
     lv2_atom_forge_pop(&forge, &frame);
     lv2_atom_forge_pop(&forge, &notify_frame);
+}
+
+// ****************************************************************************
+
+#define SAPR_HEADER "SAP\r\nAUTHOR \"\"\r\nNAME \"\"\r\nDATE \"\"\r\nTYPE R\r\n\r\n"
+
+void PokeySynth::StartSaprRecording(void) {
+    sapr_output = fopen(sapr_filename, "wb");
+    if (sapr_output) {
+        int r = fwrite(SAPR_HEADER, strlen(SAPR_HEADER), 1, sapr_output);
+        if (r != 1) {
+            fclose(sapr_output);
+            sapr_output = nullptr;
+        } else {
+            const uint32_t notify_capacity = notify->atom.size;
+            lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
+                                                            notify_capacity);
+            lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
+            lv2_atom_forge_frame_time(&forge, 0);
+
+            LV2_Atom_Forge_Frame frame;
+            lv2_atom_forge_object(&forge, &frame, 0, uris.start_sapr);
+
+            lv2_atom_forge_pop(&forge, &frame);
+            lv2_atom_forge_pop(&forge, &notify_frame);
+        }
+    }
+}
+
+void PokeySynth::StopSaprRecording(void) {
+    if (sapr_output) {
+        fclose(sapr_output);
+        sapr_output = nullptr;
+
+        const uint32_t notify_capacity = notify->atom.size;
+        lv2_atom_forge_set_buffer(&forge, (uint8_t *)notify,
+                                                        notify_capacity);
+        lv2_atom_forge_sequence_head(&forge, &notify_frame, 0);
+        lv2_atom_forge_frame_time(&forge, 0);
+
+        LV2_Atom_Forge_Frame frame;
+        lv2_atom_forge_object(&forge, &frame, 0, uris.stop_sapr);
+
+        lv2_atom_forge_pop(&forge, &frame);
+        lv2_atom_forge_pop(&forge, &notify_frame);
+    }
 }
 
 // ****************************************************************************
