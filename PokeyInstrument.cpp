@@ -29,7 +29,8 @@ PokeyInstrument::PokeyInstrument(void) :
     types_speed_cnt(0),
     pokey_freq(0),
     pitch_shift(1.0),
-    volume_cc(1.0) {
+    volume_cc(1.0),
+    overdrive_compensation(1.0) {
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
@@ -103,7 +104,8 @@ uint32_t PokeyInstrument::GetAudc(void) {
     int channels = instrdata[program].channels;
 
     int volume  = instrdata[program].volume[voldis_idx];
-    volume = round(volume_cc * velocity * (float) volume);
+    volume = round(overdrive_compensation * volume_cc * velocity *
+                                                            (float) volume);
     int volume2 = round(volume * instrdata[program].filtered_vol2);
 
     int dist = dist_values[instrdata[program].distortion[voldis_idx]];
@@ -222,4 +224,8 @@ void PokeyInstrument::SetModWheel(int value) {
 
 void PokeyInstrument::SetVolumeCC(int value) {
     volume_cc = (float) value / 127.0;
+}
+
+void PokeyInstrument::SetOverdriveCompensation(int value) {
+    overdrive_compensation = (float) value / 15.0;
 }

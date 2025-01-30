@@ -82,6 +82,7 @@ public:
     void SetPitchShift(int value);
     void SetModWheel(int value);
     void SetVolumeCC(int value);
+    void SetOverdriveCompensation(int value);
 
 private:
     uint8_t program;
@@ -97,6 +98,7 @@ private:
     float mod_lfo_angle;                // angle in radians
     float mod_amount;                   // 0-127 mapped to 0.0-1.0
     float volume_cc;                    // 0-127 mapped to 0.0-1.0
+    float overdrive_compensation;       // 0-15 mapped to 0.0-1.0
 };
 
 #define INSTRUMENT_LENGTH 64

@@ -232,6 +232,7 @@ void PokeySynth::play(void) {
     uint32_t taudf, taudc;
 
     for (int c=0; c<4; c++) {
+        instruments[c].SetOverdriveCompensation(*control_overdrive_comp);
         if (notes_on[c].empty()) {  // no note, release current note (if any)
             instruments[c].Release();
             continue;
