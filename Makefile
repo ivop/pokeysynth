@@ -1,10 +1,18 @@
 CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter
 #CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter
 LIBS=-lm
-SRC=PokeySynth.cpp PokeyInstrument.cpp Tuning.cpp mzpokey.cpp remez.cpp \
-	uris.cpp LoadSaveInstruments.cpp
-SRCUI=PokeySynthUi.cpp InstrumentEditor.cpp uris.cpp LoadSaveInstruments.cpp \
-	  platform.cpp
+SRC=src/PokeySynth.cpp \
+	src/PokeyInstrument.cpp \
+	src/Tuning.cpp \
+	src/mzpokey.cpp \
+	src/remez.cpp \
+	src/uris.cpp \
+	src/LoadSaveInstruments.cpp
+SRCUI=src/PokeySynthUi.cpp \
+	  src/InstrumentEditor.cpp \
+	  src/uris.cpp \
+	  src/LoadSaveInstruments.cpp \
+	  src/platform.cpp
 OBJ=$(SRC:.cpp=.o)
 OBJUI=$(SRCUI:.cpp=.o)
 LV2DIR=pokeysynth.lv2
@@ -28,7 +36,7 @@ test: $(POKEYSYNTHSO) $(POKEYSYNTHUISO)
 	cp -a $(LV2DIR) ~/.lv2
 
 clean:
-	rm -f *.o *.a *~ */*~ $(POKEYSYNTHSO) $(POKEYSYNTHUISO)
+	rm -f *.o *.a *~ */*~ $(POKEYSYNTHSO) $(POKEYSYNTHUISO) $(OBJ) $(OBJUI)
 
 depend:
 	rm -f .depend

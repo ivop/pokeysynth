@@ -1,6 +1,5 @@
 CXXFLAGS += -Wall
 CXXFLAGS += -Wcast-align
-#CXXFLAGS += -Wcast-qual
 CXXFLAGS += -Wchar-subscripts
 CXXFLAGS += -Wcomment
 CXXFLAGS += -Wdisabled-optimization
@@ -60,3 +59,4 @@ CXXFLAGS += -Wzero-as-null-pointer-constant
 #CXXFLAGS += -Wpadded
 #CXXFLAGS += -Wshadow
 #CXXFLAGS += -Waggregate-return
+#CXXFLAGS += -Wcast-qual
