@@ -55,6 +55,7 @@ private:
     float *control_mono_arp[4];     // pokey channels modes mono/auto-arp
     float *control_arp_speed[4];    // pokey channels arp speeds
     float *control_update_freq;     // update frequency 50/100/150/200
+    float *control_overdrive_comp;  // chip overdrive compensation
     const LV2_Atom_Sequence *notify;
 
     // features
@@ -203,6 +204,8 @@ void PokeySynth::connect_port(uint32_t port, void *data) {
     case POKEYSYNTH_NOTIFY_GUI:
         notify = (const LV2_Atom_Sequence *) data;
         break;
+    case POKEYSYNTH_CONTROL_OVERDRIVE_COMP:
+        control_overdrive_comp = (float *) data;
     default:
         break;
     }

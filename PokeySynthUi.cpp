@@ -53,9 +53,13 @@ private:
     static void HandleModesCB_redirect(Fl_Widget *w, void *data);
     void HandleModesCB(Fl_Widget *w, void *data);
 
-    Fl_Hor_Value_Slider *arpSpeedSliders[4];
+    MouseWheelSlider *arpSpeedSliders[4];
     static void HandleArpSpeedCB_redirect(Fl_Widget *w, void *data);
     void HandleArpSpeedCB(Fl_Widget *w, void *data);
+
+    MouseWheelSlider *compensationSlider;
+    static void HandleCompensationSlider_redirect(Fl_Widget *w, void *data);
+    void HandleCompensationSlider(Fl_Widget *w, void *data);
 
     FlatRadioButton *updateSpeedRadioButtons[4];
     static void HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data);
@@ -126,6 +130,16 @@ void PokeySynthUi::HandleArpSpeedCB(Fl_Widget *w, void *data) {
         write_function(controller, POKEYSYNTH_CONTROL_ARP_SPEED1+x,
                 sizeof(float), 0, (const void*) &v);
     }
+}
+
+void PokeySynthUi::HandleCompensationSlider_redirect(Fl_Widget *w, void *data){
+    ((PokeySynthUi *) data)->HandleCompensationSlider(w,data);
+}
+
+void PokeySynthUi::HandleCompensationSlider(Fl_Widget *w, void *data) {
+    float v = compensationSlider->value();
+    write_function(controller, POKEYSYNTH_CONTROL_OVERDRIVE_COMP,
+            sizeof(float), 0, (const void *) &v);
 }
 
 void PokeySynthUi::HandleUpdateSpeedCB_redirect(Fl_Widget *w, void *data) {
@@ -228,7 +242,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     // ---------- TITLE ----------
 
-    Fl_Box *title = new Fl_Box(16+WIDTH*3/5,64,WIDTH*2/5,56, "PokeySynth");
+    Fl_Box *title = new Fl_Box(16+WIDTH*3/5,56,WIDTH*2/5,56, "PokeySynth");
     title->labelfont(FL_BOLD+FL_ITALIC);
     title->labelsize(28);
     title->labelcolor(fl_rgb_color(0x20,0x40,0x80));
@@ -317,9 +331,17 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
         arpSpeedSliders[y]->callback(HandleArpSpeedCB_redirect, this);
     }
 
-    Fl_Button *but = new Fl_Button(curx+3*128, cury+3*24, 128, 24, "Panic!");
+    Fl_Button *but = new Fl_Button(curx+3*128, cury+3*24-8, 128, 24, "Panic!");
     but->callback(Panic_redirect, this);
     but->clear_visible_focus();
+
+    compensationSlider = new MouseWheelSlider(curx+224, cury+3*24-8,
+                                        128, 16, "Overdrive Compensation");
+    compensationSlider->labelsize(12);
+    compensationSlider->minimum(0);
+    compensationSlider->maximum(15);
+    compensationSlider->step(1);
+    compensationSlider->callback(HandleCompensationSlider_redirect, this);
 
     cury += 96 + 8;
 
@@ -505,6 +527,9 @@ void PokeySynthUi::PortEvent(uint32_t port_index,
         }
         break;
         }
+    case POKEYSYNTH_CONTROL_OVERDRIVE_COMP:
+        compensationSlider->value(v);
+        break;
     default:
         break;
     }
