@@ -1409,7 +1409,7 @@ void InstrumentEditor::HandleSaveBank_redirect(Fl_Widget *w, void *data) {
 
 void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
     LoadSaveInstruments io;
-    char *filename = fl_file_chooser("Save Bank", "*.bnk", bundle_path);
+    char *filename = fl_file_chooser("Save Bank", "*.bnk", bank_filename);
 
     if (filename) {
         if (!io.SaveBank(filename)) {
