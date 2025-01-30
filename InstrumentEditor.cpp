@@ -207,7 +207,7 @@ int PositionSlider::handle(int event) {
         return 1;
     }
     if (event == FL_MOUSEWHEEL && has_focus) {
-        this->value(this->value() + Fl::event_dy());
+        this->value(this->value() - Fl::event_dy());
         this->do_callback();
         return 1;
     }

@@ -42,7 +42,7 @@ public:
         }
         if (event == FL_MOUSEWHEEL && has_focus) {
             int v = this->value();
-            v += Fl::event_dy();
+            v -= Fl::event_dy();
             if (v < this->minimum()) v = this->minimum();
             if (v > this->maximum()) v = this->maximum();
             this->value(v);
