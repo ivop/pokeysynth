@@ -58,6 +58,14 @@ private:
     bool has_focus;
 };
 
+class MouseWheelSpinner : public Fl_Spinner {
+public:
+    MouseWheelSpinner(int x, int y, int w, int h, const char *l = nullptr);
+    int handle(int event) override;
+private:
+    bool has_focus;
+};
+
 class InstrumentEditor {
 public:
     InstrumentEditor(int width,
@@ -95,7 +103,7 @@ private:
 
     Fl_Check_Button *display128Check;
 
-    Fl_Spinner *programSpinner;
+    MouseWheelSpinner *programSpinner;
     InputField *programName;
     FlatRadioButton *channelsButtons[4];
     FlatRadioButton *clocksButtons[3];

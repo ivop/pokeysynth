@@ -207,7 +207,10 @@ int PositionSlider::handle(int event) {
         return 1;
     }
     if (event == FL_MOUSEWHEEL && has_focus) {
-        this->value(this->value() - Fl::event_dy());
+        int v = this->value() - Fl::event_dy();
+        if (v < this->minimum()) v = this->minimum();
+        if (v > this->maximum()) v = this->maximum();
+        this->value(v);
         this->do_callback();
         return 1;
     }
@@ -311,6 +314,35 @@ int KeyboardEditor::handle(int event) {
 }
 
 // ****************************************************************************
+// PROGRAM NUMBER SPINNER
+//
+MouseWheelSpinner::MouseWheelSpinner(int x, int y, int w, int h, const char *l)
+    : Fl_Spinner(x,y,w,h,l) {
+    has_focus = false;
+}
+
+int MouseWheelSpinner::handle(int event) {
+    if (event == FL_ENTER) {
+        this->take_focus();
+        has_focus = true;
+        return 1;
+    }
+    if (event == FL_LEAVE) {
+        has_focus = false;
+        return 1;
+    }
+    if (event == FL_MOUSEWHEEL && has_focus) {
+        int v = this->value() - Fl::event_dy();
+        if (v < this->minimum()) v = this->minimum();
+        if (v > this->maximum()) v = this->maximum();
+        this->value(v);
+        this->do_callback();
+        return 1;
+    }
+    return Fl_Spinner::handle(event);
+}
+
+// ****************************************************************************
 //
 // InstrumentEditor Constructor
 //
@@ -343,7 +375,7 @@ InstrumentEditor::InstrumentEditor(int width,
     program_base_1 = false;
 
     curx = (width -768) / 2;
-    programSpinner = new Fl_Spinner(curx,cury, 64, 24);
+    programSpinner = new MouseWheelSpinner(curx,cury, 64, 24);
     programSpinner->minimum(0);
     programSpinner->maximum(127);
     programSpinner->step(1);
