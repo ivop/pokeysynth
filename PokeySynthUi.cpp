@@ -42,7 +42,7 @@ private:
     LV2_URID_Map *map;
 
     char *sapr_filename;
-    Fl_Input *saprFilename;
+    InputField *saprFilename;
     Fl_Box *saprStatus;
 
     FlatRadioButton *listenRadioButtons[4];
@@ -377,7 +377,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     auto fn = new Fl_Box(0, 0, 80, 24, "Filename:");
     fn->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    saprFilename = new Fl_Input(0,0, 512-16, 24);
+    saprFilename = new InputField(0,0, 512-16, 24);
     saprFilename->callback(HandleSaprFilename_redirect, this);
 
     auto browse = new Fl_Button(0,0, 24, 24, "...");

@@ -353,7 +353,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     programSpinner->callback(HandleProgramSpinner_redirect, this);
 
-    programName = new Fl_Input(curx+80, cury, 688, 24);
+    programName = new InputField(curx+80, cury, 688, 24);
     programName->textfont(FL_COURIER);
     programName->callback(HandleProgramName_redirect, this);
 
@@ -576,7 +576,7 @@ InstrumentEditor::InstrumentEditor(int width,
     typesLoopEnd = new PositionSlider(curx, cury+16, "End");
     typesLoopEnd->callback(HandleTypesLoopEnd_redirect, this);
 
-    typesSpeed = new Fl_Hor_Value_Slider(xx, cury, 128, 16, "Speed");
+    typesSpeed = new MouseWheelSlider(xx, cury, 128, 16, "Speed");
     typesSpeed->bounds(0,15);
     typesSpeed->step(1);
     typesSpeed->labelsize(12);

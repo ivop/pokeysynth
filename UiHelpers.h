@@ -115,3 +115,17 @@ public:
         Fl_Group::draw();
     }
 };
+
+class InputField : public Fl_Input {
+public:
+    InputField(int x, int y, int w, int h, const char *l=nullptr)
+        : Fl_Input(x,y,w,h,l) {
+    }
+    int handle(int event) override {
+        if (event == FL_ENTER) {
+            this->take_focus();
+        }
+        return Fl_Input::handle(event);
+    }
+private:
+};
