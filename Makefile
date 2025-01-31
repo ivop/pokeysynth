@@ -1,6 +1,5 @@
 CXXFLAGS=-O3 -Wall -Wextra -Wno-unused-parameter
 #CXXFLAGS=-O0 -g3 -Wall -Wextra -Wno-unused-parameter
-LIBS=-lm
 SRC=src/PokeySynth.cpp \
 	src/PokeyInstrument.cpp \
 	src/Tuning.cpp \
@@ -21,16 +20,18 @@ POKEYSYNTHUISO=$(LV2DIR)/pokeysynth_ui.so
 POKEYSYNTHTTL=$(LV2DIR)/pokeysynth.ttl
 MANIFESTTTL=$(LV2DIR)/manifest.ttl
 DLLEXT=so
+LIBS=-lm
+LIBSUI=-lm $(shell fltk-config --ldstaticflags)
 
 #include warnings.mk
 
 all: $(POKEYSYNTHSO) $(POKEYSYNTHUISO) $(POKEYSYNTHTTL) $(MANIFESTTTL)
 
 $(POKEYSYNTHSO): $(OBJ)
-	$(CXX) -shared -fPIC -s -o $@ $^
+	$(CXX) -shared -fPIC -s -o $@ $^ $(LIBS)
 
 $(POKEYSYNTHUISO): $(OBJUI)
-	$(CXX) -shared -fPIC -s -o $@ $^ -lfltk
+	$(CXX) -shared -fPIC -s -o $@ $^ $(LIBSUI)
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $(CXXFLAGS) -fPIC $<
