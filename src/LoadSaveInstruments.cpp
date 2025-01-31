@@ -20,7 +20,7 @@ LoadSaveInstruments::LoadSaveInstruments(void) {
 }
 
 bool LoadSaveInstruments::LoadInstrument(int program, const char *filename) {
-    std::ifstream input(filename);
+    std::ifstream input(filename, std::ios::binary);
 
     if (!input.is_open()) {
         error_message = "Unable to open file!";
@@ -40,7 +40,7 @@ bool LoadSaveInstruments::LoadInstrument(int program, const char *filename) {
 // ****************************************************************************
 
 bool LoadSaveInstruments::SaveInstrument(int program, const char *filename) {
-    std::ofstream output(filename);
+    std::ofstream output(filename, std::ios::binary);
 
     if (!output.is_open()) {
         error_message = "Unable to open file!";
@@ -62,7 +62,7 @@ bool LoadSaveInstruments::SaveInstrument(int program, const char *filename) {
 bool LoadSaveInstruments::LoadBank(const char *filename) {
     char magic[16];
     int file_format_version = 0;
-    std::ifstream input(filename);
+    std::ifstream input(filename, std::ios::binary);
 
     if (!input.is_open()) {
         error_message = "Unable to open file!";
@@ -95,7 +95,7 @@ bool LoadSaveInstruments::LoadBank(const char *filename) {
 // ****************************************************************************
 
 bool LoadSaveInstruments::SaveBank(const char *filename) {
-    std::ofstream output(filename);
+    std::ofstream output(filename, std::ios::binary);
 
     if (!output.is_open()) {
         error_message = "Unable to open file!";
