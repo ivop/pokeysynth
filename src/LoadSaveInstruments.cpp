@@ -260,3 +260,22 @@ void LoadSaveInstruments::write_float(std::ofstream &output, float value) {
     outvalue.floatval = value;
     write_uint32(output, outvalue.intval);
 }
+
+// ****************************************************************************
+
+bool LoadSaveInstruments::ExportInstrumentList(const char *filename) {
+    std::ofstream output(filename, std::ios::binary);
+
+    if (!output.is_open()) {
+        error_message = "Unable to open file!";
+        return false;
+    }
+
+    for (int p=0; p<=127; p++) {
+        struct pokey_instrument *d = &instrdata[p];
+        output << p << ": " << d->name << std::endl;
+    }
+
+    output.close();
+    return true;
+}

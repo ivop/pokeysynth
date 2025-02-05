@@ -684,7 +684,7 @@ InstrumentEditor::InstrumentEditor(int width,
 
     const int butwidth = 144;
     Fl_Button *tb;
-    curx = (width - 16 - 4*(butwidth+8))/2;
+    curx = (width - 16 - 5*(butwidth+8))/2;
 
 #if 0
     progressBar = new Fl_Progress(curx, cury, 128, 24);
@@ -701,6 +701,11 @@ InstrumentEditor::InstrumentEditor(int width,
     tb->callback(RequestCurButtonCB_redirect, this);
     curx += butwidth + 8;
 #endif
+
+    tb = new Fl_Button(curx, cury, butwidth, 24, "Export List");
+    tb->clear_visible_focus();
+    tb->callback(HandleExportList_redirect, this);
+    curx += butwidth + 8;
 
     tb = new Fl_Button(curx, cury, butwidth, 24, "Load Instrument");
     tb->clear_visible_focus();
@@ -1422,6 +1427,23 @@ void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
         bank_filename = strdup(filename);
         dirty = false;
         SendNewPathnameToDSP();
+    }
+}
+
+// ----------------------------------------------------------------------------
+
+void InstrumentEditor::HandleExportList_redirect(Fl_Widget *w, void *data) {
+    ((InstrumentEditor *) data)->HandleExportList(w, data);
+}
+
+void InstrumentEditor::HandleExportList(Fl_Widget *w, void *data) {
+    LoadSaveInstruments io;
+    char *filename = fl_file_chooser("Export Instrument List", "*.txt",
+                                                                bundle_path);
+    if (filename) {
+        if (!io.ExportInstrumentList(filename)) {
+            fl_message("Error: %s", io.error_message);
+        }
     }
 }
 

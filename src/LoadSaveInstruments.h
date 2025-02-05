@@ -13,6 +13,8 @@ public:
     bool LoadBank(const char *filename);
     bool SaveBank(const char *filename);
 
+    bool ExportInstrumentList(const char *filename);
+
     const char *error_message;
 
 private:

@@ -208,6 +208,9 @@ private:
     //static void RequestCurButtonCB_redirect(Fl_Widget *w, void *data);
     //void RequestCurButtonCB(Fl_Widget *w, void *data);
 
+    static void HandleExportList_redirect(Fl_Widget *w, void *data);
+    void HandleExportList(Fl_Widget *w, void *data);
+
     static void HandleLoadInstrument_redirect(Fl_Widget *w, void *data);
     void HandleLoadInstrument(Fl_Widget *w, void *data);
     static void HandleSaveInstrument_redirect(Fl_Widget *w, void *data);
