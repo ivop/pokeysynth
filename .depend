@@ -1,17 +1,21 @@
-PokeySynth.o: PokeySynth.cpp lv2.h uris.h mzpokey.h PokeySynth.h \
- PokeyInstrument.h LoadSaveInstruments.h platform.h fltk.h
-PokeyInstrument.o: PokeyInstrument.cpp PokeyInstrument.h Tuning.h
-Tuning.o: Tuning.cpp Tuning.h PokeyInstrument.h
-mzpokey.o: mzpokey.cpp mzpokey.h remez.h
-remez.o: remez.cpp remez.h
-uris.o: uris.cpp lv2.h uris.h
-LoadSaveInstruments.o: LoadSaveInstruments.cpp PokeyInstrument.h \
- LoadSaveInstruments.h
-PokeySynthUi.o: PokeySynthUi.cpp lv2.h uris.h fltk.h platform.h \
- PokeySynth.h PokeyInstrument.h InstrumentEditor.h UiHelpers.h
-InstrumentEditor.o: InstrumentEditor.cpp lv2.h fltk.h uris.h \
- PokeyInstrument.h InstrumentEditor.h UiHelpers.h LoadSaveInstruments.h
-uris.o: uris.cpp lv2.h uris.h
-LoadSaveInstruments.o: LoadSaveInstruments.cpp PokeyInstrument.h \
- LoadSaveInstruments.h
-platform.o: platform.cpp platform.h fltk.h
+PokeySynth.o: src/PokeySynth.cpp src/lv2.h src/uris.h src/mzpokey.h \
+ src/PokeySynth.h src/PokeyInstrument.h src/LoadSaveInstruments.h \
+ src/platform.h src/fltk.h
+PokeyInstrument.o: src/PokeyInstrument.cpp src/PokeyInstrument.h \
+ src/Tuning.h
+Tuning.o: src/Tuning.cpp src/Tuning.h src/PokeyInstrument.h
+mzpokey.o: src/mzpokey.cpp src/mzpokey.h src/remez.h
+remez.o: src/remez.cpp src/remez.h
+uris.o: src/uris.cpp src/lv2.h src/uris.h
+LoadSaveInstruments.o: src/LoadSaveInstruments.cpp src/PokeyInstrument.h \
+ src/LoadSaveInstruments.h
+PokeySynthUi.o: src/PokeySynthUi.cpp src/lv2.h src/uris.h src/fltk.h \
+ src/platform.h src/PokeySynth.h src/PokeyInstrument.h \
+ src/InstrumentEditor.h src/UiHelpers.h
+InstrumentEditor.o: src/InstrumentEditor.cpp src/lv2.h src/fltk.h \
+ src/uris.h src/PokeyInstrument.h src/InstrumentEditor.h src/UiHelpers.h \
+ src/LoadSaveInstruments.h
+uris.o: src/uris.cpp src/lv2.h src/uris.h
+LoadSaveInstruments.o: src/LoadSaveInstruments.cpp src/PokeyInstrument.h \
+ src/LoadSaveInstruments.h
+platform.o: src/platform.cpp src/platform.h src/fltk.h
