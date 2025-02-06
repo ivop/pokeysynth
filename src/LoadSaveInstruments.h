@@ -5,7 +5,7 @@
 
 class LoadSaveInstruments {
 public:
-    LoadSaveInstruments(void);
+    LoadSaveInstruments(struct pokey_instrument (&instrdata)[128]);
 
     bool LoadInstrument(int program, const char *filename);
     bool SaveInstrument(int program, const char *filename);
@@ -24,4 +24,6 @@ private:
     void write_uint32(std::ofstream &output, uint32_t value);
     float read_float(std::ifstream &input);
     void write_float(std::ofstream &output, float value);
+
+    struct pokey_instrument (&instrdata)[128];
 };

@@ -14,8 +14,6 @@
 #include "InstrumentEditor.h"
 #include "LoadSaveInstruments.h"
 
-extern struct pokey_instrument instrdata[128];
-
 // ****************************************************************************
 // SEND INSTRUMENT DATA TO DSP
 //
@@ -108,7 +106,7 @@ void InstrumentEditor::SendReloadFromFileToDSP(void) {
 void VolBoxCB(Fl_Widget *w, void *data) {
     InstrumentEditor *ie = (InstrumentEditor *) data;
     VolBox *vb = (VolBox *) w;
-    struct pokey_instrument *p = &instrdata[ie->program];
+    struct pokey_instrument *p = &ie->instrdata[ie->program];
 
     p->volume[vb->myxpos()] = 15-vb->myypos();
     ie->SendInstrumentToDSP(ie->program);
@@ -351,7 +349,9 @@ InstrumentEditor::InstrumentEditor(int width,
                                    LV2UI_Write_Function write_function,
                                    LV2UI_Controller controller,
                                    LV2_URID_Map *map,
-                                   const char *bundle_path) :
+                                   const char *bundle_path,
+                                   struct pokey_instrument (&instrdata)[128]) :
+    instrdata(instrdata),
     write_function(write_function),
     controller(controller),
     bundle_path(bundle_path),
@@ -1351,7 +1351,7 @@ void InstrumentEditor::HandleLoadInstrument_redirect(Fl_Widget *w, void *data){
 }
 
 void InstrumentEditor::HandleLoadInstrument(Fl_Widget *w, void *data) {
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     char *filename = fl_file_chooser("Load Instrument", "*.ins", bundle_path);
 
     if (filename) {
@@ -1370,7 +1370,7 @@ void InstrumentEditor::HandleSaveInstrument_redirect(Fl_Widget *w, void *data){
 }
 
 void InstrumentEditor::HandleSaveInstrument(Fl_Widget *w, void *data) {
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     char *filename = fl_file_chooser("Save Instrument", "*.ins", bundle_path);
 
     if (filename) {
@@ -1387,7 +1387,7 @@ void InstrumentEditor::HandleLoadBank_redirect(Fl_Widget *w, void *data) {
 }
 
 void InstrumentEditor::HandleLoadBank(Fl_Widget *w, void *data) {
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     char *filename = fl_file_chooser("Load Bank", "*.bnk", bundle_path);
 
     if (filename) {
@@ -1413,7 +1413,7 @@ void InstrumentEditor::HandleSaveBank_redirect(Fl_Widget *w, void *data) {
 }
 
 void InstrumentEditor::HandleSaveBank(Fl_Widget *w, void *data) {
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     char *filename = fl_file_chooser("Save Bank", "*.bnk", bank_filename);
 
     if (filename) {
@@ -1437,7 +1437,7 @@ void InstrumentEditor::HandleExportList_redirect(Fl_Widget *w, void *data) {
 }
 
 void InstrumentEditor::HandleExportList(Fl_Widget *w, void *data) {
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     char *filename = fl_file_chooser("Export Instrument List", "*.txt",
                                                                 bundle_path);
     if (filename) {
@@ -1450,7 +1450,7 @@ void InstrumentEditor::HandleExportList(Fl_Widget *w, void *data) {
 // ----------------------------------------------------------------------------
 
 bool InstrumentEditor::LoadBank(const char *filename) {
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     if (!io.LoadBank(filename)) {
         fl_message("Loading bank. Error: %s\n", io.error_message);
         return false;
@@ -1464,7 +1464,7 @@ bool InstrumentEditor::LoadBank(const char *filename) {
 }
 
 bool InstrumentEditor::SaveBank(void) {
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     if (bank_filename) {
         if (!io.SaveBank(bank_filename)) {
             fl_message("Saving bank. Error: %s\n", io.error_message);

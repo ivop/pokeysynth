@@ -2,6 +2,7 @@
 #include "lv2.h"
 #include "fltk.h"
 #include "UiHelpers.h"
+#include "PokeyInstrument.h"
 
 class VolBox : public Fl_Box {
 public:
@@ -73,7 +74,8 @@ public:
                      LV2UI_Write_Function write_function,
                      LV2UI_Controller controller,
                      LV2_URID_Map *map,
-                     const char *bundle_path);
+                     const char *bundle_path,
+                     struct pokey_instrument (&instrdata)[128]);
     void DrawProgram(void);
     unsigned int program;
 
@@ -87,6 +89,8 @@ public:
 
     void SendReloadFromFileToDSP(void);
     void SendNewPathnameToDSP(void);
+
+    struct pokey_instrument (&instrdata)[128];
 
 private:
     LV2UI_Write_Function write_function;

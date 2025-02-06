@@ -93,6 +93,8 @@ private:
     void StartSaprRecording(void);
     void StopSaprRecording(void);
     FILE *sapr_output;
+
+    struct pokey_instrument instrdata[128];
 };
 
 static float intervals[4];
@@ -111,6 +113,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     current_timestamp(0),
     mzp(nullptr),
     last_note_times{0},
+    instruments{instrdata,instrdata,instrdata,instrdata},
     ticks(0),
     interval(0),
     auto_arp_count{0},
@@ -157,7 +160,7 @@ PokeySynth::PokeySynth(const double sample_rate,
     snprintf(path, 4096, "%s%c%s", bundle_path, PATH_SEPARATOR, "output.sapr");
     sapr_filename = strdup(path);
 
-    LoadSaveInstruments io;
+    LoadSaveInstruments io(instrdata);
     io.LoadBank(bank_filename);
 }
 
@@ -724,7 +727,7 @@ LV2_Worker_Status PokeySynth::work(LV2_Worker_Respond_Function respond,
         }
     } else if (obj->body.otype == uris.reload_bank) {
         puts("dsp: received reload bank command");
-        LoadSaveInstruments io;
+        LoadSaveInstruments io(instrdata);
         io.LoadBank(bank_filename);
     }
 

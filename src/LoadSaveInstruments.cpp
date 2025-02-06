@@ -15,7 +15,8 @@
 
 // ****************************************************************************
 
-LoadSaveInstruments::LoadSaveInstruments(void) {
+LoadSaveInstruments::LoadSaveInstruments(struct pokey_instrument (&instrdata)[128])
+    : instrdata(instrdata) {
     error_message = "No errors";
 }
 

@@ -13,8 +13,6 @@
 #include "InstrumentEditor.h"
 #include "UiHelpers.h"
 
-struct pokey_instrument instrdata[128];
-
 class PokeySynthUi {
 public:
     PokeySynthUi(LV2UI_Write_Function write_function,
@@ -80,6 +78,8 @@ private:
 
     static void HandleSaprFilename_redirect(Fl_Widget *w, void *data);
     void HandleSaprFilename(Fl_Widget *w, void *data);
+
+    struct pokey_instrument instrdata[128];
 };
 
 // ****************************************************************************
@@ -355,7 +355,8 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
                                   write_function,
                                   controller,
                                   map,
-                                  this->bundle_path);
+                                  this->bundle_path,
+                                  instrdata);
 
     // ---------- SAP-R RECORDING ----------
 

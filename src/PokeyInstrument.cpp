@@ -14,11 +14,9 @@ static uint8_t dist_values[] = {
     0x20
 };
 
-struct pokey_instrument instrdata[128] = {};
-
 // *************************************************************************
 
-PokeyInstrument::PokeyInstrument(void) :
+PokeyInstrument::PokeyInstrument(struct pokey_instrument (&instrdata)[128]) :
     program(0),
     note(0),
     velocity(1.0),
@@ -30,7 +28,8 @@ PokeyInstrument::PokeyInstrument(void) :
     pokey_freq(0),
     pitch_shift(1.0),
     volume_cc(1.0),
-    overdrive_compensation(1.0) {
+    overdrive_compensation(1.0),
+    instrdata(instrdata) {
 }
 
 void PokeyInstrument::SetPokeyFrequency(int frequency) {
