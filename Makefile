@@ -15,8 +15,8 @@ SRCUI=src/PokeySynthUi.cpp \
 OBJ=$(SRC:.cpp=.o)
 OBJUI=$(SRCUI:.cpp=.o)
 LV2DIR=pokeysynth.lv2
-POKEYSYNTHSO=$(LV2DIR)/pokeysynth.so
-POKEYSYNTHUISO=$(LV2DIR)/pokeysynth_ui.so
+POKEYSYNTHSO=$(LV2DIR)/pokeysynth.$(DLLEXT)
+POKEYSYNTHUISO=$(LV2DIR)/pokeysynth_ui.$(DLLEXT)
 POKEYSYNTHTTL=$(LV2DIR)/pokeysynth.ttl
 MANIFESTTTL=$(LV2DIR)/manifest.ttl
 LIBS=-lm
