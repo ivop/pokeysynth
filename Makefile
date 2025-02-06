@@ -64,6 +64,6 @@ depend:
 	+make .depend
 
 .depend:
-	$(CC) -MM $(SRC) $(SRCUI) > .depend
+	$(CC) -MM $(SRC) $(SRCUI) | sed 's|[a-zA-Z0-9_-]*\.o|src/&|' > .depend
 
 include .depend
