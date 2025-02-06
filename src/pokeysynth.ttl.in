@@ -11,7 +11,7 @@
 @prefix rsz: <http://lv2plug.in/ns/ext/resize-port#> .
 @prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 
-<https://github.com/ivop/pokeysynth#ui> a ui:X11UI ;
+<https://github.com/ivop/pokeysynth#ui> a ui:@UITYPE@ ;
     lv2:binary <pokeysynth_ui.@DLLEXT@> ;
     lv2:requiredFeature ui:idleInterface ;
     lv2:requiredFeature urid:map ;

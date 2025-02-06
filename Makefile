@@ -19,28 +19,38 @@ POKEYSYNTHSO=$(LV2DIR)/pokeysynth.so
 POKEYSYNTHUISO=$(LV2DIR)/pokeysynth_ui.so
 POKEYSYNTHTTL=$(LV2DIR)/pokeysynth.ttl
 MANIFESTTTL=$(LV2DIR)/manifest.ttl
-DLLEXT=so
 LIBS=-lm
 LIBSUI=-lm $(shell fltk-config --ldstaticflags)
+DLLEXT=so
+UITYPE=X11UI
+XLINK=
+
+ifeq ($(OS),Windows_NT)
+	DLLEXT=dll
+	UITYPE=WindowsUI
+	XLINK=-static
+endif
 
 #include warnings.mk
 
 all: $(POKEYSYNTHSO) $(POKEYSYNTHUISO) $(POKEYSYNTHTTL) $(MANIFESTTTL)
 
 $(POKEYSYNTHSO): $(OBJ)
-	$(CXX) -shared -fPIC -s -o $@ $^ $(LIBS)
+	$(CXX) -shared $(XLINK) -fPIC -s -o $@ $^ $(LIBS)
 
 $(POKEYSYNTHUISO): $(OBJUI)
-	$(CXX) -shared -fPIC -s -o $@ $^ $(LIBSUI)
+	$(CXX) -shared $(XLINK) -fPIC -s -o $@ $^ $(LIBSUI)
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $(CXXFLAGS) -fPIC $<
 
 $(POKEYSYNTHTTL): src/pokeysynth.ttl.in
 	sed s/@DLLEXT@/$(DLLEXT)/ $< > $@
+	sed -i s/@UITYPE@/$(UITYPE)/ $@
 
 $(MANIFESTTTL): src/manifest.ttl.in
 	sed s/@DLLEXT@/$(DLLEXT)/ $< > $@
+	sed -i s/@UITYPE@/$(UITYPE)/ $@
 
 test: $(POKEYSYNTHSO) $(POKEYSYNTHUISO) $(POKEYSYNTHTTL) $(MANIFESTTTL)
 	cp -a $(LV2DIR) ~/.lv2
