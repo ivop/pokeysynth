@@ -149,7 +149,7 @@ bool LoadSaveInstruments::load_instrument(std::ifstream &input, int program) {
     temp.sustain_loop_end = input.get();
     temp.release_end = input.get();
 
-    input.read((char *) p->types, INSTRUMENT_LENGTH);
+    input.read((char *) temp.types, INSTRUMENT_LENGTH);
 
     for (int i=0; i<INSTRUMENT_LENGTH; i++) {
         temp.values[i] = read_uint32(input);
