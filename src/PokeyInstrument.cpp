@@ -141,7 +141,7 @@ uint32_t PokeyInstrument::GetAudf(void) {
 
     int xnote = note;
 
-    if (TYPE_NOTE_PLUS_NOTE) xnote += value;
+    if (type == TYPE_NOTE_PLUS_NOTE) xnote += value;
 
     float freq = pow(2.0, (xnote-69) / 12.0) * 440.0;
 
