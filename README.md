@@ -62,6 +62,6 @@ Channel priorities are handled according to the following table:
 </table> 
 
 This means that, for example, a single channel instrument on channel 1, 2, and 3,
-and a filtered instrument in channel 4 is handled according to priority rule 6,
+and a filtered instrument on channel 4 is handled according to priority rule 6,
 which means that channel 1, 3 and 2+4 filtered are audible and the single instrument
 on channel 2 is muted.
