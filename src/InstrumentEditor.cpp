@@ -407,14 +407,19 @@ InstrumentEditor::InstrumentEditor(int width,
             "2CH Linked",
             "2CH Filter",
             "4CH Linked + Filter" };
+        const char *u[4] = { "", "(1+2 or 3+4)", "(1+3 or 2+4)", "(1+2+3+4)" };
+        Fl_Box *minitext;
         for (int c=0; c<4; c++) {
             channelsButtons[c] = new FlatRadioButton(curx+c*192, cury,
                                                             192, 24, t[c]);
             channelsButtons[c]->callback(HandleChannelsRadios_redirect, this);
+            minitext = new Fl_Box(curx+c*192, cury+24, 192, 12, u[c]);
+            minitext->labelsize(8);
+            minitext->labelfont(FL_ITALIC);
         }
     };
     channelsGroup->end();
-    cury += 24 + 8;
+    cury += 24 + 8 + 8;
 
     // ---------- Clocks
 
@@ -422,15 +427,20 @@ InstrumentEditor::InstrumentEditor(int width,
     Fl_Group *clocksGroup = new Fl_Group(curx, cury, 384, 24);
     clocksGroup->begin(); {
         const char *t[3] = { "15kHz", "64kHz", "1.8MHz" };
+        const char *u[3] = { "", "", "1 or 3" };
+        Fl_Box  *minitext;
         for (int c=0; c<3; c++) {
             clocksButtons[c] = new FlatRadioButton(curx+c*128, cury,
                                                             128, 24, t[c]);
             clocksButtons[c]->callback(HandleClocksRadios_redirect, this);
+            minitext = new Fl_Box(curx+c*128, cury+24, 128, 12, u[c]);
+            minitext->labelsize(8);
+            minitext->labelfont(FL_ITALIC);
         }
     }
     clocksGroup->end();
 
-    cury += 24 + 8;
+    cury += 24 + 8 + 8;
 
     // ---------- Envelope
 

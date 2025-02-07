@@ -236,7 +236,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
     Fl::visual(FL_DOUBLE|FL_INDEX);
 
 #define WIDTH 1088
-#define HEIGHT 872
+#define HEIGHT 888
 
     window = new Fl_Double_Window(WIDTH, HEIGHT);
 
