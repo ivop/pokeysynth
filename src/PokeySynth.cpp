@@ -347,6 +347,7 @@ void PokeySynth::play(void) {
         registers[AUDC3] = taudc >> 8;
 
         // we are left with channel 2 and 4, which are either filtered, or
+        // single channels
 
         // 2+4 filtered
         if (channels[1] == CHANNELS_2CH_FILTERED ||
