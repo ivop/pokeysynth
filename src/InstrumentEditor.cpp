@@ -604,7 +604,17 @@ InstrumentEditor::InstrumentEditor(int width,
     chordInversion[0]->setonly();
     chordInversionGroup->end();
 
-    Fl_Button *chordButton = new Fl_Button(16, cury+12+9*16, 96, 16, "Chord");
+    Fl_Group *chordArpDirGroup = new Fl_Group(16, cury+12+9*16, 96, 1*16);
+    for (int c=0; c<2; c++) {
+        const char *t[2] = { "Up", "Down" };
+        int x = 16 + c*48;
+        int y = cury + 12 + 9*16;
+        chordArpDirection[c] = new FlatRadioButton(x, y, 48, 16, t[c]);
+    }
+    chordArpDirection[0]->setonly();
+    chordArpDirGroup->end();
+
+    Fl_Button *chordButton = new Fl_Button(16, cury+16+10*16, 96, 16, "Chord");
     chordButton->labelsize(chordButton->labelsize()-1);
     chordButton->callback(HandleChordsButton_redirect, this);
     chordButton->clear_visible_focus();
@@ -1181,11 +1191,18 @@ void InstrumentEditor::HandleChordsButton(Fl_Widget *w, void *data) {
         result.insert(*it1 + *it2);
     }
 
-    int i = 0;
+    int i, d;
+    if (chordArpDirection[0]->value()) {    // Up
+        i = 0;
+        d = 1;
+    } else {                                // Down
+        i = result.size() - 1;
+        d = -1;
+    }
     for (auto x : result) {
         p->types[i] = TYPE_NOTE_PLUS_NOTE;
         p->values[i] = x;
-        i++;
+        i += d;
     }
     p->types_loop = 0;
     p->types_end = i - 1;

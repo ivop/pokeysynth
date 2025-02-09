@@ -137,6 +137,7 @@ private:
     FlatRadioButton *chordType[6];
     FlatRadioButton *chordAdd[7];
     FlatRadioButton *chordInversion[4];
+    FlatRadioButton *chordArpDirection[2];
 
     PositionSlider *typesLoopStart;
     PositionSlider *typesLoopEnd;
