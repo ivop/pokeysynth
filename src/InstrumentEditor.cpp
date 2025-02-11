@@ -1387,6 +1387,7 @@ void InstrumentEditor::HandleLoadInstrument(Fl_Widget *w, void *data) {
         }
     }
     dirty = true;
+    SendInstrumentToDSP(program);
     DrawProgram();
 }
 
