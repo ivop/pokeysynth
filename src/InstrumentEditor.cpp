@@ -744,8 +744,6 @@ InstrumentEditor::InstrumentEditor(int width,
     tb->clear_visible_focus();
     tb->callback(HandleSaveBank_redirect, this);
     curx += butwidth + 8;
-
-    DrawProgram();
 }
 
 // ****************************************************************************
