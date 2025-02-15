@@ -434,8 +434,6 @@ PokeySynthUi::~PokeySynthUi(void) {
             editor->SendReloadFromFileToDSP();
         }
     }
-    Fl::check();
-    Fl::flush();
 }
 
 // ****************************************************************************
