@@ -27,6 +27,8 @@ PokeyInstrument::PokeyInstrument(struct pokey_instrument (&instrdata)[128]) :
     types_speed_cnt(0),
     pokey_freq(0),
     pitch_shift(1.0),
+    mod_lfo_angle(0.0),
+    mod_amount(0.0),
     volume_cc(1.0),
     overdrive_compensation(1.0),
     instrdata(instrdata) {
