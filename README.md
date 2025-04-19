@@ -160,6 +160,26 @@ The chord type is divided in several sections.
 
 ![Misc Settings](images/misc-settings.png)
 
+##### Filter Settings
+
+This influences the ```2CH Filter``` and ```4CH Linked + Filter``` instruments.
+To create the filter effect, one of the two involved channels is playing a note slightly detuned relative to the base note that is being played.
+```Filter Detune``` determines how many cents it is detuned.
+The ```Filter Detune Volume``` determines the volume level of the detuned channel.
+If this is non-zero, you'll hear a pure square wave alongside the filtered sound for a fuller sound.
+When this is used, it's set to around 50% most of the time.
+```Filter Transpose Octave Down``` does whet its name says.
+When checked, the note being played is transposed a full octave (i.e. twelve semitones) down.
+If you switch a previously composed melody line from ```Pure Tone``` to a filtered instruments you might notice it appears to be an octave to high and/or sounds a little thin or out of tune.
+This option is for that type of situations.
+
+##### Frequency Continuous Controllers
+
+PokeySynth reacts to various frequency related MIDI CC events.
+
+* PitchWheel. This shifts the note frequency up or down. Sadly, there is no standard that defines how the internal value maps cents. Most commonly, synthesizers use +/- 200 cents, meaning a full tone up or down when the pitchwheel is moved to either end of its range. Sometimes you want to go further. You can extend its range up to 1200 cents (one octave) in either direction.
+* ModWheel. The modulation wheel changes the frequency based on a sine wave LFO (Low Frequency Oscillator). The ```LFO depth``` setting determines the amplitude of the sine wave in cents, and the ```LFO Speed``` determines how fast it modulates. The latter is set as degrees per frame. A full sine wave is 360 degrees, and one frame corresponds to one tick of the ```Update Speed```.
+
 #### Loading and Saving
 
 ![Loading and Saving](images/load-save.png)
