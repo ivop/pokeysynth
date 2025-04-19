@@ -118,6 +118,11 @@ The distortion list denotes which Pokey distortion is used while playing back th
 
 * 0 - Pure, this is a pure square wave, used for instruments, and chords, or bass notes at 15kHz or with 2CH Linked instruments
 * 1 - Noise, white noise generator, useful for percussion
+* 2 - Buzzy Bass, the typical Pokey bass sound, with a soft edge
+* 3 - Gritty Bass, the typical Pokey bass sound, but more harsh. Note that 15kHz and 1.8MHz 2CH Linked instruments have no Gritty bass. Setting this type of distortion will fallback to buzzy bass.
+* 4 - Poly5 Square, sort of a sqaure wave, but sounds more like a hobo or clarinet. Only useful for 1.8MHz 8-bit channel instruments.
+
+On the right there are handy buttons to set the whole envelope to one of the specified distortions.
 
 #### Note Table
 
