@@ -8,9 +8,9 @@ An LV2 Virtual Instrument that emulates the Atari Pokey soundchip.
 
 Head over to the [Releases](https://github.com/ivop/pokeysynth/releases) page and download the latest release for your platform.
 
-Linux users need to unpack the archive in ```$HOME/.lv2```.
+Linux users need to unpack the archive in ```$HOME/.lv2```, e.g. ```/home/john/.lv2```.
 The .lv2 directory must be created if it does not already exist.
-Windows users need to unpack the archive in ```%HOMEDRIVE%%HOMEPATH%\AppData\Roaming\LV2```.
+Windows users need to unpack the archive in ```%HOMEDRIVE%%HOMEPATH%\AppData\Roaming\LV2```, e.g. ```C:\Users\john\AppData\Roaming\LV2```.
 The LV2 directory must be created if it does not already exist.
 
 ## Usage
