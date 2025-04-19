@@ -25,7 +25,10 @@ Some knowledge about how the Pokey chip operates is recommended, but not strictl
 
 ![MIDI Channels](images/midi-channels.png)
 
-Each plugin instance can be configured to listen and respond to four blocks of MIDI channels (1-4, 5-8, 9-12, or 13-16). This distinction is necessary if you want to eventually playback the result on real hardware.
+Each plugin instance can be configured to listen and respond to four blocks of MIDI channels (1-4, 5-8, 9-12, or 13-16).
+This distinction is necessary if you want to eventually playback the result on real hardware.
+The selected block of MIDI channels maps directly to the four Pokey channels.
+So if you select 9-12, MIDI channel 9 will be played back on Pokey channel 1, MIDI channel 10 on Pokey channel 2, and so forth.
 
 #### Pokey Channels
 
