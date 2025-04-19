@@ -142,7 +142,7 @@ On the right there are handy buttons to set the whole envelope to one of the spe
 
 During sound generation, the note table is used to determine which frequency is played back.
 PokeySynth steps through the table at its own speed, which is not necesarily the same as the envelope speed.
-When it reaches the ```End``` marker as set by the slider at the bottom, it loops back to the ```loop``` slider point.
+When it reaches the ```End``` marker as set by the slider at the bottom, it loops back to the ```Loop``` slider point.
 If these are the same, it keeps repeating the last note type.
 Some types take an argument, which is specified below the type designator, with the least significant byte on top, gradually descending to the most significant byte at the bottom.
 Arguments are 32-bit values and specified in hexadecimal.
