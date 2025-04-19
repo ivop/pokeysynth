@@ -40,7 +40,7 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
 
 ## Installation
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 Head over to the [Releases](https://github.com/ivop/pokeysynth/releases) page and download the latest release for your platform.
 
@@ -51,7 +51,7 @@ The LV2 directory must be created if it does not already exist.
 
 ## Usage
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 Once installed, you can load the plugin in your favorite DAW if it supports LV2 plugins, or in a stand-alone LV2 plugin host like ```jalv``` (Linux) or ```carla``` (Linux and Windows).
 Each plugin instance emulates a full Pokey chip.
@@ -63,7 +63,7 @@ Some knowledge about how the Pokey chip operates is recommended, but not strictl
 
 #### MIDI Channels
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![MIDI Channels](images/midi-channels.png)
 
@@ -74,7 +74,7 @@ So if you select 9-12, MIDI channel 9 will be played back on Pokey channel 1, MI
 
 #### Pokey Channels
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Pokey Channels](images/pokey-channels.png)
 
@@ -90,7 +90,7 @@ If you played the chords manually you might need to align them to the grid in yo
 
 #### Update Speed
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Update Speed](images/update-speed.png)
 
@@ -101,7 +101,7 @@ Each tick is one step.
 
 ### Instrument Editor
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 There are 128 instruments corresponding to the 128 MIDI program numbers.
 Internally and in the MIDI protocol they are numbered from 0 to 127.
@@ -110,7 +110,7 @@ To make it easier in that case to lookup an instrument and set the program chang
 
 #### Name and Type
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Instrument Editor Name and Type](images/instrument-editor-head.png)
 
@@ -120,7 +120,7 @@ The types are any combination of channel layout and clock frequency.
 
 ##### Pokey Channel Combinations
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 * An ```8-bit channel``` instrument uses a single Pokey channel and has a limited 8-bit frequency range.
 * A ```2CH Linked``` instrument uses two 8-bit Pokey channels linked together to generate a single tone, and having a 16-bit frequency range.
@@ -138,7 +138,7 @@ In short, the instrument with the highest priority wins, and the lowest priority
 
 ##### Pokey Channel Clocks
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 Each Pokey channel generates its sound frequency relative to a base clock.
 The 15kHz and 64kHz are mutually exclusive and influence all four Pokey channels.
@@ -155,13 +155,13 @@ It is possible to mix 15kHz and 64kHz instruments on a single Pokey, but one has
 
 #### Volume Envelope and Distortion
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Volume Envelope and Distortion](images/instrument-editor-vol-dist.png)
 
 ##### Volume
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 The volume envelope describes how the volume of the instrument changes throught time.
 Each tick (speed determined by the global ```Update Speed```) has a specific volume assigned.
@@ -184,7 +184,7 @@ This is useful for percussion or pizzicato instruments which have no sustain.
 
 ##### Distortion
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 The distortion list denotes which Pokey distortion is used while playing back the note.
 
@@ -198,7 +198,7 @@ On the right there are handy buttons to set the whole envelope to one of the spe
 
 #### Note Table
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Note Table](images/instrument-editor-notes.png)
 
@@ -234,13 +234,13 @@ I tried to included the most common used triads and quads and still be not too o
 
 #### Miscellaneous Settings
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Misc Settings](images/misc-settings.png)
 
 ##### Filter Settings
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 This influences the ```2CH Filter``` and ```4CH Linked + Filter``` instruments.
 To create the filter effect, one of the two involved channels is playing a note slightly detuned relative to the base note that is being played.
@@ -257,7 +257,7 @@ This option is for that type of situations so you don't need to make any changes
 
 ##### Frequency Continuous Controllers
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 PokeySynth reacts to various frequency related MIDI CC events.
 
@@ -266,7 +266,7 @@ PokeySynth reacts to various frequency related MIDI CC events.
 
 #### Loading and Saving
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Loading and Saving](images/load-save.png)
 
@@ -276,7 +276,7 @@ You are entirely free to choose the filename you like, but as a convention I use
 
 #### SAP-R Recording
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![SAP-R Recording](images/sapr.png)
 
@@ -290,7 +290,7 @@ This way you can easily record your stereo or quad pokey song and the resulting 
 
 #### Overdrive and Panic!
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 ![Overdrive and Panic](images/overdrive-panic.png)
 
@@ -311,7 +311,7 @@ Sometimes the ```Panic!``` button can be useful so you don't have to restart the
 
 #### Final Volume
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 The volume of a note is determined by the following parameters in this order:
 
@@ -326,7 +326,7 @@ Rounding to the nearest integer suitable for storing in a Pokey register is done
 
 #### Final Frequency
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 The frequency (clock divider) of a note is determined by the following parameters in this order:
 
@@ -340,7 +340,7 @@ The frequency (clock divider) of a note is determined by the following parameter
 
 #### Channel Priorities
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 Channel priorities are handled according to the following table:
 
@@ -403,7 +403,7 @@ on channel 2 is muted.
 
 ### Further Notes
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 * Linked and Filtered instruments can be played at any of the involved channels and will sound correct. For example, on a plugin instance that listens to 13-16, a filtered instrument (1+3 or 2+4) can be played on MIDI channel 13 or 15, resulting in the sound being played back utilizing Pokey channel 1 and 3, or on MIDI channel 14 or 16, resulting in the sound being played back using Pokey channel 2 and 4.
 * There's a somewhat hidden **sawtooth** timbre. To use it, you have to create a ```2CH Filter``` instruments and set the clock to 1.8MHz (normally you would set it to 15 or 64). The sawtooth is only audible when this instrument is played back on Pokey channel 1 or 3 (the channels that get clocked at 1.8MHz) and won't work on channels 2 and 4 because you cannot clock them at 1.8MHz. This is a hardware limitation.
@@ -418,7 +418,7 @@ on channel 2 is muted.
 
 ### Supported MIDI Events
 
-([:arrow_double_up: table of contents](#table-of-contents))
+([:arrow_backward: table of contents](#table-of-contents))
 
 #### Channel Voice Messages
 
