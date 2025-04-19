@@ -65,7 +65,7 @@ With lower clocks it only extends the resolution, not the range.
 * A ```2CH Filter``` instrument also utilizes two 8-bit Pokey channels, but filters one with the other, generating a different timbre than the normal square wave.
 The frequency resolution is again limited to 8-bits.
 Again, underneath it displays which channel combinations are used.
-* Finally, a ```4CH Filter``` instrument uses all four 8-bit Pokey channels.
+* Finally, a ```4CH Linked + Filter``` instrument uses all four 8-bit Pokey channels.
 That's two pairs creating two ```2CH Linked``` instruments, and then one is filtered by the other, resulting in a single instrument with the same timbre as ```2CH Linked``` instruments, but with 16-bit frequency resolution.
 
 When playing multiple notes at once on a single plugin instance, there's a possibility of channel conflicts.
@@ -127,6 +127,21 @@ On the right there are handy buttons to set the whole envelope to one of the spe
 #### Note Table
 
 ![Note Table](images/instrument-editor-notes.png)
+
+During sound generation, the note table is used to determine which frequency is played back.
+PokeySynth steps through the table at the same speed as it steps through the envelope.
+See ```Update Speed``` above.
+When it reaches the ```End``` marker as set by the slider at the bottom, it loops back to the ```loop``` slider point.
+If these are the same, it keeps repeating the last note type.
+Some types take an argument, which is specified below the type designator, with the least significant byte on top, gradually descending to the most significant byte at the bottom.
+Arguments are 32-bit values and specified in hexadecimal.
+
+The following types are available:
+
+* 0 - MIDI Note, the playback frequency is determined by the MIDI Note On event, i.e. MIDI Note Number 69 corresponds to A4 440Hz. PokeySynth will play 440Hz, or more accurately, as close as possible to 440Hz depending on the (base) clock of the instrument.
+* 1 - MIDI +/- Note, same as 0, but the MIDI Note Number is adjusted with the argument value prior to conversion to hertz.
+* 2 - MIDI +/- Cents, same as 0, but after conversion to hertz the frequency is adjusted by an x amount of cents. +100 cents is a semi-tone higher and will result in the same frequency as when type 1 was used with a +1 note argument. By quickly toggling between plus some cents and minus some cents, this is one of the two methods to create a vibrato (the other being MIDI ModWheel Continuous Control events).
+* 3 - Fixed Divider, this places the argument value into the Pokey frequency divider register(s). This bypasses the MIDI Note Number and uses the 8-bit (```8-bit Channel```), 16-bit (```2CH Linked``` or ```2CH Filter```), or 32-bit (```4CH Linked + Filter```) value to directly set the frequency of the note being played. This mainly is useful to create percussion instruments.
 
 #### Miscellaneous Settings
 
