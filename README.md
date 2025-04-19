@@ -10,12 +10,28 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
 
 * [Installation](#installation)
 * [Usage](#usage)
-  * [Global Settings](#global-settings)
-   * [MIDI Channels](#midi-channels)
-   * [Pokey Channels](#pokey-channels)
-   * [Update Speed](#update-speed)
-  * [Instrument Editor](#instrument-editor)
-   * [Name and Type](#name-and-type)
+   * [Global Settings](#global-settings)
+      * [MIDI Channels](#midi-channels)
+      * [Pokey Channels](#pokey-channels)
+      * [Update Speed](#update-speed)
+   * [Instrument Editor](#instrument-editor)
+      * [Name and Type](#name-and-type)
+         * [Pokey Channel Combinations](#pokey-channel-combinations)
+         * [Pokey Channel Clocks](#pokey-channel-clocks)
+      * [Volume Envelope and Distortion](#volume-envelope-and-distortion)
+         * [Volume](#volume)
+         * [Distortion](#distortion)
+      * [Note Table](#note-table)
+      * [Miscellaneous Settings](#miscellaneous-settings)
+         * [Filter Settings](#filter-settings)
+         * [Frequency Continuous Controllers](#frequency-continuous-controllers)
+      * [Loading and Saving](#loading-and-saving)
+      * [SAP-R Recording](#sap-r-recording)
+      * [Overdrive and Panic](#overdrive-and-panic)
+    * [Theory of Operation](#theory-of-operation)
+      * [Final Volume](#final-volume)
+      * [Final Frequency](#final-frequency)
+      * [Channel Priorities](#channel-priorities)
 
 ## Installation
 
@@ -83,7 +99,7 @@ Each instrument has a name and a type.
 The name can be up to 64 characters.
 The types are any combination of channel layout and clock frequency.
 
-##### Pokey Channel combinations
+##### Pokey Channel Combinations
 
 * An ```8-bit channel``` instrument uses a single Pokey channel and has a limited 8-bit frequency range.
 * A ```2CH Linked``` instrument uses two 8-bit Pokey channels linked together to generate a single tone, and having a 16-bit frequency range.
@@ -250,7 +266,7 @@ Sometimes the ```Panic!``` button can be useful so you don't have to restart the
 
 ### Theory of Operation
 
-#### Volume
+#### Final Volume
 
 The volume of a note is determined by the following parameters in this order:
 
@@ -263,7 +279,7 @@ The volume of a note is determined by the following parameters in this order:
 All calculations are done with floating point math.
 Rounding to the nearest integer suitable for storing in a Pokey register is done as the final step.
 
-#### Frequency
+#### Final Frequency
 
 The frequency (clock divider) of a note is determined by the following parameters in this order:
 
