@@ -1,3 +1,14 @@
+// ****************************************************************************
+//
+// This file is part of PokeySynth.
+//
+// Copyright © 2024, 2025, by Ivo van Poorten
+//
+// Licensed under the terms of the General Public License, version 2.
+// See the LICENSE file in the root of the prohect directory for the full text.
+//
+// ****************************************************************************
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
