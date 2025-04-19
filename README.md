@@ -37,6 +37,7 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
       * [Channel Voice Messages](#channel-voice-messages)
       * [Control Change Messages](#control-change-messages)
       * [Channel Mode Messages](#channel-mode-messages)
+* [Development](#development)
 
 ## Installation
 
@@ -437,3 +438,11 @@ on channel 2 is muted.
 
 * CC120 All Sound Off (PokeySynth implementation also resets all controllers)
 * CC121 Reset All Controllers
+
+## Development
+
+### Compiling From Source
+
+### Why FLTK?
+
+### Credits
