@@ -6,6 +6,12 @@ An LV2 Virtual Instrument that emulates the Atari Pokey soundchip.
 
 A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
 
+## Table of Contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+  * [MIDI Channels](#midi-channels)
+
 ## Installation
 
 Head over to the [Releases](https://github.com/ivop/pokeysynth/releases) page and download the latest release for your platform.
