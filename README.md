@@ -353,5 +353,5 @@ on channel 2 is muted.
 
 ##### Channel Mode Messages
 
-* CC120 All Sound Off
+* CC120 All Sound Off (PokeySynth implementation also resets all controllers)
 * CC121 Reset All Controllers
