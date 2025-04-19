@@ -129,8 +129,7 @@ On the right there are handy buttons to set the whole envelope to one of the spe
 ![Note Table](images/instrument-editor-notes.png)
 
 During sound generation, the note table is used to determine which frequency is played back.
-PokeySynth steps through the table at the same speed as it steps through the envelope.
-See ```Update Speed``` above.
+PokeySynth steps through the table at its own speed, which is not necesarily the same as the envelope speed.
 When it reaches the ```End``` marker as set by the slider at the bottom, it loops back to the ```loop``` slider point.
 If these are the same, it keeps repeating the last note type.
 Some types take an argument, which is specified below the type designator, with the least significant byte on top, gradually descending to the most significant byte at the bottom.
@@ -138,10 +137,24 @@ Arguments are 32-bit values and specified in hexadecimal.
 
 The following types are available:
 
-* 0 - MIDI Note, the playback frequency is determined by the MIDI Note On event, i.e. MIDI Note Number 69 corresponds to A4 440Hz. PokeySynth will play 440Hz, or more accurately, as close as possible to 440Hz depending on the (base) clock of the instrument.
-* 1 - MIDI +/- Note, same as 0, but the MIDI Note Number is adjusted with the argument value prior to conversion to hertz.
+* 0 - MIDI Note, the playback frequency is determined by the MIDI Note On event, i.e. MIDI Note Number 69 corresponds to A4 440Hz. PokeySynth will play 440Hz, or more accurately, as close as possible to 440Hz depending on the (base) clock of the instrument. This type takes no argument, and its value is ignored.
+* 1 - MIDI +/- Note, same as 0, but the MIDI Note Number is adjusted with the argument value prior to conversion to hertz. This can be used to generate ar
 * 2 - MIDI +/- Cents, same as 0, but after conversion to hertz the frequency is adjusted by an x amount of cents. +100 cents is a semi-tone higher and will result in the same frequency as when type 1 was used with a +1 note argument. By quickly toggling between plus some cents and minus some cents, this is one of the two methods to create a vibrato (the other being MIDI ModWheel Continuous Control events).
 * 3 - Fixed Divider, this places the argument value into the Pokey frequency divider register(s). This bypasses the MIDI Note Number and uses the 8-bit (```8-bit Channel```), 16-bit (```2CH Linked``` or ```2CH Filter```), or 32-bit (```4CH Linked + Filter```) value to directly set the frequency of the note being played. This mainly is useful to create percussion instruments.
+
+When manually editing the hexadecimal values, be sure to sign extend negative numbers to 32-bit(!), especially for type 1 and 2.
+Type 3 is less picky, as it just masks off the excess bits anyway if the channel layout of the instruments calls for a smaller value.
+
+One can also use the handy chord generator on the left.
+Similar to the ADSR helper before, this is _not_ a real-time chord arpeggiator.
+You have to set the type of chord you want and press the ```Chord``` button.
+It'll then generate the appropriate note table.
+The chord type is divided in several sections.
+
+* Base triad, being major, minor, suspended second, suspended fourth, augmented or dimninished. 
+* Added note, which can be - (none), flat seventh, major seventh, ninth, eleventh and thirteenth.
+* Inversion, root, first, second, and third inversion, determines the lowest and highest note. For a triad, the third inversion is the same as the root inversion.
+* Direction, up or down, set whether the arpeggio is played from the lowest to the highest note, or vice versa.
 
 #### Miscellaneous Settings
 
