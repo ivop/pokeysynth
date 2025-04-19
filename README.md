@@ -32,6 +32,11 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
       * [Final Volume](#final-volume)
       * [Final Frequency](#final-frequency)
       * [Channel Priorities](#channel-priorities)
+   * [Further Notes](#further-notes)
+   * [Supported MIDI Events](#supported-midi-events)
+      * [Channel Voice Messages](#channel-voice-messages)
+      * [Control Change Messages](#control-change-messages)
+      * [Channel Mode Messages](#channel-mode-messages)
 
 ## Installation
 
@@ -352,7 +357,7 @@ and a filtered instrument on channel 4 is handled according to priority rule 6,
 which means that channel 1 (single), 3 (single) and 2+4 (filtered) are audible and the single channel instrument
 on channel 2 is muted.
 
-#### Further notes
+### Further Notes
 
 * Linked and Filtered instruments can be played at any of the involved channels and will sound correct. For example, on a plugin instance that listens to 13-16, a filtered instrument (1+3 or 2+4) can be played on MIDI channel 13 or 15, resulting in the sound being played back utilizing Pokey channel 1 and 3, or on MIDI channel 14 or 16, resulting in the sound being played back using Pokey channel 2 and 4.
 * There's a somewhat hidden **sawtooth** timbre. To use it, you have to create a ```2CH Filter``` instruments and set the clock to 1.8MHz (normally you would set it to 15 or 64). The sawtooth is only audible when this instrument is played back on Pokey channel 1 or 3 (the channels that get clocked at 1.8MHz) and won't work on channels 2 and 4 because you cannot clock them at 1.8MHz. This is a hardware limitation.
@@ -365,22 +370,22 @@ on channel 2 is muted.
 * If you want a more in-depth description of how Pokey works internally and understand why PokeySynth has certain limitations, I recommend reading the Pokey section of the [Altirra Hardware Reference Manual](https://www.virtualdub.org/downloads/Altirra%20Hardware%20Reference%20Manual.pdf).
 * At first, it might seem difficult to mix several instruments on a single Pokey channel, having to constantly insert Program Change MIDI events to switch to a different instrument, but it does not have to be that tedious. You can add a second MIDI DAW track that is connected to the same MIDI channel as your melody track, and is run through a Note to Program Change MIDI filter (for example [Note2PC](https://github.com/x42/midifilter.lv2)) before it gets routed to the PokeySynth plugin. So both DAW tracks output to the same MIDI channel, and eventually the same Pokey channel. One track sends notes, the other track sends program change events, but with the ease of use of just painting the PC events in your piano roll as notes, instead of manually editing true PC events.
 
-#### Supported MIDI Events
+### Supported MIDI Events
 
-##### Channel Voice Messages
+#### Channel Voice Messages
 
 * Note On, channel (0-15), note number (0-127) and velocity (0-127, controls the volume)
 * Note Off, channel (0-15), note number (0-127)
 * PitchBend, channel (0-15), amount (-8192 to 8192)
 * Program Change, channel (0-15), program number (0 to 127)
 
-##### Control Change Messages
+#### Control Change Messages
 
 * CC1 Modulation Wheel, amount (0-127)
 * CC7 Channel Volume, level (0-127)
 * CC14 Undefined, value (0-63 stop SAP-R recording, 64-127 start SAP-R recording)
 
-##### Channel Mode Messages
+#### Channel Mode Messages
 
 * CC120 All Sound Off (PokeySynth implementation also resets all controllers)
 * CC121 Reset All Controllers
