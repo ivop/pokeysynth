@@ -30,6 +30,23 @@ Each plugin instance can be configured to listen and respond to four blocks of M
 
 ![Pokey Channels](images/pokey-channels.png)
 
+There are 128 instruments corresponding to the 128 MIDI program numbers.
+Internally and in the MIDI protocol they are numbered from 0 to 127.
+Some programs think they are clever and number them 1 to 128.
+To make it easier in that case to lookup an instrument and set the program change event in your DAW, you can tick the Display 1-128 box.
+
+Each instrument has a name and a type.
+The name can be up to 64 characters.
+The types are any combination of channel layout and clock frequency.
+An ```8-bit channel``` instrument uses a single Pokey channel and has a limited 8-bit frequency range.
+A ```2CH Linked``` instrument uses two 8-bit Pokey channels linked together to generate a single tone, and having a 16-bit frequency range.
+For convenience, underneath the radio button there's a note displaying which Pokey channel combinations are used when such an instrument is triggered.
+A ```2CH Filter``` instrument also utilizes two 8-bit Pokey channels, but filters one with the other, generating a different timbre than the normal square wave.
+The frequency resolution is again limited to 8-bits.
+Again, underneath it displays which channel combinations are used.
+Finally, a ```4CH Filter``` instrument uses all four 8-bit Pokey channels.
+That's two pairs creating two ```2CH Linked``` instruments, and then one is filtered by the other, resulting in a single instrument with the same timbre as ```2CH Linked``` instruments, but with 16-bit frequency resolution.
+
 #### Update Speed
 
 ![Update Speed](images/update-speed.png)
