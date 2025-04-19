@@ -61,8 +61,6 @@ Some knowledge about how the Pokey chip operates is recommended, but not strictl
 
 ### Global Settings
 
-([:arrow_double_up: table of contents](#table-of-contents))
-
 #### MIDI Channels
 
 ([:arrow_double_up: table of contents](#table-of-contents))
