@@ -446,3 +446,7 @@ on channel 2 is muted.
 ### Why FLTK?
 
 ### Credits
+
+PokeySynth is Copyright © 2024, 2025, by Ivo van Poorten, and is licensed under the terms of the General Public License, version 2.  
+Pokey emulation engine is Copyright © 2002-2018 by Michael Borisov, Krzystof Nikiel, Perry McFarlane, Petr Stehlík, and Piotr Fusik, and is licensed under the terms of the General Public License, version 2, or at your option any later version.  
+Remez resampling code is Copyright © 1995,1998 by Jake Janovetz, and Copyright © 2003-2008 by Krzysztof Nikiel, Piotr Fusik, Perry McFarland, and is licensed under the terms of the General Public License, version 2, or at your option any later version.  
