@@ -97,7 +97,7 @@ It is possible to mix 15kHz and 64kHz instruments on a single Pokey, but one has
 
 * 15kHz, low frequencies in the bass range, useful for bass lines and kick drums
 * 64kHz, mid-range frequencies, used for chords, melodies, and percussive sounds
-* 1.8MHz, overrides 15/64kHz base clock, full frequency range from C0-C9
+* 1.8MHz, overrides 15/64kHz base clock, full frequency range from C0-C9 when used in combinartion with ```2CH Linked```.
 
 #### Volume Envelope and Distortion
 
