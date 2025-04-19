@@ -54,18 +54,43 @@ Each tick is one step.
 Each instrument has a name and a type.
 The name can be up to 64 characters.
 The types are any combination of channel layout and clock frequency.
+
+##### Pokey Channel combinations
+
 * An ```8-bit channel``` instrument uses a single Pokey channel and has a limited 8-bit frequency range.
 * A ```2CH Linked``` instrument uses two 8-bit Pokey channels linked together to generate a single tone, and having a 16-bit frequency range.
 For convenience, underneath the radio button there's a note displaying which Pokey channel combinations are used when such an instrument is triggered.
+This type is most useful with an 1.8Mhz clock to have the widest frequency range.
+With lower clocks it only extends the resolution, not the range.
 * A ```2CH Filter``` instrument also utilizes two 8-bit Pokey channels, but filters one with the other, generating a different timbre than the normal square wave.
 The frequency resolution is again limited to 8-bits.
 Again, underneath it displays which channel combinations are used.
 * Finally, a ```4CH Filter``` instrument uses all four 8-bit Pokey channels.
 That's two pairs creating two ```2CH Linked``` instruments, and then one is filtered by the other, resulting in a single instrument with the same timbre as ```2CH Linked``` instruments, but with 16-bit frequency resolution.
 
+When playing multiple notes at once on a single plugin instance, there's a possibility of channel conflicts.
+See **Channel Priorities** below how these are resolved.
+In short, the instrument with the highest priority wins, and the lowest priority is muted.
+
+##### Pokey Channel Clocks
+
+Each Pokey channel generates its sound frequency relative to a base clock.
+The 15kHz and 64kHz are mutually exclusive and influence all four Pokey channels.
+1.8MHz override the 15 or 64kHz base clock, but can only be set for channel 1 or 3 (or channel 1+2 or 3+4 when the channels are linked).
+Contrary to the channel layout conflicts mentioned earlier, frequency conflicts _do not_ mute the offending channel.
+If two instruments are set to play at the same time (both are in the MIDI Note On phase) and there is a base clock frequency mismatch, the 15kHz instrument wins (sounds in tune) and the 64kHz instrument will sound out of tune.
+This is by design as to have audible feedback when combing 15kHz and 64kHz instruments on a single Pokey.
+It is possible to mix 15kHz and 64kHz instruments on a single Pokey, but one has to take great care to avoid two instruments being on at the same time.
+
+* 15kHz, low frequencies in the bass range, useful for bass lines and kick drums
+* 64kHz, mid-range frequencies, used for chords, melodies, and percussive sounds
+* 1.8MHz, overrides 15/64kHz base clock, full frequency range from C0-C9
+
 #### Volume Envelope and Distortion
 
 ![Volume Envelope and Distortion](images/instrument-editor-vol-dist.png)
+
+##### Volume
 
 The volume envelope describes how the volume of the instrument changes throught time.
 Each tick has a specific volume assigned.
@@ -85,6 +110,13 @@ You can use a small window between Start and End to create a volume tremelo.
 Once a MIDI Note Off event arrives, the Release period starts, which usually fades out the volume to 0.
 If the ```Sustain End``` marker is equal to or beyond the ```Release End``` marker, there will be no sustain and it will progress linearly from start to end and then stop.
 This is useful for percussion or pizzicato instruments which have no sustain.
+
+##### Distortion
+
+The distortion list denotes which Pokey distortion is used while playing back the note.
+
+* 0 - Pure, this is a pure square wave, used for instruments, and chords, or bass notes at 15kHz or with 2CH Linked instruments
+* 1 - Noise, white noise generator, useful for percussion
 
 #### Note Table
 
