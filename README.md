@@ -111,7 +111,7 @@ You can either draw them as a bar graph, edit them manually in hexadecimal below
 Note that the ADSR values are _not_ real-time.
 You need to set the values you want and then click one of the AD, ADR or ADSR buttons to generate the envelope.
 
-* Attack sets the amount of ticks to rise from 0 to 15 (F)
+* Attack sets the amount of ticks to rise from 0 to 15 (F in hexadecimal)
 * Decay sets the amount of ticks to fall to sustain level
 * Sustain sets the sustain level, i.e. the volume of the instrument while you keep pressing the key
 * Release sets the amount of ticks to fall from sustain level to 0
