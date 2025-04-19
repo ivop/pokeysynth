@@ -168,7 +168,7 @@ The chord type is divided in several sections.
 * [Inversion](https://en.wikipedia.org/wiki/Inversion_(music)), root, first, second, and third inversion, determines the lowest and highest note. For a triad, the third inversion is the same as the root inversion.
 * Direction, up or down, set whether the arpeggio is played from the lowest to the highest note, or vice versa.
 
-I tried to included the most common used triads and quads and still be not too overwhelming. If you want a [dominent seventh sharp ninth chord](https://en.wikipedia.org/wiki/Dominant_seventh_sharp_ninth_chord) you need to edit the note table manually.
+I tried to included the most common used triads and quads and still be not too overwhelming. If you want the Hendrix Chord (which is a [dominant seventh sharp ninth chord](https://en.wikipedia.org/wiki/Dominant_seventh_sharp_ninth_chord)) you need to edit the note table manually.
 
 #### Miscellaneous Settings
 
