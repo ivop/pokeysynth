@@ -40,6 +40,8 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
 
 ## Installation
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 Head over to the [Releases](https://github.com/ivop/pokeysynth/releases) page and download the latest release for your platform.
 
 Linux users need to unpack the archive in ```$HOME/.lv2```, e.g. ```/home/john/.lv2```.
