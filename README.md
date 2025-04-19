@@ -9,10 +9,60 @@ An LV2 Virtual Instrument that emulates the Atari Pokey soundchip.
 Head over to the [Releases](https://github.com/ivop/pokeysynth/releases) page and download the latest release for your platform.
 
 Linux users need to unpack the archive in ```$HOME/.lv2```.
+The .lv2 directory must be created if it does not already exist.
 Windows users need to unpack the archive in ```%HOMEDRIVE%%HOMEPATH%\AppData\Roaming\LV2```.
 The LV2 directory must be created if it does not already exist.
 
 ### Usage
+
+Once installed, you can load the plugin in your favorite DAW if it supports LV2 plugins, or in a stand-alone LV2 plugin host like ```jalv``` (Linux) or ```carla``` (Linux and Windows).
+Each plugin instance emulates a full Pokey chip.
+If your use case is creating chiptune-like music in combination with other synths and sampled instruments, it's advised to create as many plugin instances as you need channels and instruments, and play a single instrument on a single Pokey for maximum sound quality and frequency resolution.
+If instead you want to create music that can actually be played back on real hardware (stock Atari with single Pokey, Gumby stereo upgrade, or quad Pokey with PokeyMax) you need to limit the amount of plugin instances accordingly and route up to four MIDI tracks to each instance.
+
+#### MIDI Channels
+
+![MIDI Channels](images/midi-channels.png)
+
+Each plugin instance can be configured to listen and respond to four blocks of MIDI channels (1-4, 5-8, 9-12, or 13-16). This distinction is necessary if you want to eventually playback the result on real hardware.
+
+#### Pokey Channels
+
+![Pokey Channels](images/pokey-channels.png)
+
+#### Update Speed
+
+![Update Speed](images/update-speed.png)
+
+### Instrument Editor
+
+#### Name and Type
+
+![Instrument Editor Name and Type](images/instrument-editor-head.png)
+
+#### Volume Envelope and Distortion
+
+![Volume Envelope and Distortion](images/instrument-editor-vol-dist.png)
+
+#### Note Table
+
+![Note Table](images/instrument-editor-notes.png)
+
+#### Miscellaneous Settings
+
+![Misc Settings](images/misc-settings.png)
+
+#### Loading and Saving
+
+![Loading and Saving](images/load-save.png)
+
+#### SAP-R Recording
+
+![SAP-R Recording](images/sapr.png)
+
+#### Overdrive and Panic!
+
+![Overdrive and Panic](images/overdrive-panic.png)
 
 ### Channel Priorities
 
