@@ -117,9 +117,9 @@ You need to set the values you want and then click one of the AD, ADR or ADSR bu
 * Release sets the amount of ticks to fall from sustain level to 0
 
 Every MIDI Note On event starts at the beginning of the envelope.
-When it reaches the marker of the ```Sustain End``` slider, it will loop back to the ```Sustain Start``` slider.
+When it reaches the marker of the ```Sustain End``` slider, it will loop back to the ```Sustain Start``` slider position.
 Most of the time these are the same, sustaining on a constant volume when a note is held.
-You can use a small window between Start and End to create a volume tremelo.
+You could use a small window between Start and End to create a volume tremelo.
 Once a MIDI Note Off event arrives, the Release period starts, which usually fades out the volume to 0.
 If the ```Sustain End``` marker is equal to or beyond the ```Release End``` marker, there will be no sustain and it will progress linearly from start to end and then stop.
 This is useful for percussion or pizzicato instruments which have no sustain.
