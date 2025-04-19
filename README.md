@@ -51,6 +51,8 @@ The LV2 directory must be created if it does not already exist.
 
 ## Usage
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 Once installed, you can load the plugin in your favorite DAW if it supports LV2 plugins, or in a stand-alone LV2 plugin host like ```jalv``` (Linux) or ```carla``` (Linux and Windows).
 Each plugin instance emulates a full Pokey chip.
 If your use case is creating chiptune-like music in combination with other synths and sampled instruments, it's advised to create as many plugin instances as you need channels and instruments, and play a single instrument on a single Pokey for maximum sound quality and frequency resolution.
@@ -59,7 +61,11 @@ Some knowledge about how the Pokey chip operates is recommended, but not strictl
 
 ### Global Settings
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 #### MIDI Channels
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 ![MIDI Channels](images/midi-channels.png)
 
@@ -69,6 +75,8 @@ The selected block of MIDI channels maps directly to the four Pokey channels.
 So if you select 9-12, MIDI channel 9 will be played back on Pokey channel 1, MIDI channel 10 on Pokey channel 2, and so forth.
 
 #### Pokey Channels
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 ![Pokey Channels](images/pokey-channels.png)
 
@@ -84,6 +92,8 @@ If you played the chords manually you might need to align them to the grid in yo
 
 #### Update Speed
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 ![Update Speed](images/update-speed.png)
 
 Update Speed controls the speed at which the incoming MIDI events are processed and played back as Pokey sounds.
@@ -93,12 +103,16 @@ Each tick is one step.
 
 ### Instrument Editor
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 There are 128 instruments corresponding to the 128 MIDI program numbers.
 Internally and in the MIDI protocol they are numbered from 0 to 127.
 Some programs think they are clever and number them 1 to 128.
 To make it easier in that case to lookup an instrument and set the program change event in your DAW, you can tick the Display 1-128 box.
 
 #### Name and Type
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 ![Instrument Editor Name and Type](images/instrument-editor-head.png)
 
@@ -107,6 +121,8 @@ The name can be up to 64 characters.
 The types are any combination of channel layout and clock frequency.
 
 ##### Pokey Channel Combinations
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 * An ```8-bit channel``` instrument uses a single Pokey channel and has a limited 8-bit frequency range.
 * A ```2CH Linked``` instrument uses two 8-bit Pokey channels linked together to generate a single tone, and having a 16-bit frequency range.
@@ -124,6 +140,8 @@ In short, the instrument with the highest priority wins, and the lowest priority
 
 ##### Pokey Channel Clocks
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 Each Pokey channel generates its sound frequency relative to a base clock.
 The 15kHz and 64kHz are mutually exclusive and influence all four Pokey channels.
 1.8MHz overrides the 15 or 64kHz base clock, but can only be set for channel 1 or 3 (or channel 1+2 or 3+4 when the channels are linked).
@@ -139,9 +157,13 @@ It is possible to mix 15kHz and 64kHz instruments on a single Pokey, but one has
 
 #### Volume Envelope and Distortion
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 ![Volume Envelope and Distortion](images/instrument-editor-vol-dist.png)
 
 ##### Volume
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 The volume envelope describes how the volume of the instrument changes throught time.
 Each tick (speed determined by the global ```Update Speed```) has a specific volume assigned.
@@ -164,6 +186,8 @@ This is useful for percussion or pizzicato instruments which have no sustain.
 
 ##### Distortion
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 The distortion list denotes which Pokey distortion is used while playing back the note.
 
 * 0 - Pure, this is a pure square wave, used for instruments, and chords, or bass notes at 15kHz or with 2CH Linked instruments
@@ -175,6 +199,8 @@ The distortion list denotes which Pokey distortion is used while playing back th
 On the right there are handy buttons to set the whole envelope to one of the specified distortions.
 
 #### Note Table
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 ![Note Table](images/instrument-editor-notes.png)
 
@@ -210,9 +236,13 @@ I tried to included the most common used triads and quads and still be not too o
 
 #### Miscellaneous Settings
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 ![Misc Settings](images/misc-settings.png)
 
 ##### Filter Settings
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 This influences the ```2CH Filter``` and ```4CH Linked + Filter``` instruments.
 To create the filter effect, one of the two involved channels is playing a note slightly detuned relative to the base note that is being played.
@@ -229,12 +259,16 @@ This option is for that type of situations so you don't need to make any changes
 
 ##### Frequency Continuous Controllers
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 PokeySynth reacts to various frequency related MIDI CC events.
 
 * PitchWheel. This shifts the note frequency up or down. Sadly, there is no standard that defines how the internal MIDI value (-8192 to 8192) is supposed to be mapped to cents. Most commonly, synthesizers use +/- 200 cents, meaning a full tone up or down when the pitchwheel is moved to either end of its range. Sometimes you want to go further. You can extend its range up to 1200 cents (one octave) in either direction.
 * ModWheel. The modulation wheel changes the frequency based on a sine wave LFO (Low Frequency Oscillator). The ```LFO depth``` setting determines the amplitude of the sine wave in cents, and the ```LFO Speed``` determines how fast it modulates. The latter is set as degrees per frame. A full sine wave is 360 degrees, and one frame corresponds to one tick of the ```Update Speed```.
 
 #### Loading and Saving
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 ![Loading and Saving](images/load-save.png)
 
@@ -243,6 +277,8 @@ You are entirely free to choose the filename you like, but as a convention I use
 ```Export List``` lets you write a plain text list of all instrument names and numbers to file, which might be handy as a reference when you use a previously defined bank, so you do not constantly have to lookup MIDI Program Numbers when switching to the desired instrument.
 
 #### SAP-R Recording
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 ![SAP-R Recording](images/sapr.png)
 
@@ -255,6 +291,8 @@ CC14 takes a value argument. 64-127 starts recording, 0-63 stops recording.
 This way you can easily record your stereo or quad pokey song and the resulting SAP-R files will automatically be in sync.
 
 #### Overdrive and Panic!
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 ![Overdrive and Panic](images/overdrive-panic.png)
 
@@ -275,6 +313,8 @@ Sometimes the ```Panic!``` button can be useful so you don't have to restart the
 
 #### Final Volume
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 The volume of a note is determined by the following parameters in this order:
 
 * Volume is read from envelope table
@@ -288,6 +328,8 @@ Rounding to the nearest integer suitable for storing in a Pokey register is done
 
 #### Final Frequency
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 The frequency (clock divider) of a note is determined by the following parameters in this order:
 
 * If note type from the note table is 3 (Fixed Divider), the value is read from the table and all the next steps are skipped
@@ -299,6 +341,8 @@ The frequency (clock divider) of a note is determined by the following parameter
 * And finally, the pitch is adjusted accoring to the modulation wheel setting, taking into account its depth setting, mapping the MIDI event value ranging from -8192 to 8192 to the correct amount of cents.
 
 #### Channel Priorities
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 Channel priorities are handled according to the following table:
 
@@ -361,6 +405,8 @@ on channel 2 is muted.
 
 ### Further Notes
 
+([:arrow_double_up: table of contents](#table-of-contents))
+
 * Linked and Filtered instruments can be played at any of the involved channels and will sound correct. For example, on a plugin instance that listens to 13-16, a filtered instrument (1+3 or 2+4) can be played on MIDI channel 13 or 15, resulting in the sound being played back utilizing Pokey channel 1 and 3, or on MIDI channel 14 or 16, resulting in the sound being played back using Pokey channel 2 and 4.
 * There's a somewhat hidden **sawtooth** timbre. To use it, you have to create a ```2CH Filter``` instruments and set the clock to 1.8MHz (normally you would set it to 15 or 64). The sawtooth is only audible when this instrument is played back on Pokey channel 1 or 3 (the channels that get clocked at 1.8MHz) and won't work on channels 2 and 4 because you cannot clock them at 1.8MHz. This is a hardware limitation.
 * For each timbre there's at least one example in the default sound bank. Instruments 0-45 are all 16-bit (linked) instruments or 32-bit (linked + filter), except for instrument 44, which is the 1.8MHz single channel (1 or 3) Poly5 square which is often used alongside. Instruments 64-107 are 8-bit and 16-bit (filter only) instruments. All instruments up to now run use the 64kHz base clock (or 1.8MHz override). Instruments 120-127 are a few 15kHz examples.
@@ -373,6 +419,8 @@ on channel 2 is muted.
 * At first, it might seem difficult to mix several instruments on a single Pokey channel, having to constantly insert Program Change MIDI events to switch to a different instrument, but it does not have to be that tedious. You can add a second MIDI DAW track that is connected to the same MIDI channel as your melody track, and is run through a Note to Program Change MIDI filter (for example [Note2PC](https://github.com/x42/midifilter.lv2)) before it gets routed to the PokeySynth plugin. So both DAW tracks output to the same MIDI channel, and eventually the same Pokey channel. One track sends notes, the other track sends program change events, but with the ease of use of just painting the PC events in your piano roll as notes, instead of manually editing true PC events.
 
 ### Supported MIDI Events
+
+([:arrow_double_up: table of contents](#table-of-contents))
 
 #### Channel Voice Messages
 
