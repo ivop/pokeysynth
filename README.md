@@ -193,7 +193,7 @@ This option is for that type of situations so you don't need to make any changes
 
 PokeySynth reacts to various frequency related MIDI CC events.
 
-* PitchWheel. This shifts the note frequency up or down. Sadly, there is no standard that defines how the internal value maps cents. Most commonly, synthesizers use +/- 200 cents, meaning a full tone up or down when the pitchwheel is moved to either end of its range. Sometimes you want to go further. You can extend its range up to 1200 cents (one octave) in either direction.
+* PitchWheel. This shifts the note frequency up or down. Sadly, there is no standard that defines how the internal MIDI value (-8192 to 8192) is supposed to be mapped to cents. Most commonly, synthesizers use +/- 200 cents, meaning a full tone up or down when the pitchwheel is moved to either end of its range. Sometimes you want to go further. You can extend its range up to 1200 cents (one octave) in either direction.
 * ModWheel. The modulation wheel changes the frequency based on a sine wave LFO (Low Frequency Oscillator). The ```LFO depth``` setting determines the amplitude of the sine wave in cents, and the ```LFO Speed``` determines how fast it modulates. The latter is set as degrees per frame. A full sine wave is 360 degrees, and one frame corresponds to one tick of the ```Update Speed```.
 
 #### Loading and Saving
@@ -210,7 +210,7 @@ You are entirely free to choose the filename you like, but as a convention I use
 
 Each PokeySynth instance is capable of writing a raw Pokey register dump to a file, which can later be played back at original hardware with the appropriate SAP-R player.
 Recording can be started by pressing the ```Start``` button, and is stopped by pressing the ```Stop``` button.
-Consecutive presses to ```Start``` will overwrite the previous recording, so be cautious.
+Consecutive presses to ```Start``` will overwrite the previous recording if you don't change the filename in between, so be cautious.
 As this might be cumbersome and tricky to time correctly (start playback in DAW, quickly start recording before music starts), and is even more clumsy when trying to record a stereo Pokey song (you cannot press two record buttons at once, so you have to manually synchronize the two SAP-R files with ```sapredit``` (part of [saprtools](https://github.com/ivop/saprtools)) afterwards), you can also automate this.
 By strategically placing a MIDI CC14 events on _one_ of the MIDI channels that is routed to a particular PokeySynth instance, you can either start or stop the SAP-R recording process.
 CC14 takes a value argument. 0-63 starts recording, 64-127 stops recording.
@@ -220,7 +220,7 @@ This way you can easily record your stereo or quad pokey song and the resulting 
 
 ![Overdrive and Panic](images/overdrive-panic.png)
 
-```Overdrive Compensation``` only applies when more than one instrument is routed to the same plugin instance.
+```Overdrive Compensation``` only is only relevant when more than one instrument is routed to the same plugin instance.
 If the total volume of all instruments currently audible combined exceeds 40, the Pokey Chip starts to overdrive and the sound starts to clip and sounds badly.
 Without having to adjust any of the other factors that determine the volume of each instrument (see Theory of Operation below), you can change the overdrive compensation value to reduce the overall volume without changing the relative dynamics between channels and instruments.
 This is basically a master volume slider.
@@ -244,6 +244,9 @@ The volume of a note is determined by the following parameters in this order:
 * MIDI CC7 Volume as factor, multiply by (CC7 value/127)
 * Note On Velocity, multiply by (velocity value/127)
 * If it's a filtered instrument and it's the detuned channel, apply Filter Detune Volume percentage
+
+All calculations are done with floating point math.
+Rounding to the nearest integer suitable for storing in a Pokey register is done as the final step.
 
 #### Frequency
 
