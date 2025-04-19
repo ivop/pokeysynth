@@ -34,10 +34,15 @@ So if you select 9-12, MIDI channel 9 will be played back on Pokey channel 1, MI
 
 ![Pokey Channels](images/pokey-channels.png)
 
-There are 128 instruments corresponding to the 128 MIDI program numbers.
-Internally and in the MIDI protocol they are numbered from 0 to 127.
-Some programs think they are clever and number them 1 to 128.
-To make it easier in that case to lookup an instrument and set the program change event in your DAW, you can tick the Display 1-128 box.
+When MIDI Note On events arrive, PokeySynth has to determine what to do with it.
+If it's an event for a channel it is listening to, it's added to a list of which keys are currently being pressed on that channel.
+Setting the channel to ```Monophonic``` will always play the highest note currently being on, and ignore all other notes.
+For example, if you play a C major chord as G C E, it will play the E.
+Setting the channel to ```Arpeggiate Up``` or ```Arpeggiate Down```, it while cycle through the note list either upwards or downwards, effectively playing an arpeggio.
+The speed at which it steps through this list is determined by the ```Arp Speed``` slider.
+It's directly related to the ```Update Speed``` (see below), and a higher number being slower.
+The auto-arpeggiator works best if all Note On events arrive at the same time.
+If you played the chords manually you might need to align them to the grid in your DAW.
 
 #### Update Speed
 
@@ -49,6 +54,11 @@ Each tick is one step.
 50Hz is the most common setting and all instruments in the default sound bank are designed for it.
 
 ### Instrument Editor
+
+There are 128 instruments corresponding to the 128 MIDI program numbers.
+Internally and in the MIDI protocol they are numbered from 0 to 127.
+Some programs think they are clever and number them 1 to 128.
+To make it easier in that case to lookup an instrument and set the program change event in your DAW, you can tick the Display 1-128 box.
 
 #### Name and Type
 
