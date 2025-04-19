@@ -10,7 +10,12 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
 
 * [Installation](#installation)
 * [Usage](#usage)
-  * [MIDI Channels](#midi-channels)
+  * [Global Settings](#global-settings)
+   * [MIDI Channels](#midi-channels)
+   * [Pokey Channels](#pokey-channels)
+   * [Update Speed](#update-speed)
+  * [Instrument Editor](#instrument-editor)
+   * [Name and Type](#name-and-type)
 
 ## Installation
 
@@ -28,6 +33,8 @@ Each plugin instance emulates a full Pokey chip.
 If your use case is creating chiptune-like music in combination with other synths and sampled instruments, it's advised to create as many plugin instances as you need channels and instruments, and play a single instrument on a single Pokey for maximum sound quality and frequency resolution.
 If instead you want to create music that can actually be played back on real hardware (stock Atari with single Pokey, Gumby stereo upgrade, or quad Pokey with PokeyMax) you need to limit the amount of plugin instances accordingly and route up to four MIDI channels to each instance.
 Some knowledge about how the Pokey chip operates is recommended, but not strictly necessary.
+
+### Global Settings
 
 #### MIDI Channels
 
