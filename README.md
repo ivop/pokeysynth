@@ -326,3 +326,4 @@ on channel 2 is muted.
 * The sliders can be adjusted with the mouse wheel. Move your mouse cursor over it to get automatic focus, and scroll the wheel up or down to modify its value.
 * Using the mouse wheel in the instrument number field will scroll through all the available instruments.
 * There are several ```Clear``` buttons. Each corresponds to the section to which it is closest, i.e. clear the envelope and distortion settings, clear the note table, or clear the miscellaneous settings. At the top right of the instrument editor there's a ```Clear Instrument``` button that clears them all at the same time.
+* If you want a more in-depth description of how Pokey works internally and understand why PokeySynth has certain limitations, I recommend reading the Pokey section of the [Altirra Hardware Reference Manual](https://www.virtualdub.org/downloads/Altirra%20Hardware%20Reference%20Manual.pdf).
