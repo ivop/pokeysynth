@@ -313,3 +313,7 @@ This means that, for example, a single channel instrument on channel 1, 2, and 3
 and a filtered instrument on channel 4 is handled according to priority rule 6,
 which means that channel 1, 3 and 2+4 filtered are audible and the single instrument
 on channel 2 is muted.
+
+#### Further notes
+
+* Linked and Filtered instruments can be played at any of the involved channels and will sound correct. For example, on a plugin instance that listens to 13-16, a filtered instrument (1+3 or 2+4) can be played on MIDI channel 13 or 15, resulting in the sound being played back on Pokey channel 1 and 3, or on MIDI channel 14 or 16, resulting in the sound being played back on Pokey channel 2 and 4.
