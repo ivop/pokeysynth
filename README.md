@@ -163,10 +163,12 @@ You have to set the type of chord you want and press the ```Chord``` button.
 It'll then generate the appropriate note table.
 The chord type is divided in several sections.
 
-* Base triad, being major, minor, suspended second, suspended fourth, augmented or dimninished. 
-* Added note, which can be - (none), flat seventh, major seventh, ninth, eleventh and thirteenth.
-* Inversion, root, first, second, and third inversion, determines the lowest and highest note. For a triad, the third inversion is the same as the root inversion.
+* Base [triad](https://en.wikipedia.org/wiki/Triad_(music)), being [major](https://en.wikipedia.org/wiki/Major_chord), [minor](https://en.wikipedia.org/wiki/Minor_chord), [suspended second](https://en.wikipedia.org/wiki/Suspended_chord), [suspended fourth](https://en.wikipedia.org/wiki/Suspended_chord), [augmented](https://en.wikipedia.org/wiki/Augmented_triad) or [dimninished](https://en.wikipedia.org/wiki/Diminished_triad). 
+* Added note, which can be - (none), [dominant seventh](https://en.wikipedia.org/wiki/Seventh_chord), [major seventh](https://en.wikipedia.org/wiki/Major_seventh_chord), [ninth](https://en.wikipedia.org/wiki/Ninth_chord), [eleventh](https://en.wikipedia.org/wiki/Eleventh_chord) and [thirteenth](https://en.wikipedia.org/wiki/Thirteenth). Note that add9, add11, and add13 _only_ add the specific interval, i.e. Cadd9 is not the same as C9, where the latter would also include the 7th and possibly drop the 5th.
+* [Inversion](https://en.wikipedia.org/wiki/Inversion_(music)), root, first, second, and third inversion, determines the lowest and highest note. For a triad, the third inversion is the same as the root inversion.
 * Direction, up or down, set whether the arpeggio is played from the lowest to the highest note, or vice versa.
+
+I tried to included the most common used triads and quads and still be not too overwhelming. If you want a [dominent seventh sharp ninth chord](https://en.wikipedia.org/wiki/Dominant_seventh_sharp_ninth_chord) you need to edit the note table manually.
 
 #### Miscellaneous Settings
 
