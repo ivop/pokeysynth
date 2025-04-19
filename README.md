@@ -204,6 +204,19 @@ This way you can easily record your stereo or quad pokey song and the resulting 
 
 ![Overdrive and Panic](images/overdrive-panic.png)
 
+```Overdrive Compensation``` only applies when more than one instrument is routed to the same plugin instance.
+If the total volume of all instruments currently audible combined exceeds 40, the Pokey Chip starts to overdrive and the sound starts to clip and sounds badly.
+Without having to adjust any of the other factors that determine the volume of each instrument (see Theory of Operation below), you can change the overdrive compensation value to reduce the overall volume without changing the relative dynamics between channels and instruments.
+This is basically a master volume slider.
+The maximum combined volume is directly related to its value.
+For example, if it is set to 10, your volume envelope that ranges from 0-15 is linearly mapped to 0-10.
+
+The ```Panic!``` button internally sends MIDI CC120 (All Notes Off) to all 16 channels, sets the ModWheel CC1 to 0, and the Volume CC7 to 127.
+You will probably not use this often, but it can be handy when for example you switch MIDI send channel on your master keyboard while a key is being hold.
+The Note Off event that's generated when the key is released will be sent on a different MIDI channel than on which the Note On event was sent, hence you'll have a hung note.
+Or you switch off power of your keyboard while a key is being pressed, or your DAW crashes during playback with your PokeySynth instance being hosted externally.
+Sometimes the ```Panic!``` button can be useful so you don't have to restart the plugin to get rid of hung notes.
+
 ### Channel Priorities
 
 Channel priorities are handled according to the following table:
