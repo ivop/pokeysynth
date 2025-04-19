@@ -106,7 +106,7 @@ It is possible to mix 15kHz and 64kHz instruments on a single Pokey, but one has
 ##### Volume
 
 The volume envelope describes how the volume of the instrument changes throught time.
-Each tick has a specific volume assigned.
+Each tick (speed determined by the global ```Update Speed```) has a specific volume assigned.
 You can either draw them as a bar graph, edit them manually in hexadecimal below it, or use the ADSR helper on the left.
 Note that the ADSR values are _not_ real-time.
 You need to set the values you want and then click one of the AD, ADR or ADSR buttons to generate the envelope.
