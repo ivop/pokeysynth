@@ -19,6 +19,7 @@ Once installed, you can load the plugin in your favorite DAW if it supports LV2 
 Each plugin instance emulates a full Pokey chip.
 If your use case is creating chiptune-like music in combination with other synths and sampled instruments, it's advised to create as many plugin instances as you need channels and instruments, and play a single instrument on a single Pokey for maximum sound quality and frequency resolution.
 If instead you want to create music that can actually be played back on real hardware (stock Atari with single Pokey, Gumby stereo upgrade, or quad Pokey with PokeyMax) you need to limit the amount of plugin instances accordingly and route up to four MIDI tracks to each instance.
+Some knowledge about how the Pokey chip operates is recommended, but not strictly necessary.
 
 #### MIDI Channels
 
@@ -53,18 +54,37 @@ Each tick is one step.
 Each instrument has a name and a type.
 The name can be up to 64 characters.
 The types are any combination of channel layout and clock frequency.
-An ```8-bit channel``` instrument uses a single Pokey channel and has a limited 8-bit frequency range.
-A ```2CH Linked``` instrument uses two 8-bit Pokey channels linked together to generate a single tone, and having a 16-bit frequency range.
+* An ```8-bit channel``` instrument uses a single Pokey channel and has a limited 8-bit frequency range.
+* A ```2CH Linked``` instrument uses two 8-bit Pokey channels linked together to generate a single tone, and having a 16-bit frequency range.
 For convenience, underneath the radio button there's a note displaying which Pokey channel combinations are used when such an instrument is triggered.
-A ```2CH Filter``` instrument also utilizes two 8-bit Pokey channels, but filters one with the other, generating a different timbre than the normal square wave.
+* A ```2CH Filter``` instrument also utilizes two 8-bit Pokey channels, but filters one with the other, generating a different timbre than the normal square wave.
 The frequency resolution is again limited to 8-bits.
 Again, underneath it displays which channel combinations are used.
-Finally, a ```4CH Filter``` instrument uses all four 8-bit Pokey channels.
+* Finally, a ```4CH Filter``` instrument uses all four 8-bit Pokey channels.
 That's two pairs creating two ```2CH Linked``` instruments, and then one is filtered by the other, resulting in a single instrument with the same timbre as ```2CH Linked``` instruments, but with 16-bit frequency resolution.
 
 #### Volume Envelope and Distortion
 
 ![Volume Envelope and Distortion](images/instrument-editor-vol-dist.png)
+
+The volume envelope describes how the volume of the instrument changes throught time.
+Each tick has a specific volume assigned.
+You can either draw them as a bar graph, edit them manually in hexadecimal below it, or use the ADSR helper on the left.
+Note that the ADSR values are _not_ real-time.
+You need to set the values you want and then click one of the AD, ADR or ADSR buttons to generate the envelope.
+
+* Attack sets the amount of ticks to rise from 0 to 15 (F)
+* Decay sets the amount of ticks to fall to sustain level
+* Sustain sets the sustain level, i.e. the volume of the instrument while you keep pressing the key
+* Release sets the amount of ticks to fall from sustain level to 0
+
+Every MIDI Note On event starts at the beginning of the envelope.
+When it reaches the marker of the ```Sustain End``` slider, it will loop back to the ```Sustain Start``` slider.
+Most of the time these are the same, sustaining on a constant volume when a note is held.
+You can use a small window between Start and End to create a volume tremelo.
+Once a MIDI Note Off event arrives, the Release period starts, which usually fades out the volume to 0.
+If the ```Sustain End``` marker is equal to or beyond the ```Release End``` marker, there will be no sustain and it will progress linearly from start to end and then stop.
+This is useful for percussion or pizzicato instruments which have no sustain.
 
 #### Note Table
 
