@@ -184,9 +184,21 @@ PokeySynth reacts to various frequency related MIDI CC events.
 
 ![Loading and Saving](images/load-save.png)
 
+Here you can load or save individual instruments, and load or save a full bank of 128 instruments.
+You are entirely free to choose the filename you like, but as a convention I used ```.ins``` for instruments, and ```.bnk``` for sound banks.
+```Export List``` lets you write a plain text list of all instrument names and numbers to file, which might be handy as a reference when you use a previously defined bank, so you do not constantly have to lookup MIDI Program Numbers when switching to the desired instrument.
+
 #### SAP-R Recording
 
 ![SAP-R Recording](images/sapr.png)
+
+Each PokeySynth instance is capable of writing a raw Pokey register dump to a file, which can later be played back at original hardware with the appropriate SAP-R player.
+Recording can be started by pressing the ```Start``` button, and is stopped by pressing the ```Stop``` button.
+Consecutive presses to ```Start``` will overwrite the previous recording, so be cautious.
+As this might be cumbersome and tricky to time correctly (start playback in DAW, quickly start recording before music starts), and is even more clumsy when trying to record a stereo Pokey song (you cannot press two record buttons at once, so you have to manually synchronize the two SAP-R files with ```sapredit``` (part of [saprtools](https://github.com/ivop/saprtools)) afterwards), you can also automate this.
+By strategically placing a MIDI CC14 events on _one_ of the MIDI channels that is routed to a particular PokeySynth instance, you can either start or stop the SAP-R recording process.
+CC14 takes a value argument. 0-63 starts recording, 64-127 stops recording.
+This way you can easily record your stereo or quad pokey song and the resulting SAP-R files will automatically be in sync.
 
 #### Overdrive and Panic!
 
