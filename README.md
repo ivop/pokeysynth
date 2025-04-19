@@ -179,13 +179,15 @@ I tried to included the most common used triads and quads and still be not too o
 This influences the ```2CH Filter``` and ```4CH Linked + Filter``` instruments.
 To create the filter effect, one of the two involved channels is playing a note slightly detuned relative to the base note that is being played.
 ```Filter Detune``` determines how many cents it is detuned.
+Note that the consequence of changing this value is limited on 8-bit filtered instruments (```2CH Filter```).
+To notice the full effect, you need to use a ```4CH Linked + Filter``` instrument.
 The ```Filter Detune Volume``` determines the volume level of the detuned channel.
 If this is non-zero, you'll hear a pure square wave alongside the filtered sound for a fuller sound.
 When this is used, it's set to around 50% most of the time.
-```Filter Transpose Octave Down``` does whet its name says.
+```Filter Transpose Octave Down``` does what its name says.
 When checked, the note being played is transposed a full octave (i.e. twelve semitones) down.
-If you switch a previously composed melody line from ```Pure Tone``` to a filtered instruments you might notice it appears to be an octave to high and/or sounds a little thin or out of tune.
-This option is for that type of situations.
+If you switch a previously composed melody line from a ```Pure Tone``` instrument to a filtered instrument you might notice it appears to be an octave to high and/or sounds a little thin or out of tune.
+This option is for that type of situations so you don't need to make any changes in your MIDI composition.
 
 ##### Frequency Continuous Controllers
 
