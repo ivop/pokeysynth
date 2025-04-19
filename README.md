@@ -76,11 +76,12 @@ In short, the instrument with the highest priority wins, and the lowest priority
 
 Each Pokey channel generates its sound frequency relative to a base clock.
 The 15kHz and 64kHz are mutually exclusive and influence all four Pokey channels.
-1.8MHz override the 15 or 64kHz base clock, but can only be set for channel 1 or 3 (or channel 1+2 or 3+4 when the channels are linked).
+1.8MHz overrides the 15 or 64kHz base clock, but can only be set for channel 1 or 3 (or channel 1+2 or 3+4 when the channels are linked).
 Contrary to the channel layout conflicts mentioned earlier, frequency conflicts _do not_ mute the offending channel.
-If two instruments are set to play at the same time (both are in the MIDI Note On phase) and there is a base clock frequency mismatch, the 15kHz instrument wins (sounds in tune) and the 64kHz instrument will sound out of tune.
+If two instruments are set to play at the same time (both are in the MIDI Note On phase) and there is a clock frequency mismatch, the 15kHz instrument wins (sounds in tune) and the 64kHz instrument will sound out of tune.
+1.8MHz instruments never conflict, except when played on a channel that has no 1.8MHz support, i.e. playing an 8-bit 1.8MHz instrument on channel 2.
 This is by design as to have audible feedback when combing 15kHz and 64kHz instruments on a single Pokey.
-It is possible to mix 15kHz and 64kHz instruments on a single Pokey, but one has to take great care to avoid two instruments being on at the same time.
+It is possible to mix 15kHz and 64kHz instruments on a single Pokey, but one has to take great care to avoid two mismatching instruments being played at the same time.
 
 * 15kHz, low frequencies in the bass range, useful for bass lines and kick drums
 * 64kHz, mid-range frequencies, used for chords, melodies, and percussive sounds
