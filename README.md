@@ -4,7 +4,7 @@ An LV2 Virtual Instrument that emulates the Atari Pokey soundchip.
 
 <img src="images/pokeysynth.png" height="256">
 
-### Installation
+## Installation
 
 Head over to the [Releases](https://github.com/ivop/pokeysynth/releases) page and download the latest release for your platform.
 
@@ -13,7 +13,7 @@ The .lv2 directory must be created if it does not already exist.
 Windows users need to unpack the archive in ```%HOMEDRIVE%%HOMEPATH%\AppData\Roaming\LV2```.
 The LV2 directory must be created if it does not already exist.
 
-### Usage
+## Usage
 
 Once installed, you can load the plugin in your favorite DAW if it supports LV2 plugins, or in a stand-alone LV2 plugin host like ```jalv``` (Linux) or ```carla``` (Linux and Windows).
 Each plugin instance emulates a full Pokey chip.
@@ -50,6 +50,11 @@ That's two pairs creating two ```2CH Linked``` instruments, and then one is filt
 #### Update Speed
 
 ![Update Speed](images/update-speed.png)
+
+Update Speed controls the speed at which the incoming MIDI events are processed and played back as Pokey sounds.
+It also determines how fast the sound generator(s) go through the volume envelope and distortion list (see below).
+Each tick is one step.
+50Hz is the most common setting and all instruments in the default sound bank are designed for it.
 
 ### Instrument Editor
 
