@@ -485,7 +485,7 @@ In theory it should even work with Ardour and Reaper on macOS.
 ([🡑 table of contents](#table-of-contents))
 
 Now the GUI part of the plugin is another kind of mess.
-LV2 support native X11, Windows and Cocoa UIs. But writing one limits it to that specific platform, so that's out of the question.
+LV2 supports native X11, Windows and Cocoa UIs. But writing one limits it to that specific platform, so that's out of the question.
 For cross-platform UIs, it defines GTK and Qt UI types in its standard, but that turns out to be a huge mistake.
 If your interface is GTK+ 2 and the host uses GTK+ 3, or it's the other way around, that won't work as the GTK eventloop of one version is not compatible with that of the other.
 The same happens with Qt 5 and 6. It's hopeless.
