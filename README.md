@@ -133,7 +133,7 @@ The frequency resolution is again limited to 8-bits, and underneath the button i
 * Finally, a ```4CH Linked + Filter``` instrument uses all four 8-bit Pokey channels.
 That's two pairs creating two ```2CH Linked``` instruments, and then one is filtered by the other, resulting in a single instrument with the same timbre as ```2CH Filter``` instruments, but with 16-bit frequency resolution.
 
-When playing multiple notes at once on a single plugin instance, there's a possibility of channel conflicts.
+When playing multiple instruments on multiple channels at once on a single plugin instance, there's a possibility of channel conflicts.
 See **Channel Priorities** below how these are resolved.
 In short, the instrument with the highest priority wins, and the lowest priority is muted.
 
