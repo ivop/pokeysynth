@@ -474,7 +474,7 @@ Developing a cross-platform plugin that compiles more or less from the same sour
 I briefly looked into JUCE, which supposedly creates wrappers around it for all major plugin formats (VST2/3, AU, AUv3, and LV2, no CLAP), but I soon encountered problems with sending large amounts of data between the plugin and the UI. Also, I needed to learn a completely new toolkit, and they dropped support for their GUI builder years ago.
 AU and AUv3 is macOS only, so that's a no-go.
 VST2 has licensing issues, and VST3 is not widely supported on Linux, which is a must-have platform for me.
-CLAP is a fairly recent addition, adding [yet another "standard"](https://xkcd.com/927/), and again, Linux support is scarce.
+CLAP is a fairly recent addition, adding [yet another "standard"](https://xkcd.com/927/) (xkcd), and again, Linux support is scarce.
 Then there's DSSI, which once seemed promising, but is now completely dead.
 
 That leaves us with LV2, the succesor to LADSPA2. Supported by at least QTractor, Ardour, and Reaper on Linux, and Ardour, and Reaper on Windows. Can be hosted externally with jalv on Linux, and Carla on both Linux and Windows, which basically opens up all the other DAWs, like Rosegarden (has native LV2 support in development version, but it's buggy and internal MIDI routing is non-existant), LMMS, BitWig, RipX, Cubase, ProTools, Cakewalk, et cetera.
