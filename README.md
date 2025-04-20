@@ -442,6 +442,8 @@ on channel 2 is muted.
 
 ### Known Bugs
 
+([:arrow_backward: table of contents](#table-of-contents))
+
 I recently discovered that the Windows version of Carla has problems redirecting keyboard events (the alphabetical one, not the musical one) to the UI. Mouse events work fine, but up to 90% of
 the keyboard events seem to get lost.
 You can still run it perfectly fine as an audio backend, but the instrument editor might be hard to navigate without keyboard input. For one, you cannot conveniently give your instrument a new name. Windows Reaper does not have this problem when it's acting as plugin host, and neither has Carla for Linux. The Windows port of Carla is buggy in this respect.
@@ -452,6 +454,8 @@ Until that's fixed upstream, and you want to use a Windows DAW that is not Reape
 
 ### Compiling From Source
 
+([:arrow_backward: table of contents](#table-of-contents))
+
 To compile PokeySynth from source you need to install the LV2 development package of your distribution as well as the FLTK development package of at least version 1.3.
 For Windows I used MSYS and installed the same packages.
 You also need a C++ compiler. Type ```make``` to build the plugin.
@@ -461,6 +465,8 @@ The Linux library also links LV2 and FLTK statically, but depends on libX11 and 
 Release files should be compatible with Debian 12, Ubuntu 22.04 LTS and Linux Mint 21.
 
 ### Why LV2?
+
+([:arrow_backward: table of contents](#table-of-contents))
 
 The world of audio plugins turned out to be a real challenge.
 One would think things got standardized years ago across Windows, Linux, and macOS, but no such thing has happened.
@@ -475,6 +481,8 @@ That leaves us with LV2, the succesor to LADSPA2. Supported by at least QTractor
 In theory it should even work with Ardour and Reaper on macOS.
 
 ### Why FLTK?
+
+([:arrow_backward: table of contents](#table-of-contents))
 
 Now the GUI part of the plugin is another kind of mess.
 LV2 support native X11, Windows and Cocoa UIs. But writing one limits it to that specific platform, so that's out of the question.
@@ -491,6 +499,8 @@ A macOS version is theoretically possible. The audio part compiles cleanly with 
 So, there it is, LV2 with FLTK.
 
 ### Credits
+
+([:arrow_backward: table of contents](#table-of-contents))
 
 PokeySynth is Copyright © 2024, 2025, by Ivo van Poorten, and is licensed under the terms of the General Public License, version 2.  
 Pokey emulation engine is Copyright © 2002-2018 by Michael Borisov, Krzystof Nikiel, Perry McFarlane, Petr Stehlík, and Piotr Fusik, and is licensed under the terms of the General Public License, version 2, or at your option any later version.  
