@@ -129,8 +129,7 @@ The types are any combination of channel layout and clock frequency.
 For convenience, underneath the radio button there's a note displaying which Pokey channel combinations are used when such an instrument is triggered.
 This type is most useful with an 1.8Mhz clock to have the widest frequency range.
 * A ```2CH Filter``` instrument also utilizes two 8-bit Pokey channels, but filters one with the other, generating a different timbre than the normal square wave.
-The frequency resolution is again limited to 8-bits.
-Again, underneath it displays which channel combinations are used.
+The frequency resolution is again limited to 8-bits, and underneath the button it displays which channel combinations it will use.
 * Finally, a ```4CH Linked + Filter``` instrument uses all four 8-bit Pokey channels.
 That's two pairs creating two ```2CH Linked``` instruments, and then one is filtered by the other, resulting in a single instrument with the same timbre as ```2CH Filter``` instruments, but with 16-bit frequency resolution.
 
