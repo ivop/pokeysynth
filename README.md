@@ -445,6 +445,7 @@ on channel 2 is muted.
 I recently discovered that the Windows version of Carla has problems redirecting keyboard events (the alphabetical one, not the musical one) to the UI. Mouse events work fine, but up to 90% of
 the keyboard events seem to get lost.
 You can still run it perfectly fine as an audio backend, but the instrument editor might be hard to navigate without keyboard input. For one, you cannot conveniently give your instrument a new name. Windows Reaper does not have this problem when it's acting as plugin host, and neither has Carla for Linux. The Windows port of Carla is buggy in this respect.
+
 Until that's fixed upstream, and you want to use a Windows DAW that is not Reaper, and that does not have native LV2 support, it's advised to install Reaper anyway (it's free, as in WinRAR), but only use it as an LV2 host. That means, route all your DAWs MIDI output to Reaper. It should work the same as any other plugin host after that. And maybe you'll dabble a bit more in Reaper and come to like it. Its internal Routing Matrix is awesome!
 
 ## Development
@@ -469,6 +470,7 @@ AU and AUv3 is macOS only, so that's a no-go.
 VST2 has licensing issues, and VST3 is not widely supported on Linux, which is a must-have platform for me.
 CLAP is a fairly recent addition, adding [yet another "standard"](https://xkcd.com/927/), and again, Linux support is scarce.
 Then there's DSSI, which once seemed promising, but is now completely dead.
+
 That leaves us with LV2, the succesor to LADSPA2. Supported by at least QTractor, Ardour, and Reaper on Linux, and Ardour, and Reaper on Windows. Can be hosted externally with jalv on Linux, and Carla on both Linux and Windows, which basically opens up all the other DAWs, like Rosegarden (has native LV2 support in development version, but it's buggy and internal MIDI routing is non-existant), LMMS, BitWig, RipX, Cubase, ProTools, Cakewalk, et cetera.
 In theory it should even work with Ardour and Reaper on macOS.
 
@@ -481,9 +483,10 @@ If your interface is GTK+ 2 and the host uses GTK+ 3, or it's the other way arou
 The same happens with Qt 5 and 6. It's hopeless.
 Then there are some LV2 specific UI libraries. Most of them build on top of an X11UI type, so that's Linux only. Even the ones that build on top of GLFW, which should be a cross-platform OpenGL abstraction layer, need to reparent their main window to the plugin host supplied window (an X11 Window on Linux, a HWND on Windows, or an NSView on macOS), which again introduces platform dependent code, and all the examples only show X11UI reparenting.
 Besides, all of the LV2 specific UI libraries were started years ago, and show no activity for the last three or so years, so that's not really future proof.
+
 Soooo, that's when I decided to use FLTK. It is a small, easy to use C++ toolkit, that has been around for over 25 years, and has a bright future. It does have a bit dated nineties look, but it does the job.
 Platform specific code has been reduced to the bare minimum for reparenting an X11 Window and a Windows HWND to the host window, which is less than 15 lines of code each.
-A macOS version is theoretically possible. The audio part compiles cleanly with brew and XCode, but the UI part is troublesome. It _should_ be possible to reparent an NSView, but I can't find decent sample code and there is little documentation by Apple, and all apply to Objective-C, not C++. It should be possible to do a few function calls from C++, right? It also doesn't help that I don't own a Mac, and I have no sound running under emulation.
+A macOS version is theoretically possible. The audio part compiles cleanly with brew and XCode, but the UI part is troublesome. It _should_ be possible to reparent an NSView, but I can't find any decent sample code and there is little documentation by Apple, of which all is Objective-C anyway, and not C++. It should be possible to do a few function calls from C++, right? It also doesn't help that I don't own a Mac, and I have no sound running under emulation. Any help here is appreciated.
 
 So, there it is, LV2 with FLTK.
 
