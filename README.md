@@ -56,6 +56,8 @@ The LV2 directory must be created if it does not already exist.
 ([🡑 table of contents](#table-of-contents))
 
 Once installed, you can load the plugin in your favorite DAW if it supports LV2 plugins, or in a stand-alone LV2 plugin host like ```jalv``` (Linux) or ```carla``` (Linux and Windows).
+For details, see [below](#daws-without-lv2-support).
+
 Each plugin instance emulates a full Pokey chip.
 If your use case is creating chiptune-like music in combination with other synths and sampled instruments, it's advised to create as many plugin instances as you need channels and instruments, and play a single instrument on a single Pokey for maximum sound quality and frequency resolution.
 If instead you want to create music that can actually be played back on real hardware (stock Atari with single Pokey, Gumby stereo upgrade, or quad Pokey with PokeyMax) you need to limit the amount of plugin instances accordingly and route up to four MIDI channels to each instance.
@@ -439,6 +441,16 @@ on channel 2 is muted.
 * CC120 All Sound Off (PokeySynth implementation also resets all controllers)
 * CC121 Reset All Controllers
 
+### DAWs without LV2 support
+
+If your DAW does not support LV2 plugins or its internal MIDI routing capabilities are limited, you can use an external LV2 plugin host.
+For Linux there is ```jalv``` and ```carla```, both shipped with most common distros and easy to install via their package management system.
+There's also a Windows port of the [Carla plugin host](https://kx.studio/Applications:Carla).
+When using Carla on Windows, the easiest way is to copy the Carla.vst directory to the directory that is scanned for VST plugis by your DAW.
+Refresh the list of plugins, and use the Carla patchbay VST plugin wrapper to load the PokeySYnth LV2 plugin.
+Note that you have to connect PokeySynth to Audio Out _within_ the Carla patchbay, or you won't have any sound.
+See [known bugs](#known-bugs) for its current limitations, and a solution using Reaper as a host only for your favourite DAW.
+
 ### Known Bugs
 
 ([🡑 table of contents](#table-of-contents))
@@ -447,7 +459,7 @@ I recently discovered that the Windows version of Carla has problems redirecting
 the keyboard events seem to get lost.
 You can still run it perfectly fine as an audio backend, but the instrument editor might be hard to navigate without keyboard input. For one, you cannot conveniently give your instrument a new name. Windows Reaper does not have this problem when it's acting as plugin host, and neither has Carla for Linux. The Windows port of Carla is buggy in this respect.
 
-Until that's fixed upstream, and you want to use a Windows DAW that is not Reaper, and that does not have native LV2 support, it's advised to install Reaper anyway (it's free, as in WinRAR), but only use it as an LV2 host. That means, route all your DAWs MIDI output to Reaper. It should work the same as any other plugin host after that. And maybe you'll dabble a bit more in Reaper and come to like it. Its internal Routing Matrix is awesome!
+Until that's fixed upstream, and you want to use a Windows DAW that is not Reaper, and that does not have native LV2 support, it's advised to install Reaper anyway (it's free, as in WinRAR), but only use it as an LV2 host. That means, route all your DAWs MIDI output to Reaper, for example by using [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html). First create a loopMIDI port. Start Reaper, and select 'Insert virtual instrument on new track' from the track menu. The default is that it listens to all incoming MIDI ports, including the just created loopMIDI Port. Now in your prefered DAW, you select the loopMIDI Port as your MIDI Out device, and that's it! Tested with FL Studio, but should work with any other DAW, too.
 
 ## Development
 
