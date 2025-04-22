@@ -37,6 +37,7 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
       * [Channel Voice Messages](#channel-voice-messages)
       * [Control Change Messages](#control-change-messages)
       * [Channel Mode Messages](#channel-mode-messages)
+   * [DAWs without LV2 support](#daws-without-lv2-support)
    * [Known Bugs](#known-bugs)
 * [Development](#development)
 
@@ -446,6 +447,7 @@ on channel 2 is muted.
 If your DAW does not support LV2 plugins or its internal MIDI routing capabilities are limited, you can use an external LV2 plugin host.
 For Linux there is ```jalv``` and ```carla```, both shipped with most common distros and easy to install via their package management system.
 There's also a Windows port of the [Carla plugin host](https://kx.studio/Applications:Carla).
+
 When using Carla on Windows, the easiest way is to copy the Carla.vst directory to the directory that is scanned for VST plugis by your DAW.
 Refresh the list of plugins, and use the Carla patchbay VST plugin wrapper to load the PokeySYnth LV2 plugin.
 Note that you have to connect PokeySynth to Audio Out _within_ the Carla patchbay, or you won't have any sound.
