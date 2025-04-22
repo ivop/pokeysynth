@@ -448,7 +448,7 @@ If your DAW does not support LV2 plugins or its internal MIDI routing capabiliti
 For Linux there is ```jalv``` and ```carla```, both shipped with most common distros and easy to install via their package management system.
 There's also a Windows port of the [Carla plugin host](https://kx.studio/Applications:Carla).
 
-When using Carla on Windows, the easiest way is to copy the Carla.vst directory to the directory that is scanned for VST plugis by your DAW.
+When using Carla on Windows, the easiest way is to copy the Carla.vst directory to the directory that is scanned for VST plugins by your DAW.
 Refresh the list of plugins, and use the Carla patchbay VST plugin wrapper to load the PokeySYnth LV2 plugin.
 Note that you have to connect PokeySynth to Audio Out _within_ the Carla patchbay, or you won't have any sound.
 See [known bugs](#known-bugs) for its current limitations, and a solution using Reaper as a host only for your favourite DAW.
