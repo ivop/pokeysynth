@@ -461,6 +461,8 @@ I recently discovered that the Windows version of Carla has problems redirecting
 the keyboard events seem to get lost.
 You can still run it perfectly fine as an audio backend, but the instrument editor might be hard to navigate without keyboard input. For one, you cannot conveniently give your instrument a new name. Windows Reaper does not have this problem when it's acting as plugin host, and neither has Carla for Linux. The Windows port of Carla is buggy in this respect.
 
+###### Using Reaper as an LV2 host only
+
 Until that's fixed upstream, and you want to use a Windows DAW that is not Reaper, and that does not have native LV2 support, it's advised to install Reaper anyway (it's free, as in WinRAR), but only use it as an LV2 host. That means, route all your DAWs MIDI output to Reaper, for example by using [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html). First create a loopMIDI port. Start Reaper, and select 'Insert virtual instrument on new track' from the track menu. The default is that it listens to all incoming MIDI ports, including the just created loopMIDI Port. Now in your prefered DAW, you select the loopMIDI Port as your MIDI Out device, and that's it! Tested with FL Studio, but should work with any other DAW, too.
 
 ## Development
