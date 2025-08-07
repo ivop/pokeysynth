@@ -41,9 +41,6 @@ jobs:
         os: [windows-2022]
           #os: [windows-2019,windows-2022]
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: msys2 '{0}'
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -53,10 +50,12 @@ jobs:
         update: true
         install: mingw-w64-x86_64-gcc mingw-w64-x86_64-fltk make mingw-w64-x86_64-lv2 zip
     - name: build pokeysynth with msys2
+      shell: msys2 '{0}'
       run: |
         make
 
     - name: make zip archive
+      shell: msys2 '{0}'
       run : |
         VERSION=`grep VERSION src/version.h | cut -d'"' -f2`
         zip -9r pokeysynth-$VERSION-win64.zip pokeysynth.lv2
