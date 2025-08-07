@@ -1,5 +1,6 @@
 name: Release Linux 64-bit
 on: [workflow_dispatch]
+permissions: write-all
 jobs:
   build:
     strategy:
@@ -34,5 +35,5 @@ jobs:
         automatic_release_tag: "latest"
         prerelease: true
         title: "Development Build"
-        file: |
+        files: |
           pokeysynth-*-linux64.tar.gz
