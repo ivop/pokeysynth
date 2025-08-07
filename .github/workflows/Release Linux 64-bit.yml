@@ -14,6 +14,9 @@ jobs:
     - name: make
       run: |
         make -j`nproc`
+
+    - name: make tarball
+      run : |
         VERSION=`grep VERSION src/version.h | cut -d'"' -f2`
         tar -cvzf pokeysynth-$VERSION-linux64.tar.gz pokeysynth.lv2
 
@@ -23,3 +26,13 @@ jobs:
       with:
         name: linux64-build-failure
         path: pokeysynth.lv2
+
+    - name: release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        file: |
+          pokeysynth-*-linux64.tar.gz
