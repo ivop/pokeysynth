@@ -1,4 +1,4 @@
-name: Release Linux 64-bit
+name: Release
 on: [workflow_dispatch]
 permissions: write-all
 jobs:
@@ -28,12 +28,30 @@ jobs:
         name: linux64-build-failure
         path: pokeysynth.lv2
 
-    - name: release
-      uses: "marvinpinto/action-automatic-releases@latest"
+  build:
+    strategy:
+      matrix:
+        os: [windows-2022]
+          #os: [windows-2019,windows-2022]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: msys2 '{0}'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Install MSYS2
+      uses: msys2/setup-msys2@v2
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
-        prerelease: true
-        title: "Development Build"
-        files: |
-          pokeysynth-*-linux64.tar.gz
+        update: true
+        install: mingw-w64-x86_64-gcc mingw-w64-x86_64-fltk make mingw-w64-x86_64-lv2
+    - name: build pokeysynth with msys2
+      run: |
+        make
+
+    - name: Archive production artifacts
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: win64-build-failure
+        path: pokeysynth.lv2
