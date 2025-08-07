@@ -18,6 +18,7 @@
 #include "uris.h"
 #include "fltk.h"
 #include "platform.h"
+#include "version.h"
 
 #include "PokeySynth.h"
 #include "PokeyInstrument.h"
@@ -260,7 +261,7 @@ PokeySynthUi::PokeySynthUi(LV2UI_Write_Function write_function,
 
     Fl_Box *copyright = new Fl_Box(title->x(), title->y()+title->h()-8,
                                    title->w(), 20,
-                                   "Version 0.9.0 / Copyright © 2025 "
+                                   "Version " POKEYSYNTH_VERSION_S " / Copyright © 2025 "
                                    "by Ivo van Poorten");
     copyright->labelfont(FL_ITALIC);
     copyright->labelsize(10);
