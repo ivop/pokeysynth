@@ -13,7 +13,7 @@ jobs:
         submodules: recursive
     - name: install packages
       run: sudo apt update && sudo apt install lv2-dev libfltk1.3-dev libxcursor-dev libxfixes-dev libxft-dev libxinerama-dev
-    - name: make test
+    - name: make
       run: make -j`nproc`
 
     - name: Archive production artifacts
