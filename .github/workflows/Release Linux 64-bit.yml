@@ -1,4 +1,4 @@
-name: Linux 64-bit
+name: Release Linux 64-bit
 on: [workflow_dispatch]
 jobs:
   build:
