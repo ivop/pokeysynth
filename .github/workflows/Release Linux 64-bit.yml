@@ -69,4 +69,4 @@ jobs:
 
     - name: upload release asset
       run: |
-        gh release upload $RELEASE_VERSION pokeysynth-*.zip
+        gh release upload $env:RELEASE_VERSION pokeysynth-*.zip
