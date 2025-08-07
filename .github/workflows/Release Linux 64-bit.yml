@@ -28,7 +28,7 @@ jobs:
         name: linux64-build-failure
         path: pokeysynth.lv2
 
-  build:
+  build2:
     strategy:
       matrix:
         os: [windows-2022]
