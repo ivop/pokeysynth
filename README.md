@@ -37,6 +37,7 @@ A [short demonstration](https://youtu.be/UA6P4s_X4ds) on YouTube.
       * [Channel Voice Messages](#channel-voice-messages)
       * [Control Change Messages](#control-change-messages)
       * [Channel Mode Messages](#channel-mode-messages)
+   * [DAWs without LV2 support](#daws-without-lv2-support)
    * [Known Bugs](#known-bugs)
 * [Development](#development)
 
@@ -56,6 +57,8 @@ The LV2 directory must be created if it does not already exist.
 ([🡑 table of contents](#table-of-contents))
 
 Once installed, you can load the plugin in your favorite DAW if it supports LV2 plugins, or in a stand-alone LV2 plugin host like ```jalv``` (Linux) or ```carla``` (Linux and Windows).
+For details, see [below](#daws-without-lv2-support).
+
 Each plugin instance emulates a full Pokey chip.
 If your use case is creating chiptune-like music in combination with other synths and sampled instruments, it's advised to create as many plugin instances as you need channels and instruments, and play a single instrument on a single Pokey for maximum sound quality and frequency resolution.
 If instead you want to create music that can actually be played back on real hardware (stock Atari with single Pokey, Gumby stereo upgrade, or quad Pokey with PokeyMax) you need to limit the amount of plugin instances accordingly and route up to four MIDI channels to each instance.
@@ -84,7 +87,7 @@ When MIDI Note On events arrive, PokeySynth has to determine what to do with it.
 If it's an event for a channel it is listening to, it's added to a list of which keys are currently being pressed on that channel.
 Setting the channel to ```Monophonic``` will always play the highest note currently being on, and ignore all other notes.
 For example, if you play a C major chord as G C E, it will play the E.
-Setting the channel to ```Arpeggiate Up``` or ```Arpeggiate Down```, it while cycle through the note list either upwards or downwards, effectively playing an arpeggio.
+Setting the channel to ```Arpeggiate Up``` or ```Arpeggiate Down```, it will cycle through the note list either upwards or downwards, effectively playing an arpeggio.
 The speed at which it steps through this list is determined by the ```Arp Speed``` slider.
 It's directly related to the ```Update Speed``` (see below), and a higher number being slower.
 The auto-arpeggiator works best if all Note On events arrive at the same time.
@@ -129,12 +132,11 @@ The types are any combination of channel layout and clock frequency.
 For convenience, underneath the radio button there's a note displaying which Pokey channel combinations are used when such an instrument is triggered.
 This type is most useful with an 1.8Mhz clock to have the widest frequency range.
 * A ```2CH Filter``` instrument also utilizes two 8-bit Pokey channels, but filters one with the other, generating a different timbre than the normal square wave.
-The frequency resolution is again limited to 8-bits.
-Again, underneath it displays which channel combinations are used.
+The frequency resolution is again limited to 8-bits, and underneath the button it displays which channel combinations it will use.
 * Finally, a ```4CH Linked + Filter``` instrument uses all four 8-bit Pokey channels.
 That's two pairs creating two ```2CH Linked``` instruments, and then one is filtered by the other, resulting in a single instrument with the same timbre as ```2CH Filter``` instruments, but with 16-bit frequency resolution.
 
-When playing multiple notes at once on a single plugin instance, there's a possibility of channel conflicts.
+When playing multiple instruments on multiple channels at once on a single plugin instance, there's a possibility of channel conflicts.
 See **Channel Priorities** below how these are resolved.
 In short, the instrument with the highest priority wins, and the lowest priority is muted.
 
@@ -143,7 +145,7 @@ In short, the instrument with the highest priority wins, and the lowest priority
 ([🡑 table of contents](#table-of-contents))
 
 Each Pokey channel generates its sound frequency relative to a base clock.
-The 15kHz and 64kHz are mutually exclusive and influence all four Pokey channels.
+The 15kHz and 64kHz clocks are mutually exclusive and influence all four Pokey channels.
 1.8MHz overrides the 15 or 64kHz base clock, but can only be set for channel 1 or 3 (or channel 1+2 or 3+4 when the channels are linked).
 Contrary to the channel layout conflicts mentioned earlier, frequency conflicts _do not_ mute the offending channel.
 If two instruments are set to play at the same time (both are in the MIDI Note On phase) and there is a clock frequency mismatch, the 15kHz instrument wins (sounds in tune) and the 64kHz instrument will sound out of tune.
@@ -193,7 +195,7 @@ The distortion list denotes which Pokey distortion is used while playing back th
 * 0 - Pure, this is a pure square wave, used for instruments, and chords, or bass notes at 15kHz or with 2CH Linked instruments
 * 1 - Noise, white noise generator, useful for percussion
 * 2 - Buzzy Bass, the typical Pokey bass sound, with a soft edge
-* 3 - Gritty Bass, the typical Pokey bass sound, but more harsh. Note that 15kHz and 1.8MHz 2CH Linked instruments have no Gritty bass. Setting this type of distortion will fallback to buzzy bass.
+* 3 - Gritty Bass, the typical Pokey bass sound, but more harsh. Note that 15kHz and 1.8MHz 2CH Linked instruments have no gritty bass. Setting this type of distortion will fallback to buzzy bass.
 * 4 - Poly5 Square, sort of a sqaure wave, but sounds more like a hobo or clarinet. Only useful for 1.8MHz 8-bit channel instruments.
 
 On the right there are handy buttons to set the whole envelope to one of the specified distortions.
@@ -227,7 +229,7 @@ You have to set the type of chord you want and press the ```Chord``` button.
 It'll then generate the appropriate note table.
 The chord type is divided in several sections.
 
-* Base [triad](https://en.wikipedia.org/wiki/Triad_(music)), being [major](https://en.wikipedia.org/wiki/Major_chord), [minor](https://en.wikipedia.org/wiki/Minor_chord), [suspended second](https://en.wikipedia.org/wiki/Suspended_chord), [suspended fourth](https://en.wikipedia.org/wiki/Suspended_chord), [augmented](https://en.wikipedia.org/wiki/Augmented_triad) or [dimninished](https://en.wikipedia.org/wiki/Diminished_triad). 
+* Base [triad](https://en.wikipedia.org/wiki/Triad_(music)), being [major](https://en.wikipedia.org/wiki/Major_chord), [minor](https://en.wikipedia.org/wiki/Minor_chord), [suspended second](https://en.wikipedia.org/wiki/Suspended_chord), [suspended fourth](https://en.wikipedia.org/wiki/Suspended_chord), [augmented](https://en.wikipedia.org/wiki/Augmented_triad) or [diminished](https://en.wikipedia.org/wiki/Diminished_triad). 
 * Added note, which can be - (none), [dominant seventh](https://en.wikipedia.org/wiki/Seventh_chord), [major seventh](https://en.wikipedia.org/wiki/Major_seventh_chord), [ninth](https://en.wikipedia.org/wiki/Ninth_chord), [eleventh](https://en.wikipedia.org/wiki/Eleventh_chord) and [thirteenth](https://en.wikipedia.org/wiki/Thirteenth). Note that add9, add11, and add13 _only_ add the specific interval, i.e. Cadd9 is not the same as C9, where the latter would also include the 7th and possibly drop the 5th.
 * [Inversion](https://en.wikipedia.org/wiki/Inversion_(music)), root, first, second, and third inversion, determines the lowest and highest note. For a triad, the third inversion is the same as the root inversion.
 * Direction, up or down, set whether the arpeggio is played from the lowest to the highest note, or vice versa.
@@ -440,6 +442,17 @@ on channel 2 is muted.
 * CC120 All Sound Off (PokeySynth implementation also resets all controllers)
 * CC121 Reset All Controllers
 
+### DAWs without LV2 support
+
+If your DAW does not support LV2 plugins or its internal MIDI routing capabilities are limited, you can use an external LV2 plugin host.
+For Linux there is ```jalv``` and ```carla```, both shipped with most common distros and easy to install via their package management system.
+There's also a Windows port of the [Carla plugin host](https://kx.studio/Applications:Carla).
+
+When using Carla on Windows, the easiest way is to copy the Carla.vst directory to the directory that is scanned for VST plugins by your DAW.
+Refresh the list of plugins, and use the Carla patchbay VST plugin wrapper to load the PokeySynth LV2 plugin.
+Note that you have to connect PokeySynth to Audio Out _within_ the Carla patchbay, or you won't have any sound.
+See [known bugs](#known-bugs) for its current limitations, and a solution using Reaper as a host only for your favourite DAW.
+
 ### Known Bugs
 
 ([🡑 table of contents](#table-of-contents))
@@ -448,7 +461,9 @@ I recently discovered that the Windows version of Carla has problems redirecting
 the keyboard events seem to get lost.
 You can still run it perfectly fine as an audio backend, but the instrument editor might be hard to navigate without keyboard input. For one, you cannot conveniently give your instrument a new name. Windows Reaper does not have this problem when it's acting as plugin host, and neither has Carla for Linux. The Windows port of Carla is buggy in this respect.
 
-Until that's fixed upstream, and you want to use a Windows DAW that is not Reaper, and that does not have native LV2 support, it's advised to install Reaper anyway (it's free, as in WinRAR), but only use it as an LV2 host. That means, route all your DAWs MIDI output to Reaper. It should work the same as any other plugin host after that. And maybe you'll dabble a bit more in Reaper and come to like it. Its internal Routing Matrix is awesome!
+###### Using Reaper as an LV2 host only
+
+Until that's fixed upstream, and you want to use a Windows DAW that is not Reaper, and that does not have native LV2 support, it's advised to install Reaper anyway (it's free, as in WinRAR), but only use it as an LV2 host. That means, route all your DAWs MIDI output to Reaper, for example by using [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html). First create a loopMIDI port. Start Reaper, and select 'Insert virtual instrument on new track' from the track menu. The default is that it listens to all incoming MIDI ports, including the just created loopMIDI Port. Now in your prefered DAW, you select the loopMIDI Port as your MIDI Out device, and that's it! Tested with FL Studio, but should work with any other DAW, too.
 
 ## Development
 
@@ -485,7 +500,7 @@ In theory it should even work with Ardour and Reaper on macOS.
 ([🡑 table of contents](#table-of-contents))
 
 Now the GUI part of the plugin is another kind of mess.
-LV2 support native X11, Windows and Cocoa UIs. But writing one limits it to that specific platform, so that's out of the question.
+LV2 supports native X11, Windows and Cocoa UIs. But writing one limits it to that specific platform, so that's out of the question.
 For cross-platform UIs, it defines GTK and Qt UI types in its standard, but that turns out to be a huge mistake.
 If your interface is GTK+ 2 and the host uses GTK+ 3, or it's the other way around, that won't work as the GTK eventloop of one version is not compatible with that of the other.
 The same happens with Qt 5 and 6. It's hopeless.
@@ -504,4 +519,4 @@ So, there it is, LV2 with FLTK.
 
 PokeySynth is Copyright © 2024, 2025, by Ivo van Poorten, and is licensed under the terms of the General Public License, version 2.  
 Pokey emulation engine is Copyright © 2002-2018 by Michael Borisov, Krzystof Nikiel, Perry McFarlane, Petr Stehlík, and Piotr Fusik, and is licensed under the terms of the General Public License, version 2, or at your option any later version.  
-Remez resampling code is Copyright © 1995,1998 by Jake Janovetz, and Copyright © 2003-2008 by Krzysztof Nikiel, Piotr Fusik, Perry McFarland, and is licensed under the terms of the General Public License, version 2, or at your option any later version.  
+Remez resampling code is Copyright © 1995,1998 by Jake Janovetz, and Copyright © 2003-2008 by Krzysztof Nikiel, Piotr Fusik, and Perry McFarland, and is licensed under the terms of the General Public License, version 2, or at your option any later version.  
