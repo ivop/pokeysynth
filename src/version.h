@@ -1,2 +1,2 @@
 #pragma once
-#define POKEYSYNTH_VERSION_S    "0.9.0"
+#define POKEYSYNTH_VERSION_S    "0.9.1"
