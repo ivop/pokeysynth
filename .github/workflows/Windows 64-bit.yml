@@ -1,0 +1,30 @@
+name: Windows 64-bit
+on: [workflow_dispatch]
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-2019]
+          #os: [windows-2019,windows-2022]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: msys2 '{0}'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Install MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: mingw-w64-x86_64-gcc mingw-w64-x86_64-fltk
+    - name: build pokeysynth with msys2
+      run: |
+        make
+
+    - name: Archive production artifacts
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: win64-build-failure
+        path: pokeysynth.lv2
