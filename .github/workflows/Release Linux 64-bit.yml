@@ -1,6 +1,8 @@
 name: Release
 on: [workflow_dispatch]
 permissions: write-all
+env:
+  RELEASE_VERSION=0.9.0-auto
 jobs:
   build:
     strategy:
@@ -21,12 +23,16 @@ jobs:
         VERSION=`grep VERSION src/version.h | cut -d'"' -f2`
         tar -cvzf pokeysynth-$VERSION-linux64.tar.gz pokeysynth.lv2
 
-    - name: Archive production artifacts
+    - name: Archive production artifacts on failure
       if: ${{ failure() }}
       uses: actions/upload-artifact@v4
       with:
         name: linux64-build-failure
         path: pokeysynth.lv2
+
+    - name: upload release asset
+      run: |
+        gh release upload $RELEASE_VERSION pokeysynth-*.tar.gz
 
   build2:
     strategy:
@@ -44,14 +50,23 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         update: true
-        install: mingw-w64-x86_64-gcc mingw-w64-x86_64-fltk make mingw-w64-x86_64-lv2
+        install: mingw-w64-x86_64-gcc mingw-w64-x86_64-fltk make mingw-w64-x86_64-lv2 zip
     - name: build pokeysynth with msys2
       run: |
         make
 
-    - name: Archive production artifacts
+    - name: make zip archive
+      run : |
+        VERSION=`grep VERSION src/version.h | cut -d'"' -f2`
+        zip -9r pokeysynth-$VERSION-win64.zip pokeysynth.lv2
+
+    - name: Archive production artifacts on failure
       if: ${{ failure() }}
       uses: actions/upload-artifact@v4
       with:
         name: win64-build-failure
         path: pokeysynth.lv2
+
+    - name: upload release asset
+      run: |
+        gh release upload $RELEASE_VERSION pokeysynth-*.zip
