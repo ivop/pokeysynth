@@ -12,7 +12,7 @@ jobs:
       with:
         submodules: recursive
     - name: install packages
-      run: sudo apt update && sudo apt install lv2-dev libfltk1.3-dev
+      run: sudo apt update && sudo apt install lv2-dev libfltk1.3-dev libxcursor-dev libxfixes-dev libxft-dev libxinerama-dev
     - name: make test
       run: make -j`nproc`
 
