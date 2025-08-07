@@ -17,7 +17,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         update: true
-        install: mingw-w64-x86_64-gcc mingw-w64-x86_64-fltk make
+        install: mingw-w64-x86_64-gcc mingw-w64-x86_64-fltk make mingw-w64-x86_64-lv2
     - name: build pokeysynth with msys2
       run: |
         make
