@@ -1,5 +1,8 @@
 # PokeySynth
 
+[![Linux 64-bit](https://github.com/ivop/pokeysynth/actions/workflows/Linux%2064-bit.yml/badge.svg)](https://github.com/ivop/pokeysynth/actions/workflows/Linux%2064-bit.yml)
+[![Windows 64-bit](https://github.com/ivop/pokeysynth/actions/workflows/Windows%2064-bit.yml/badge.svg)](https://github.com/ivop/pokeysynth/actions/workflows/Windows%2064-bit.yml)
+
 An LV2 Virtual Instrument that emulates the Atari Pokey soundchip.
 
 <img src="images/pokeysynth.png" height="256">
