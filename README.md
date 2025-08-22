@@ -431,7 +431,7 @@ on channel 2 is muted.
 
 * Note On, channel (0-15), note number (0-127) and velocity (0-127, controls the volume)
 * Note Off, channel (0-15), note number (0-127)
-* PitchBend, channel (0-15), amount (-8192 to 8192)
+* PitchBend, channel (0-15), amount (-8192 to 8191)
 * Program Change, channel (0-15), program number (0 to 127)
 
 #### Control Change Messages
