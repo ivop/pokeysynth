@@ -268,7 +268,7 @@ This option is for that type of situations so you don't need to make any changes
 
 PokeySynth reacts to various frequency related MIDI CC events.
 
-* PitchWheel. This shifts the note frequency up or down. Sadly, there is no standard that defines how the internal MIDI value (-8192 to 8192) is supposed to be mapped to cents. Most commonly, synthesizers use +/- 200 cents, meaning a full tone up or down when the pitchwheel is moved to either end of its range. Sometimes you want to go further. You can extend its range up to 1200 cents (one octave) in either direction.
+* PitchWheel. This shifts the note frequency up or down. Sadly, there is no standard that defines how the internal MIDI value (-8192 to 8191) is supposed to be mapped to cents. Most commonly, synthesizers use +/- 200 cents, meaning a full tone up or down when the pitchwheel is moved to either end of its range. Sometimes you want to go further. You can extend its range up to 1200 cents (one octave) in either direction.
 * ModWheel. The modulation wheel changes the frequency based on a sine wave LFO (Low Frequency Oscillator). The ```LFO depth``` setting determines the amplitude of the sine wave in cents, and the ```LFO Speed``` determines how fast it modulates. The latter is set as degrees per frame. A full sine wave is 360 degrees, and one frame corresponds to one tick of the ```Update Speed```.
 
 #### Loading and Saving
