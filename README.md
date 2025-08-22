@@ -341,7 +341,7 @@ The frequency (clock divider) of a note is determined by the following parameter
 * The note is set by the Note Number of the MIDI Note On event
 * If note type from the note table is 1, the argument from the note table is added (negative numbers result in subtraction)
 * From this note number the corresponding frequency is calculated
-* If note type from the note table is 2, the argument determines the frequency adjustment in cents. This adjustment is appplied.
+* If note type from the note table is 2, the argument determines the frequency adjustment in cents. This adjustment is applied.
 * If the pitch wheel is not in its center position, the relevant pitch shift is applied.
 * And finally, the pitch is adjusted accoring to the modulation wheel setting, taking into account its depth setting, mapping the MIDI event value ranging from -8192 to 8192 to the correct amount of cents.
 
