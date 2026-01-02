@@ -259,7 +259,7 @@ If this is non-zero, you'll hear a pure square wave alongside the filtered sound
 When this is used, it's set to around 50% most of the time.
 ```Filter Transpose Octave Down``` does what its name says.
 When checked, the note being played is transposed a full octave (i.e. twelve semitones) down.
-If you switch a previously composed melody line from a ```Pure Tone``` instrument to a filtered instrument you might notice it appears to be an octave to high and/or sounds a little thin or out of tune.
+If you switch a previously composed melody line from a ```Pure Tone``` instrument to a filtered instrument you might notice it appears to be an octave too high and/or sounds a little thin or out of tune.
 This option is for that type of situations so you don't need to make any changes in your MIDI composition.
 
 ##### Frequency Continuous Controllers
