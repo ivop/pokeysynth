@@ -301,7 +301,7 @@ This way you can easily record your stereo or quad pokey song and the resulting 
 
 ![Overdrive and Panic](images/overdrive-panic.png)
 
-```Overdrive Compensation``` only is only relevant when more than one instrument is routed to the same plugin instance.
+```Overdrive Compensation``` is only relevant when more than one instrument is routed to the same plugin instance.
 If the total volume of all instruments currently audible combined exceeds 40, the Pokey Chip starts to overdrive and the sound starts to clip and sounds badly.
 Without having to adjust any of the other factors that determine the volume of each instrument (see Theory of Operation below), you can change the overdrive compensation value to reduce the overall volume without changing the relative dynamics between channels and instruments.
 This is basically a master volume slider.
